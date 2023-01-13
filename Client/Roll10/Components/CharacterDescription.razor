@@ -2,12 +2,34 @@
 
 @if(Character != null)
 {
-    <hr />
-    <h4>@Character.name</h4>
-    <hr />
+    <div class="rounded drop-shadow-lg bg-slate-100 w-6/12 m-10">
+        <p class="text-center">@Character.name</p>
+        <div class="flex justify-between p-4">
+            @foreach(var stat in GetStats())
+            {            
+                <div class="w-10 rounded h-10 bg-slate-100">
+                    <p>@stat.Item2</p>
+                    <p>@stat.Item1</p>
+                </div>
+            }
+        </div>
+    </div>
 }
 
 @code{
     [Parameter]
     public Character Character {get;set;}
+
+    public List<(string, int)> GetStats() 
+    {
+        var vals = new List<(string, int)>();
+        vals.Add(("Strength", Character.strength));
+        vals.Add(("Agility", Character.agility));
+        vals.Add(("Durability", Character.durability));
+        vals.Add(("Stamina", Character.stamina));
+        vals.Add(("Intelligence", Character.intelligence));
+        vals.Add(("Insight", Character.insight));
+
+        return vals;
+    }
 }
