@@ -1,0 +1,18 @@
+﻿@page "/"
+@inject Roll10.Services.IApiService apiservice;
+@using Roll10.Models;
+@using Roll10.Components;
+
+@foreach (var character in characters)
+{
+    <CharacterDescription Character="character"></CharacterDescription>
+}
+
+@code{
+    public List<Character> characters = new List<Character>();
+    protected override async Task OnInitializedAsync()
+    {
+        characters = (await apiservice.GetDefaultCharacters()).ToList();
+        Console.WriteLine(characters);
+    }
+}

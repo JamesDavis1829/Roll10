@@ -1,0 +1,13 @@
+@using Roll10.Models;
+
+@if(Character != null)
+{
+    <hr />
+    <h4>@Character.name</h4>
+    <hr />
+}
+
+@code{
+    [Parameter]
+    public Character Character {get;set;}
+}
