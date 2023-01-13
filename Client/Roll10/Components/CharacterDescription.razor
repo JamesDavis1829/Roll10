@@ -2,16 +2,22 @@
 
 @if(Character != null)
 {
-    <div class="rounded drop-shadow-lg bg-slate-100 w-6/12 m-10">
-        <p class="text-center">@Character.name</p>
-        <div class="flex justify-between p-4">
-            @foreach(var stat in GetStats())
-            {            
-                <div class="w-10 rounded h-10 bg-slate-100">
-                    <p>@stat.Item2</p>
-                    <p>@stat.Item1</p>
-                </div>
-            }
+    <div class="flex justify-center">
+        <div class="rounded drop-shadow-lg bg-slate-50 sm:w-auto md:w-auto lg:w-9/12 m-10">
+            <p class="text-center">@Character.name</p>
+            <div class="flex flex-wrap justify-center">
+                @foreach(var stat in GetStats())
+                {            
+                    <div 
+                        class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg" 
+                        title="@stat.Item1"
+                    >
+                        <div class="h-3"></div>
+                        <p class="text-center font-bold">@stat.Item3</p>
+                        <p class="text-center font-bold">@stat.Item2</p>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 }
@@ -20,15 +26,15 @@
     [Parameter]
     public Character Character {get;set;}
 
-    public List<(string, int)> GetStats() 
+    public List<(string, string, int)> GetStats() 
     {
-        var vals = new List<(string, int)>();
-        vals.Add(("Strength", Character.strength));
-        vals.Add(("Agility", Character.agility));
-        vals.Add(("Durability", Character.durability));
-        vals.Add(("Stamina", Character.stamina));
-        vals.Add(("Intelligence", Character.intelligence));
-        vals.Add(("Insight", Character.insight));
+        var vals = new List<(string, string, int)>();
+        vals.Add(("Strength", "STR", Character.strength));
+        vals.Add(("Agility", "AGI", Character.agility));
+        vals.Add(("Durability", "DUR", Character.durability));
+        vals.Add(("Stamina", "STA", Character.stamina));
+        vals.Add(("Intelligence", "INT", Character.intelligence));
+        vals.Add(("Insight", "INS", Character.insight));
 
         return vals;
     }
