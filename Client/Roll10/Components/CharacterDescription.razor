@@ -4,21 +4,21 @@
 @if (Character != null)
 {
     <div class="flex justify-center">
-    <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 sm:w-auto md:w-auto lg:w-9/12 m-10">
+    <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-auto lg:w-9/12 m-10">
         <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@Character.name</p>
         <div class="flex flex-wrap justify-center">
             @foreach (var stat in GetStats())
                 {
                     <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800"
-                title="@stat.Item1">
+                        title="@stat.Item1">
                         <div class="h-3"></div>
                         <p class="text-center font-bold">@stat.Item3</p>
                         <p class="text-center font-bold">@stat.Item2</p>
                     </div>
                 }
             </div>
-            <div class="flex flex-col md:flex-row">
-                <div class="w-auto md:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+            <div class="flex flex-col lg:flex-row">
+                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
                     <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
                     <ul class="list-none">
                         @foreach (var item in Character.equipment)
@@ -50,7 +50,7 @@
                         }
                     </ul>
                 </div>
-                <div class="w-auto md:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
                     <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
                     <ul class="list-none">
                         @foreach (var spell in Character.spells)

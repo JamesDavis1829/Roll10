@@ -871,4 +871,12 @@ video {
   .lg\:w-9\/12 {
     width: 75%;
   }
+
+  .lg\:w-1\/2 {
+    width: 50%;
+  }
+
+  .lg\:flex-row {
+    flex-direction: row;
+  }
 }
