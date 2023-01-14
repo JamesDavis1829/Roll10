@@ -631,6 +631,14 @@ video {
   width: 2rem;
 }
 
+.w-1\/3 {
+  width: 33.333333%;
+}
+
+.w-2\/5 {
+  width: 40%;
+}
+
 .grow {
   flex-grow: 1;
 }
@@ -667,6 +675,14 @@ video {
 
 .rounded-full {
   border-radius: 9999px;
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .rounded-t {
@@ -783,6 +799,10 @@ video {
     margin: 2.5rem;
   }
 
+  .lg\:h-20 {
+    height: 5rem;
+  }
+
   .lg\:w-9\/12 {
     width: 75%;
   }
@@ -791,7 +811,15 @@ video {
     width: 50%;
   }
 
+  .lg\:w-20 {
+    width: 5rem;
+  }
+
   .lg\:flex-row {
     flex-direction: row;
+  }
+
+  .lg\:rounded-full {
+    border-radius: 9999px;
   }
 }

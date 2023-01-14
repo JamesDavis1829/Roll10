@@ -42,7 +42,7 @@
                                     <div class="relative w-9/12">
                                         @if(!string.IsNullOrEmpty(item.dice_roll) && item.dice_roll.Contains("d"))
                                         {
-                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" />
+                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(item)" />
                                         }
                                     </div>
                                 </div>
@@ -73,7 +73,7 @@
                                     <div class="relative w-9/12">
                                         @if(!string.IsNullOrEmpty(spell.dice_roll) && spell.dice_roll.Contains("d"))
                                         {
-                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" />
+                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(spell)" />
                                         }
                                     </div>
                                 </div>
@@ -106,7 +106,6 @@
     //TODO: move somewhere else
     public string FormatOpValString(string opValString)
     {
-        Console.WriteLine(opValString);
         return string.Join(" ", opValString
                 .Split(";")
                 .Select(m => {
@@ -117,5 +116,11 @@
                     }
                     return string.Join(" ", parts);
                 }));
+    }
+
+    public void RollDice(IRollable item)
+    {
+        DiceService.PerformRoll(Character, item);
+        Console.WriteLine(DiceService.DiceLog.Last());
     }
 }

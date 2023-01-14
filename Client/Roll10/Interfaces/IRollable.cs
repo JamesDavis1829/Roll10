@@ -4,4 +4,5 @@ public interface IRollable
     string action_effect {get; init;}
     string dice_roll {get; init;}
     string modifiers {get; init;}
+    string name {get; init;}
 }

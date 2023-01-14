@@ -1,8 +1,87 @@
+using Roll10.Models;
+
 namespace Roll10.DiceService
 {
+    public record DiceLogEntry(
+        string Title,
+        string DiceRoll,
+        string RolledAmount
+    );
+
     public static class DiceService
     {
         private static List<string> OpList = new List<string> { "+", "-" };
+
+        public static List<DiceLogEntry> DiceLog = new List<DiceLogEntry>();
+
+        private static int StatSubstitute(Character character, string stat)
+        {
+            return stat.ToUpper() switch 
+            {
+                "STR" => character.strength - Constants.DiceBase,
+                "AGI" => character.agility - Constants.DiceBase,
+                "DUR" => character.durability - Constants.DiceBase,
+                "STA" => character.stamina - Constants.DiceBase,
+                "INT" => character.intelligence - Constants.DiceBase,
+                "INS" => character.insight - Constants.DiceBase,
+                _ => 0
+            };
+        }
+
+        private static int DiceSubstitute(string diceString)
+        {
+            var parts = diceString.Split("d");
+            var output = 0;
+            var rolls = int.Parse(parts[0]);
+            var maxValue = int.Parse(parts[1]);
+            for(var x = 0; x < rolls; x++)
+            {
+                output += new Random().Next(maxValue) + 1;
+            }
+            return output;
+        }
+
+        public static int PerformRoll(Character character, IRollable item)
+        {
+            var readableRoll = "";
+            var opList = item.dice_roll.Split(";").ToList();
+            if(item.add_base_dice)
+            {
+                opList.Add($"+ 1d{Constants.DiceBase}");
+            }
+            opList.AddRange(item.modifiers.Split(";").ToList());
+
+            var roll = opList.Aggregate(0, (acc, x) => {
+                var parts = x.Split(" ");
+                var substitutedNumber = 0;
+                if(parts[1].Contains("d"))
+                {
+                    substitutedNumber = DiceSubstitute(parts[1]);
+                }
+                else
+                {
+                    substitutedNumber = StatSubstitute(character, parts[1]);
+                }
+
+                readableRoll += $"{parts[1]}({substitutedNumber}) {parts[0]} ";
+
+                return parts[0] switch 
+                {
+                    "+" => acc + substitutedNumber,
+                    "-" => acc - substitutedNumber,
+                    _ => throw new Exception($"Invalid operator {parts[0]}")
+                };
+            });
+
+            DiceLog.Add(new DiceLogEntry(
+                $"{character.name} - {item.name}",
+                RemoveTrailingOperation(readableRoll),
+                roll.ToString()
+            ));
+
+            return roll;
+        }
+
         public static string HumanReadableRollString(IRollable item)
         {
             var diceRoll = item.dice_roll
@@ -13,7 +92,7 @@ namespace Roll10.DiceService
 
             if(item.add_base_dice)
             {
-                diceRoll = diceRoll.Prepend("1d10 +");
+                diceRoll = diceRoll.Prepend($"1d{Constants.DiceBase} +");
             }
 
             var modifiers = item.modifiers
@@ -27,14 +106,21 @@ namespace Roll10.DiceService
                     return string.Join(" ", parts.Reverse());
                 });
 
-            var rollString = string.Join(" ", diceRoll.Concat(modifiers)).Trim();
+            var rollString = string.Join(" ", diceRoll.Concat(modifiers));
             
+            
+
+            return RemoveTrailingOperation(rollString);
+        }
+
+        private static string RemoveTrailingOperation(string rollString)
+        {
+            rollString = rollString.Trim();
             if(OpList.Contains(rollString.Last().ToString()))
             {
                 rollString = rollString.Substring(0, rollString.Length - 1);
             }
-
-            return rollString;
+            return rollString.Trim();
         }
     }
 }
