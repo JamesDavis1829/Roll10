@@ -3,13 +3,13 @@
 @if(Character != null)
 {
     <div class="flex justify-center">
-        <div class="rounded drop-shadow-lg bg-slate-50 sm:w-auto md:w-auto lg:w-9/12 m-10">
-            <p class="text-center">@Character.name</p>
+        <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 sm:w-auto md:w-auto lg:w-9/12 m-10">
+            <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl">@Character.name</p>
             <div class="flex flex-wrap justify-center">
                 @foreach(var stat in GetStats())
                 {            
                     <div 
-                        class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg" 
+                        class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800" 
                         title="@stat.Item1"
                     >
                         <div class="h-3"></div>
@@ -17,6 +17,22 @@
                         <p class="text-center font-bold">@stat.Item2</p>
                     </div>
                 }
+            </div>
+            <div class="flex flex-row">
+                <div class="w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Equipment</p>
+                    @foreach(var item in Character.equipment)
+                    {
+                        <p>@item.name</p>
+                    }
+                </div>
+                <div class="w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
+                    @foreach(var spell in Character.spells)
+                    {
+                        <p>@spell.name</p>
+                    }
+                </div>
             </div>
         </div>
     </div>
