@@ -5,4 +5,5 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  variants: ['even','odd']
 }
