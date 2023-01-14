@@ -13,6 +13,6 @@ namespace Roll10.Models
         public IEnumerable<Spell> spells {get; set;} = new List<Spell>();
         public IEnumerable<Item> equipment {get; set;} = new List<Item>();
         public IEnumerable<Item> inventory {get; set;} = new List<Item>();
-        public string id {get; set;} = "";
+        public string id {get; init;} = "";
     }
 }
