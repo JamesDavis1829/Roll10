@@ -615,6 +615,30 @@ video {
   height: 2rem;
 }
 
+.h-screen {
+  height: 100vh;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-1\/2 {
+  height: 50%;
+}
+
+.h-3\/4 {
+  height: 75%;
+}
+
+.h-1\/4 {
+  height: 25%;
+}
+
+.h-1 {
+  height: 0.25rem;
+}
+
 .w-auto {
   width: auto;
 }
@@ -639,6 +663,18 @@ video {
   width: 40%;
 }
 
+.w-full {
+  width: 100%;
+}
+
+.w-11\/12 {
+  width: 91.666667%;
+}
+
+.w-10\/12 {
+  width: 83.333333%;
+}
+
 .grow {
   flex-grow: 1;
 }
@@ -661,6 +697,10 @@ video {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 
 .truncate {
@@ -795,12 +835,36 @@ video {
 }
 
 @media (min-width: 1024px) {
+  .lg\:absolute {
+    position: absolute;
+  }
+
+  .lg\:left-0 {
+    left: 0px;
+  }
+
+  .lg\:top-0 {
+    top: 0px;
+  }
+
+  .lg\:right-0 {
+    right: 0px;
+  }
+
   .lg\:m-10 {
     margin: 2.5rem;
   }
 
+  .lg\:block {
+    display: block;
+  }
+
   .lg\:h-20 {
     height: 5rem;
+  }
+
+  .lg\:h-screen {
+    height: 100vh;
   }
 
   .lg\:w-9\/12 {
@@ -815,8 +879,24 @@ video {
     width: 5rem;
   }
 
+  .lg\:w-10\/12 {
+    width: 83.333333%;
+  }
+
+  .lg\:w-2\/12 {
+    width: 16.666667%;
+  }
+
+  .lg\:w-3\/12 {
+    width: 25%;
+  }
+
   .lg\:flex-row {
     flex-direction: row;
+  }
+
+  .lg\:overflow-scroll {
+    overflow: scroll;
   }
 
   .lg\:rounded-full {

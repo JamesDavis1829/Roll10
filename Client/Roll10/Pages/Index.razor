@@ -1,17 +1,40 @@
 ﻿@page "/"
-@inject Roll10.Services.IApiService apiservice;
 @using Roll10.Models;
 @using Roll10.Components;
+@using Roll10.DiceService;
+@inject Roll10.Services.IApiService apiservice;
+@inject Roll10.Services.GlobalRefreshService globalRefreshService;
 
-@foreach (var character in characters)
-{
-    <CharacterDescription Character="character"></CharacterDescription>
-}
+<div class="lg:block flex flex-col h-screen">
+    <div class="lg:w-9/12 lg:absolute lg:left-0 lg:top-0 lg:h-screen overflow-scroll h-3/4 w-full">
+        @foreach (var character in characters)
+        {
+            <CharacterDescription Character="character"></CharacterDescription>
+        }
+    </div>
+    <div class="lg:w-3/12 lg:absolute lg:right-0 lg:top-0 lg:h-screen overflow-scroll h-1/4 w-full">
+        <p class="text-center uppercase font-extrabold">Dice Log</p>
+        <hr />
+        <ul class="list-none">
+            @foreach(var roll in DiceService.DiceLog.AsEnumerable().Reverse())
+            {
+                <li class="even:bg-slate-200 p-2">
+                    <p class="text-center font-bold">@roll.Title</p>
+                    <p class="text-center italic">@roll.DiceRoll</p>
+                    <p class="text-center font-bold text-lg">@roll.RolledAmount</p>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
 
 @code{
     public List<Character> characters = new List<Character>();
     protected override async Task OnInitializedAsync()
     {
         characters = (await apiservice.GetDefaultCharacters()).ToList();
+        globalRefreshService.RefreshRequested += () => {
+            this.StateHasChanged();
+        };
     }
 }

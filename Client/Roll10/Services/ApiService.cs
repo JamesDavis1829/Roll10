@@ -17,8 +17,8 @@ namespace Roll10.Services
         private HttpClient client;
         public ApiService()
         {
-            client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
-            //client = new HttpClient { BaseAddress = new Uri("https://c729-2600-6c58-6600-1e3e-7200-9273-eb5d-ff82.ngrok.io/api/") };
+            //client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
+            client = new HttpClient { BaseAddress = new Uri("https://c729-2600-6c58-6600-1e3e-7200-9273-eb5d-ff82.ngrok.io/api/") };
         }
 
         public async Task<List<Character>> GetDefaultCharacters()
