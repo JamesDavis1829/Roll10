@@ -1,13 +1,127 @@
 @using Roll10.Models;
+@using Roll10.DiceService;
+@inject Roll10.Services.GlobalRefreshService globalRefreshService;
 
-@if(Character != null)
+@if (Character != null)
 {
-    <hr />
-    <h4>@Character.name</h4>
-    <hr />
+    <div class="flex justify-center">
+    <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
+        <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@Character.name</p>
+        <div class="flex flex-wrap justify-center">
+            @foreach (var stat in GetStats())
+                {
+                    <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800"
+                        title="@stat.Item1">
+                        <div class="h-3"></div>
+                        <p class="text-center font-bold">@stat.Item3</p>
+                        <p class="text-center font-bold">@stat.Item2</p>
+                    </div>
+                }
+            </div>
+            <div class="flex flex-col lg:flex-row">
+                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
+                    <ul class="list-none">
+                        @foreach (var item in Character.equipment)
+                        {
+                            <li class="even:bg-slate-200">
+                                <div class="flex justify-between">
+                                    <div class="w-9/12 p-2">
+                                        <p class="font-bold">@item.name</p>
+                                        <p class="italic">Requirements: STR-@item.strength_requirement AGI-@item.agility_requirement INT-@item.intelligence_requirement</p>
+                                        <p class="italic">Roll: @DiceService.HumanReadableRollString(@item)</p>
+                                        @if(!string.IsNullOrEmpty(item.action_effect))
+                                        {
+                                            <p class="italic">Effect: @FormatOpValString(@item.action_effect)</p>
+                                        }
+                                        @if(item.wield.Count() > 0)
+                                        {
+                                            <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
+                                        }
+                                        <p class="italic"></p>
+                                    </div>
+                                    <div class="relative w-9/12">
+                                        @if(!string.IsNullOrEmpty(item.dice_roll) && item.dice_roll.Contains("d"))
+                                        {
+                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(item)" />
+                                        }
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
+                    <ul class="list-none">
+                        @foreach (var spell in Character.spells)
+                        {
+                            <li class="even:bg-slate-200">
+                                <div class="flex justify-between">
+                                    <div class="w-9/12 p-2">
+                                        <p class="font-bold">@spell.name</p>
+                                        <p class="italic">Requirements: INT-@spell.intelligence_requirement</p>
+                                        @if(!string.IsNullOrEmpty(spell.dice_roll))
+                                        {
+                                            <p class="italic">Roll: @DiceService.HumanReadableRollString(@spell)</p>
+                                        }
+                                        @if(!string.IsNullOrEmpty(spell.action_effect))
+                                        {
+                                            <p class="italic">Effect: @FormatOpValString(@spell.action_effect)</p>
+                                        }
+                                        <p class="italic"></p>
+                                    </div>
+                                    <div class="relative w-9/12">
+                                        @if(!string.IsNullOrEmpty(spell.dice_roll) && spell.dice_roll.Contains("d"))
+                                        {
+                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(spell)" />
+                                        }
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
-@code{
+@code {
     [Parameter]
-    public Character Character {get;set;}
+    public Character Character { get; set; }
+
+    public List<(string, string, int)> GetStats()
+    {
+        var vals = new List<(string, string, int)>();
+        vals.Add(("Strength", "STR", Character.strength));
+        vals.Add(("Agility", "AGI", Character.agility));
+        vals.Add(("Durability", "DUR", Character.durability));
+        vals.Add(("Stamina", "STA", Character.stamina));
+        vals.Add(("Intelligence", "INT", Character.intelligence));
+        vals.Add(("Insight", "INS", Character.insight));
+
+        return vals;
+    }
+
+    //TODO: move somewhere else
+    public string FormatOpValString(string opValString)
+    {
+        return string.Join(" ", opValString
+                .Split(";")
+                .Select(m => {
+                    var parts = m.Split(" ");
+                    if(parts.Count() > 2)
+                    {
+                        parts[2] = parts[2].ToUpper();
+                    }
+                    return string.Join(" ", parts);
+                }));
+    }
+
+    public void RollDice(IRollable item)
+    {
+        DiceService.PerformRoll(Character, item);
+        globalRefreshService.CallRequestRefresh();
+    }
 }

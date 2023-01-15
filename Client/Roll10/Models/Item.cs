@@ -1,20 +1,20 @@
 namespace Roll10.Models
 {
-    public record Item(
-        string name,
-        int strength_requirement,
-        int agility_requirement,
-        int intelligence_requirement,
-        IEnumerable<string> wield,
-        string action_effect,
-        string dice_roll,
-        string modifier,
-        string category,
-        string description, 
-        string range,
-        string weight,
-        DateTime created,
-        DateTime updated,
-        string id
-    ): DbRecord(id, created, updated);
+    public class Item: IDbRecord, IRollable
+    {
+        public string name {get; init;} = "";
+        public int strength_requirement {get; init;}
+        public int agility_requirement {get; init;}
+        public int intelligence_requirement {get; init;}
+        public IEnumerable<string> wield {get; init;}
+        public string action_effect {get; init;} = "";
+        public string dice_roll {get; init;} = "";
+        public string modifiers {get; init;} = "";
+        public string category {get; init;} = "";
+        public string description {get; init;} = "";
+        public string range {get; init;} = "";
+        public string weight {get; init;} = "";
+        public string id {get; init;} = "";
+        public bool add_base_dice { get; init; } = false;
+    }
 }

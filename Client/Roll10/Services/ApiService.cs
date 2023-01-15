@@ -17,45 +17,39 @@ namespace Roll10.Services
         private HttpClient client;
         public ApiService()
         {
-            client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
+            //client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
+            client = new HttpClient { BaseAddress = new Uri("https://c729-2600-6c58-6600-1e3e-7200-9273-eb5d-ff82.ngrok.io/api/") };
         }
 
         public async Task<List<Character>> GetDefaultCharacters()
         {
             var characters = new List<Character>();
-            var request = await client.GetAsync("collections/characters/records");
+            var request = await client.GetAsync("collections/characters/records?expand=items,spells,equipment");
             var data = await request.Content.ReadAsStringAsync();
-            var dynamicData = JsonDocument.Parse(data);
-
-            foreach(var item in dynamicData.RootElement.GetProperty("items").EnumerateArray())
+            var dynamicData = JsonNode.Parse(data);
+            if(dynamicData != null)
             {
-                var spells = await GetSpellsByIds(
-                    item.GetProperty("spells").EnumerateArray().Select(s => s.GetString() ?? "").ToList()
-                );
-                var inventory = await GetItemsByIds(
-                    item.GetProperty("inventory").EnumerateArray().Select(s => s.GetString() ?? "").ToList()
-                );
-                var equipement = await GetItemsByIds(
-                    item.GetProperty("equipment").EnumerateArray().Select(s => s.GetString() ?? "").ToList()
-                );
 
-                characters.Add(new Character(
-                    item.GetProperty("name").GetString() ?? "",
-                    item.GetProperty("agility").GetInt32(),
-                    item.GetProperty("durability").GetInt32(),
-                    item.GetProperty("durability").GetInt32(),
-                    item.GetProperty("durability").GetInt32(),
-                    item.GetProperty("intelligence").GetInt32(),
-                    item.GetProperty("insight").GetInt32(),
-                    spells,
-                    equipement,
-                    inventory,
-                    item.GetProperty("id").GetString() ?? "",
-                    DateTime.Parse(item.GetProperty("created").GetString()),
-                    DateTime.Parse(item.GetProperty("updated").GetString())
-                ));
+                foreach(var item in dynamicData.AsObject()["items"].AsArray())
+                {
+                    if(item == null) continue;
+
+                    item["items"] = JsonNode.Parse(
+                        (item["expand"]?["items"] ?? item["items"] ?? new JsonArray()).ToJsonString()
+                    );
+                    item["spells"] = JsonNode.Parse(
+                        (item["expand"]?["spells"] ?? item["spells"] ?? new JsonArray()).ToJsonString()
+                    );
+                    item["equipment"] = JsonNode.Parse(
+                        (item["expand"]?["equipment"] ?? item["equipment"] ?? new JsonArray()).ToJsonString()
+                    );
+
+                    var character = JsonSerializer.Deserialize<Character>(item.ToJsonString());
+                    if(character != null)
+                        characters.Add(character);
+                }
             }
-
+            
             return characters;
         }
 
