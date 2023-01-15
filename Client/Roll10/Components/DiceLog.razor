@@ -1,0 +1,48 @@
+@using DiceService;
+@using Roll10.Services;
+@inject GlobalRefreshService refreshService;
+
+<div class="fixed lg:right-16 lg:bottom-16 right-5 bottom-5 z-10">
+    @if(IsDiceLogShowing && DiceService.DiceLog.Count > 0)
+    {
+        <div class="max-h-96 overflow-scroll bg-slate-50 rounded-lg p-4 m-4 shadow-lg shadow-slate-900">
+            <p class="font-bold uppercase text-center">Dice Log</p>
+            <hr />
+            <ul class="list-none">
+                @foreach(var roll in DiceService.DiceLog)
+                {
+                    <li class="even:bg-slate-200 p-2">
+                        <p class="text-center font-bold">@roll.Title</p>
+                        <p class="text-center italic">@roll.DiceRoll</p>
+                        <p class="text-center font-bold text-lg">@roll.RolledAmount</p>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    <div class="flex justify-end w-full">
+        <div class="rounded-full bg-slate-50 shadow-lg shadow-slate-900">
+            <img src="images/dice.svg" class="h-14 w-14" @onclick="ToggleDiceLog" />
+        </div>
+    </div>
+</div>
+
+@code 
+{
+    public bool IsDiceLogShowing {get;set;} = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        refreshService.RefreshRequested += () => {
+            this.StateHasChanged();
+        };
+    }
+
+    
+
+    public void ToggleDiceLog()
+    {
+        IsDiceLogShowing = !IsDiceLogShowing;
+    }
+}

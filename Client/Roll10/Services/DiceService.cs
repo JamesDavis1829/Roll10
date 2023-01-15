@@ -54,16 +54,19 @@ namespace Roll10.DiceService
             var roll = opList.Aggregate(0, (acc, x) => {
                 var parts = x.Split(" ");
                 var substitutedNumber = 0;
+                var rolledValueLogEntry = "";
                 if(parts[1].Contains("d"))
                 {
                     substitutedNumber = DiceSubstitute(parts[1]);
+                    rolledValueLogEntry = parts[1];
                 }
                 else
                 {
                     substitutedNumber = StatSubstitute(character, parts[1]);
+                    rolledValueLogEntry = parts[1].ToUpper();
                 }
 
-                readableRoll += $"{parts[1]}({substitutedNumber}) {parts[0]} ";
+                readableRoll += $"{rolledValueLogEntry}({substitutedNumber}) {parts[0]} ";
 
                 return parts[0] switch 
                 {

@@ -1,6 +1,8 @@
 @using Roll10.Models;
 @using Roll10.DiceService;
-@inject Roll10.Services.GlobalRefreshService globalRefreshService;
+@using Roll10.Services;
+@inject GlobalRefreshService globalRefreshService;
+@inject ToastService toastService;
 
 @if (Character != null)
 {
@@ -122,6 +124,11 @@
     public void RollDice(IRollable item)
     {
         DiceService.PerformRoll(Character, item);
+        var roll = DiceService.DiceLog.Last();
+        toastService.ShowToast(new ToastMessage(
+            ToastType.INFO,
+            $"<p class=\"text-center font-bold\">{roll.Title}</p><p class=\"text-center italic\">{roll.DiceRoll}</p><p class=\"text-center font-bold text-lg\">{roll.RolledAmount}</p>"
+        ));
         globalRefreshService.CallRequestRefresh();
     }
 }
