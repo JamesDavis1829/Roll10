@@ -53,6 +53,7 @@ namespace Roll10.DiceService
                     opList.Add($"+ 1d{Constants.DiceBase}");
                 }
                 opList.AddRange(item.modifiers.Split(";").ToList());
+                opList = opList.Where(s => !string.IsNullOrEmpty(s)).ToList();
 
                 roll = opList.Aggregate(0, (acc, x) => {
                     var parts = x.Split(" ");
@@ -66,8 +67,17 @@ namespace Roll10.DiceService
                     }
                     else
                     {
-                        substitutedNumber = StatSubstitute(character, parts[1]);
-                        rolledValueLogEntry = parts[1].ToUpper();
+                        int staticValue;
+                        if(int.TryParse(parts[1], out staticValue))
+                        {
+                            substitutedNumber = staticValue;
+                            rolledValueLogEntry = parts[1];
+                        }   
+                        else
+                        {
+                            substitutedNumber = StatSubstitute(character, parts[1]);
+                            rolledValueLogEntry = parts[1].ToUpper();
+                        }
                     }
 
                     readableRoll += $"{rolledValueLogEntry}({substitutedNumber}) {parts[0]} ";

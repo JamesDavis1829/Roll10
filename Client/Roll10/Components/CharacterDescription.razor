@@ -23,7 +23,7 @@
                         title="HP">
                             <div class="h-3"></div>
                             <p class="text-center font-bold">@TargetCharacter.hp</p>
-                            <p class="text-center font-bold">HP</p>
+                            <p class="text-center font-bold select-none">HP</p>
                             <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "HP")'>
                                 <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
                             </div>
@@ -35,7 +35,7 @@
                         title="HP">
                             <div class="h-3"></div>
                             <p class="text-center font-bold">@TargetCharacter.current_stamina</p>
-                            <p class="text-center font-bold">STA</p>
+                            <p class="text-center font-bold select-none">STA</p>
                             <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "STA")'>
                                 <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
                             </div>
@@ -130,6 +130,7 @@
                 </div>
                 <div class="flex flex-row">
                     <button class="m-2" type="button" @onclick="ResetCharacter">Reset</button>
+                    <button class="m-2" type="button" @onclick="RollDefence">Defend</button>
                 </div>
             </div>
         </div>
@@ -183,9 +184,14 @@
             $"<p class=\"text-center font-bold\">{roll.Title}</p><p class=\"text-center italic\">{roll.DiceRoll}</p><p class=\"text-center font-bold text-lg\">{roll.RolledAmount}</p>"
         ));
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
-        Console.WriteLine(effectedCharacter);
         TargetCharacter = effectedCharacter;
         globalRefreshService.CallRequestRefresh();
+    }
+
+    public void RollDefence()
+    {
+        var defenceRoll = CharacterService.GetDefenceRoll(TargetCharacter);
+        RollDice(defenceRoll);
     }
 
     public void ResetCharacter()

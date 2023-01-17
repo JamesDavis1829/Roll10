@@ -33,4 +33,23 @@ public static class CharacterService
             return ApplyEffect(acc, operation, operationParts[2]);
         });
     }
+
+    public static IRollable GetDefenceRoll(Character character)
+    {
+        var diceRoll = new List<string>();
+        foreach(var item in character.equipment)
+        {
+            if(item.category == "armor")
+            {
+                diceRoll.Add(item.dice_roll);
+            }
+        }
+
+        return new InlineRollable {
+            action_effect = "- 1 STA",
+            add_base_dice = true,
+            name = "Defend",
+            dice_roll = string.Join(";",diceRoll)
+        };
+    }
 }
