@@ -1,6 +1,6 @@
 namespace Roll10.Models
 {
-    public class Item: IDbRecord, IRollable
+    public record Item: IDbRecord, IRollable
     {
         public string name {get; init;} = "";
         public int strength_requirement {get; init;}

@@ -47,6 +47,9 @@ namespace Roll10.Services
                     var character = JsonSerializer.Deserialize<Character>(item.ToJsonString());
                     if(character != null)
                         characters.Add(character);
+                    
+                    characters.Last().current_stamina = characters.Last().stamina;
+                    characters.Last().hp = characters.Last().durability;
                 }
             }
             
