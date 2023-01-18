@@ -26,7 +26,7 @@ namespace Roll10.DiceService
                 "INS" => character.insight - Constants.DiceBase,
                 "ARMOR" => PerformRoll(
                                 character, 
-                                new InlineRollable {dice_roll = string.Join(";",character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())}, 
+                                new InlineRollable { dice_roll = string.Join(";",character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList()) }, 
                                 true
                             ),
                 _ => 0
