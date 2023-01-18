@@ -16,6 +16,9 @@ public static class CharacterService
     }
     public static Character ApplyEffects(Character character, string effectString)
     {
+        if(string.IsNullOrEmpty(effectString))
+            return character;
+            
         var effectParts = effectString.Split(";");
         return effectParts.Aggregate(character, (acc, x) => {
             var operationParts = x.Split(" ");
