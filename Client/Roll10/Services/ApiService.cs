@@ -24,7 +24,7 @@ namespace Roll10.Services
         public async Task<List<Character>> GetDefaultCharacters()
         {
             var characters = new List<Character>();
-            var request = await client.GetAsync("collections/characters/records?expand=items,spells,equipment");
+            var request = await client.GetAsync("collections/characters/records?expand=spells,equipment,inventory");
             var data = await request.Content.ReadAsStringAsync();
             var dynamicData = JsonNode.Parse(data);
             if(dynamicData != null)
@@ -34,8 +34,8 @@ namespace Roll10.Services
                 {
                     if(item == null) continue;
 
-                    item["items"] = JsonNode.Parse(
-                        (item["expand"]?["items"] ?? item["items"] ?? new JsonArray()).ToJsonString()
+                    item["inventory"] = JsonNode.Parse(
+                        (item["expand"]?["inventory"] ?? item["inventory"] ?? new JsonArray()).ToJsonString()
                     );
                     item["spells"] = JsonNode.Parse(
                         (item["expand"]?["spells"] ?? item["spells"] ?? new JsonArray()).ToJsonString()
