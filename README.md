@@ -15,6 +15,7 @@ For effects the recognized DSL commands are recognized
 | STA | Character stamina - 10 |
 | INT | Character intelligence - 10 |
 | INS | Character insight - 10 |
+| ARMOR | Characters equipped armor |
 
 #### Format
 Here is an example roll for a few modifiers
