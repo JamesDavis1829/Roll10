@@ -52,6 +52,7 @@ public static class CharacterService
             action_effect = "- 1 STA",
             add_base_dice = true,
             name = "Defend",
+            modifiers = "+ AGI",
             dice_roll = string.Join(";",diceRoll)
         };
     }

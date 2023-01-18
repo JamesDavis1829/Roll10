@@ -8,6 +8,7 @@ namespace Roll10.Services
     public interface IApiService 
     {
         public Task<List<Character>> GetDefaultCharacters();
+        public Task<List<CharacterAction>> GetActions(bool allCharacters);
         public Task<List<Item>> GetItemsByIds(List<string> ids);
         public Task<List<Spell>> GetSpellsByIds(List<string> ids);
     }
@@ -19,6 +20,15 @@ namespace Roll10.Services
         {
             client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
             //client = new HttpClient { BaseAddress = new Uri("https://c729-2600-6c58-6600-1e3e-7200-9273-eb5d-ff82.ngrok.io/api/") };
+        }
+
+        public async Task<List<CharacterAction>> GetActions(bool allCharacters)
+        {
+            var actions = new List<CharacterAction>();
+            var request = await client.GetAsync($"collections/actions/records?filter=(all_characters={allCharacters.ToString().ToLower()})");
+            var data = await request.Content.ReadAsStringAsync();
+            var dynamicData = JsonNode.Parse(data);
+            return JsonSerializer.Deserialize<List<CharacterAction>>(dynamicData.AsObject()["items"]);
         }
 
         public async Task<List<Character>> GetDefaultCharacters()
