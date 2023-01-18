@@ -44,34 +44,53 @@ namespace Roll10.DiceService
         public static int PerformRoll(Character character, IRollable item)
         {
             var readableRoll = "";
-            var opList = item.dice_roll.Split(";").ToList();
-            if(item.add_base_dice)
+            var roll = 0;
+
+            if(!string.IsNullOrEmpty(item.dice_roll) || item.add_base_dice)
             {
-                opList.Add($"+ 1d{Constants.DiceBase}");
+                var opList = item.dice_roll.Split(";").ToList();
+                if(item.add_base_dice)
+                {
+                    opList.Add($"+ 1d{Constants.DiceBase}");
+                }
+                opList.AddRange(item.modifiers.Split(";").ToList());
+                opList = opList.Where(s => !string.IsNullOrEmpty(s)).ToList();
+
+                roll = opList.Aggregate(0, (acc, x) => {
+                    var parts = x.Split(" ");
+                    var substitutedNumber = 0;
+                    var rolledValueLogEntry = "";
+
+                    if(parts[1].Contains("d"))
+                    {
+                        substitutedNumber = DiceSubstitute(parts[1]);
+                        rolledValueLogEntry = parts[1];
+                    }
+                    else
+                    {
+                        int staticValue;
+                        if(int.TryParse(parts[1], out staticValue))
+                        {
+                            substitutedNumber = staticValue;
+                            rolledValueLogEntry = parts[1];
+                        }   
+                        else
+                        {
+                            substitutedNumber = StatSubstitute(character, parts[1]);
+                            rolledValueLogEntry = parts[1].ToUpper();
+                        }
+                    }
+
+                    readableRoll += $"{rolledValueLogEntry}({substitutedNumber}) {parts[0]} ";
+
+                    return parts[0] switch 
+                    {
+                        "+" => acc + substitutedNumber,
+                        "-" => acc - substitutedNumber,
+                        _ => throw new Exception($"Invalid operator {parts[0]}")
+                    };
+                });
             }
-            opList.AddRange(item.modifiers.Split(";").ToList());
-
-            var roll = opList.Aggregate(0, (acc, x) => {
-                var parts = x.Split(" ");
-                var substitutedNumber = 0;
-                if(parts[1].Contains("d"))
-                {
-                    substitutedNumber = DiceSubstitute(parts[1]);
-                }
-                else
-                {
-                    substitutedNumber = StatSubstitute(character, parts[1]);
-                }
-
-                readableRoll += $"{parts[1]}({substitutedNumber}) {parts[0]} ";
-
-                return parts[0] switch 
-                {
-                    "+" => acc + substitutedNumber,
-                    "-" => acc - substitutedNumber,
-                    _ => throw new Exception($"Invalid operator {parts[0]}")
-                };
-            });
 
             DiceLog.Add(new DiceLogEntry(
                 $"{character.name} - {item.name}",
@@ -115,6 +134,11 @@ namespace Roll10.DiceService
 
         private static string RemoveTrailingOperation(string rollString)
         {
+            if(string.IsNullOrEmpty(rollString))
+            {
+                return  "";
+            }
+
             rollString = rollString.Trim();
             if(OpList.Contains(rollString.Last().ToString()))
             {

@@ -1,107 +1,163 @@
 @using Roll10.Models;
 @using Roll10.DiceService;
-@inject Roll10.Services.GlobalRefreshService globalRefreshService;
+@using Roll10.Services;
+@inject GlobalRefreshService globalRefreshService;
+@inject ToastService toastService;
 
-@if (Character != null)
+@if (TargetCharacter != null)
 {
-    <div class="flex justify-center">
-    <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
-        <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@Character.name</p>
-        <div class="flex flex-wrap justify-center">
-            @foreach (var stat in GetStats())
+        <div class="flex justify-center">
+            <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
+                <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@TargetCharacter.name</p>
+                <div class="flex flex-wrap justify-center">
+                @foreach (var stat in GetStats())
                 {
-                    <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800"
-                        title="@stat.Item1">
-                        <div class="h-3"></div>
-                        <p class="text-center font-bold">@stat.Item3</p>
-                        <p class="text-center font-bold">@stat.Item2</p>
-                    </div>
+                        <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800"
+                    title="@stat.Item1">
+                            <div class="h-3"></div>
+                            <p class="text-center font-bold">@stat.Item3</p>
+                            <p class="text-center font-bold">@stat.Item2</p>
+                        </div>
                 }
-            </div>
-            <div class="flex flex-col lg:flex-row">
-                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
-                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
-                    <ul class="list-none">
-                        @foreach (var item in Character.equipment)
-                        {
-                            <li class="even:bg-slate-200">
-                                <div class="flex justify-between">
-                                    <div class="w-9/12 p-2">
-                                        <p class="font-bold">@item.name</p>
-                                        <p class="italic">Requirements: STR-@item.strength_requirement AGI-@item.agility_requirement INT-@item.intelligence_requirement</p>
-                                        <p class="italic">Roll: @DiceService.HumanReadableRollString(@item)</p>
-                                        @if(!string.IsNullOrEmpty(item.action_effect))
-                                        {
-                                            <p class="italic">Effect: @FormatOpValString(@item.action_effect)</p>
-                                        }
-                                        @if(item.wield.Count() > 0)
-                                        {
-                                            <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
-                                        }
-                                        <p class="italic"></p>
-                                    </div>
-                                    <div class="relative w-9/12">
-                                        @if(!string.IsNullOrEmpty(item.dice_roll) && item.dice_roll.Contains("d"))
-                                        {
-                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(item)" />
-                                        }
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    </ul>
+                    <div class="relative w-20 h-20 m-5 rounded-full border-4 border-red-700 bg-red-500 text-white shadow-lg shadow-slate-800"
+                        title="HP">
+                            <div class="h-3"></div>
+                            <p class="text-center font-bold">@TargetCharacter.hp</p>
+                            <p class="text-center font-bold select-none">HP</p>
+                            <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "HP")'>
+                                <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
+                            </div>
+                            <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(-1, "HP")'>
+                                <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
+                            </div>
+                    </div>
+                    <div class="relative w-20 h-20 m-5 rounded-full border-4 border-green-700 bg-green-500 text-white shadow-lg shadow-slate-800"
+                        title="HP">
+                            <div class="h-3"></div>
+                            <p class="text-center font-bold">@TargetCharacter.current_stamina</p>
+                            <p class="text-center font-bold select-none">STA</p>
+                            <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "STA")'>
+                                <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
+                            </div>
+                            <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(-1, "STA")'>
+                                <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
+                            </div>
+                    </div>
                 </div>
-                <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
-                    <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
-                    <ul class="list-none">
-                        @foreach (var spell in Character.spells)
+                <div class="flex flex-col lg:flex-row">
+                    <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                        <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
+                        <ul class="list-none">
+                        @foreach (var item in TargetCharacter.equipment)
                         {
-                            <li class="even:bg-slate-200">
-                                <div class="flex justify-between">
-                                    <div class="w-9/12 p-2">
-                                        <p class="font-bold">@spell.name</p>
-                                        <p class="italic">Requirements: INT-@spell.intelligence_requirement</p>
-                                        @if(!string.IsNullOrEmpty(spell.dice_roll))
+                                <li class="even:bg-slate-200">
+                                    <div class="flex justify-between">
+                                        <div class="w-9/12 p-2">
+                                            <p class="font-bold">@item.name</p>
+                                            <p class="italic">Requirements: STR-@item.strength_requirement
+                                                AGI-@item.agility_requirement INT-@item.intelligence_requirement</p>
+                                            <p class="italic">Roll: @DiceService.HumanReadableRollString(@item)</p>
+                                        @if (!string.IsNullOrEmpty(item.action_effect))
                                         {
-                                            <p class="italic">Roll: @DiceService.HumanReadableRollString(@spell)</p>
+                                                <p class="italic">Effect: @FormatOpValString(@item.action_effect)</p>
                                         }
-                                        @if(!string.IsNullOrEmpty(spell.action_effect))
+                                        @if (item.wield.Count() > 0)
                                         {
-                                            <p class="italic">Effect: @FormatOpValString(@spell.action_effect)</p>
+                                                <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
                                         }
-                                        <p class="italic"></p>
+                                        @if (!string.IsNullOrEmpty(item.range))
+                                        {
+                                                <p class="italic">Range: @item.range</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.description))
+                                        {
+                                                <p class="italic">Description: @item.description</p>
+                                        }
+                                        </div>
+                                        <div class="relative w-8">
+                                        @if (!string.IsNullOrEmpty(item.dice_roll) && item.dice_roll.Contains("d") ||
+                                       !string.IsNullOrEmpty(item.action_effect))
+                                        {
+                                                <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2"
+                                        @onclick="() => RollDice(item)" />
+                                        }
+                                        </div>
                                     </div>
-                                    <div class="relative w-9/12">
-                                        @if(!string.IsNullOrEmpty(spell.dice_roll) && spell.dice_roll.Contains("d"))
-                                        {
-                                            <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2" @onclick="() => RollDice(spell)" />
-                                        }
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
                         }
-                    </ul>
+                        </ul>
+                    </div>
+                    <div class="w-auto lg:w-1/2 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                        <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
+                        <ul class="list-none">
+                        @foreach (var spell in TargetCharacter.spells)
+                        {
+                                <li class="even:bg-slate-200">
+                                    <div class="flex justify-between">
+                                        <div class="w-9/12 p-2">
+                                            <p class="font-bold">@spell.name</p>
+                                            <p class="italic">Requirements: INT-@spell.intelligence_requirement</p>
+                                        @if (!string.IsNullOrEmpty(spell.dice_roll))
+                                        {
+                                                <p class="italic">Roll: @DiceService.HumanReadableRollString(@spell)</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(spell.action_effect))
+                                        {
+                                                <p class="italic">Effect: @FormatOpValString(@spell.action_effect)</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(spell.range))
+                                        {
+                                                <p class="italic">Range: @spell.range</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(spell.description))
+                                        {
+                                                <p class="italic">Description: @spell.description</p>
+                                        }
+                                        </div>
+                                        <div class="relative w-8">
+                                        @if (!string.IsNullOrEmpty(spell.dice_roll) && spell.dice_roll.Contains("d") ||
+                                       !string.IsNullOrEmpty(spell.action_effect))
+                                        {
+                                                <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2"
+                                        @onclick="() => RollDice(spell)" />
+                                        }
+                                        </div>
+                                    </div>
+                                </li>
+                        }
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex flex-row">
+                    <button class="m-2" type="button" @onclick="ResetCharacter">Reset</button>
+                    <button class="m-2" type="button" @onclick="RollDefence">Defend</button>
                 </div>
             </div>
         </div>
-    </div>
 }
 
 @code {
     [Parameter]
     public Character Character { get; set; }
+    private Character TargetCharacter { get; set; }
 
     public List<(string, string, int)> GetStats()
     {
         var vals = new List<(string, string, int)>();
-        vals.Add(("Strength", "STR", Character.strength));
-        vals.Add(("Agility", "AGI", Character.agility));
-        vals.Add(("Durability", "DUR", Character.durability));
-        vals.Add(("Stamina", "STA", Character.stamina));
-        vals.Add(("Intelligence", "INT", Character.intelligence));
-        vals.Add(("Insight", "INS", Character.insight));
+        vals.Add(("Strength", "STR", TargetCharacter.strength));
+        vals.Add(("Agility", "AGI", TargetCharacter.agility));
+        vals.Add(("Durability", "DUR", TargetCharacter.durability));
+        vals.Add(("Stamina", "STA", TargetCharacter.stamina));
+        vals.Add(("Intelligence", "INT", TargetCharacter.intelligence));
+        vals.Add(("Insight", "INS", TargetCharacter.insight));
 
         return vals;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        TargetCharacter = Character;
     }
 
     //TODO: move somewhere else
@@ -121,7 +177,30 @@
 
     public void RollDice(IRollable item)
     {
-        DiceService.PerformRoll(Character, item);
+        DiceService.PerformRoll(TargetCharacter, item);
+        var roll = DiceService.DiceLog.Last();
+        toastService.ShowToast(new ToastMessage(
+            ToastType.INFO,
+            $"<p class=\"text-center font-bold\">{roll.Title}</p><p class=\"text-center italic\">{roll.DiceRoll}</p><p class=\"text-center font-bold text-lg\">{roll.RolledAmount}</p>"
+        ));
+        var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
+        TargetCharacter = effectedCharacter;
         globalRefreshService.CallRequestRefresh();
+    }
+
+    public void RollDefence()
+    {
+        var defenceRoll = CharacterService.GetDefenceRoll(TargetCharacter);
+        RollDice(defenceRoll);
+    }
+
+    public void ResetCharacter()
+    {
+        TargetCharacter = Character;
+    }
+
+    public void ApplyStatOperation(int op, string stat)
+    {
+        TargetCharacter = CharacterService.ApplyEffect(TargetCharacter, op, stat);
     }
 }

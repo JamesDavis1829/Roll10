@@ -1,6 +1,6 @@
 namespace Roll10.Models
 {
-    public class Spell : IDbRecord, IRollable
+    public record Spell : IDbRecord, IRollable
     {
         public string name {get;init;} = "";
         public string action_effect {get;init;} = "";
