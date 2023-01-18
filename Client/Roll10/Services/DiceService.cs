@@ -45,7 +45,8 @@ namespace Roll10.DiceService
         {
             var readableRoll = "";
             var roll = 0;
-            if(!string.IsNullOrEmpty(item.dice_roll))
+
+            if(!string.IsNullOrEmpty(item.dice_roll) || item.add_base_dice)
             {
                 var opList = item.dice_roll.Split(";").ToList();
                 if(item.add_base_dice)
