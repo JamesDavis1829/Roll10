@@ -19,7 +19,7 @@ For effects the recognized DSL commands are recognized
 
 #### Format
 Here is an example roll for a few modifiers
-`+ AGI; + DUR; + INS`
+`+ AGI;+ DUR;+ INS`
 which would result in a modifier that would add a characters agility, durability and insight to the roll.
 
 ### Effects
@@ -32,12 +32,12 @@ For effects the following commands are recognized
 
 #### Format
 Here is an example of an effect that would remove 1 stamina and add 2 hp
-`- 1 STA; + 2 HP`
+`- 1 STA;+ 2 HP`
 
 ### Dice Rolls
 Dice rolls can consists of any dice in the format XdX and any static number values.
 
 #### Format
 Here is an example of a dice roll
-`+ 1d10; + 2d6; + 3`
+`+ 1d10;+ 2d6;+ 3`
 Which would result in rolling three dice, and then adding 3.
