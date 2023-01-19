@@ -24,6 +24,11 @@ namespace Roll10.DiceService
                 "STA" => character.stamina - Constants.DiceBase,
                 "INT" => character.intelligence - Constants.DiceBase,
                 "INS" => character.insight - Constants.DiceBase,
+                "ARMOR" => PerformRoll(
+                                character, 
+                                new InlineRollable { dice_roll = string.Join(";",character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList()) }, 
+                                true
+                            ),
                 _ => 0
             };
         }
@@ -41,7 +46,7 @@ namespace Roll10.DiceService
             return output;
         }
 
-        public static int PerformRoll(Character character, IRollable item)
+        public static int PerformRoll(Character character, IRollable item, bool isSilent = false)
         {
             var readableRoll = "";
             var roll = 0;
@@ -92,11 +97,14 @@ namespace Roll10.DiceService
                 });
             }
 
-            DiceLog.Add(new DiceLogEntry(
-                $"{character.name} - {item.name}",
-                RemoveTrailingOperation(readableRoll),
-                roll.ToString()
-            ));
+            if(!isSilent)
+            {
+                DiceLog.Add(new DiceLogEntry(
+                    $"{character.name} - {item.name}",
+                    RemoveTrailingOperation(readableRoll),
+                    roll.ToString()
+                ));
+            }
 
             return roll;
         }

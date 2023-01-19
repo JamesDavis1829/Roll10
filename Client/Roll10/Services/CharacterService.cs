@@ -16,6 +16,9 @@ public static class CharacterService
     }
     public static Character ApplyEffects(Character character, string effectString)
     {
+        if(string.IsNullOrEmpty(effectString))
+            return character;
+            
         var effectParts = effectString.Split(";");
         return effectParts.Aggregate(character, (acc, x) => {
             var operationParts = x.Split(" ");
@@ -49,6 +52,7 @@ public static class CharacterService
             action_effect = "- 1 STA",
             add_base_dice = true,
             name = "Defend",
+            modifiers = "+ AGI",
             dice_roll = string.Join(";",diceRoll)
         };
     }
