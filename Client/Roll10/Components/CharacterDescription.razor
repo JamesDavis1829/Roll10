@@ -77,7 +77,7 @@
                         {
                             @foreach (var item in TargetCharacter.equipment)
                             {
-                                <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice">
+                                <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice" HideDiceRoll="@ItemService.HideDiceRoll(item)">
                                     @if (item.wield.Count() > 0)
                                     {
                                         <p class="italic">Wielding: @string.Join(", ",item.wield)</p>

@@ -15,7 +15,7 @@
             @ChildContent
         </div>
         <div class="relative w-8">
-            @if (!string.IsNullOrEmpty(Item.dice_roll) || !string.IsNullOrEmpty(Item.action_effect))
+            @if(!HideDiceRoll)
             {
                 <img src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2 hover:cursor-pointer"
                     @onclick="() => RollDice(Item)" />
@@ -34,6 +34,8 @@
     public IRollable Item { get;set; }
     [Parameter]
     public Action<IRollable> RollDice { get;set; }
+    [Parameter]
+    public bool HideDiceRoll { get;set; } = false;
 
     //TODO: move somewhere else
     public string FormatOpValString(string opValString)
