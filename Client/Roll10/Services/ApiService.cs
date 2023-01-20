@@ -18,7 +18,6 @@ namespace Roll10.Services
         private HttpClient client;
         public ApiService()
         {
-            //client = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:8090/api/") };
             client = new HttpClient { BaseAddress = new Uri("https://roll10.org/api/") };
         }
 
