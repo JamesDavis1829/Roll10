@@ -1,0 +1,1 @@
+./Server/pocketbase serve --http="roll10.org:80" --https="roll10.org:443"
