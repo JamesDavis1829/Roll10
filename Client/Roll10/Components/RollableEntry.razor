@@ -1,4 +1,5 @@
-@using DiceService;
+@using Roll10.Services;
+@inject DiceService diceService;
 
 <li class="even:bg-slate-200">
     <div class="flex justify-between">
@@ -6,7 +7,7 @@
             <p class="font-bold">@Name</p>
             @if(!string.IsNullOrEmpty(@Item.dice_roll))
             {
-                <p class="italic">Roll: @DiceService.HumanReadableRollString(@Item)</p>
+                <p class="italic">Roll: @diceService.HumanReadableRollString(@Item)</p>
             }
             @if (!string.IsNullOrEmpty(Item.action_effect))
             {

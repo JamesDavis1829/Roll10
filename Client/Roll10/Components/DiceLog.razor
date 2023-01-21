@@ -1,21 +1,28 @@
-@using DiceService;
 @using Roll10.Services;
 @inject GlobalRefreshService refreshService;
+@inject DiceLogService diceLogService;
 
 <div class="fixed lg:right-16 lg:bottom-16 right-5 bottom-5 z-10">
-    @if(IsDiceLogShowing && DiceService.DiceLog.Count > 0)
+    @if(IsDiceLogShowing)
     {
         <div class="max-h-96 overflow-scroll bg-slate-50 rounded-lg p-4 m-4 shadow-lg shadow-slate-900">
             <p class="font-bold uppercase text-center">Dice Log</p>
             <hr />
             <ul class="list-none">
-                @foreach(var roll in DiceService.DiceLog)
+                @if(diceLogService.DiceLog.Count > 0)
                 {
-                    <li class="even:bg-slate-200 p-2">
-                        <p class="text-center font-bold">@roll.Title</p>
-                        <p class="text-center italic">@roll.DiceRoll</p>
-                        <p class="text-center font-bold text-lg">@roll.RolledAmount</p>
-                    </li>
+                    @foreach(var roll in diceLogService.DiceLog)
+                    {
+                        <li class="even:bg-slate-200 p-2">
+                            <p class="text-center font-bold">@roll.Title</p>
+                            <p class="text-center italic">@roll.DiceRoll</p>
+                            <p class="text-center font-bold text-lg">@roll.RolledAmount</p>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li><p class="text-center font-italic">No rolls yet.</p></li>
                 }
             </ul>
         </div>

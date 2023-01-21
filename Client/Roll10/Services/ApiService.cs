@@ -9,22 +9,20 @@ namespace Roll10.Services
     {
         public Task<List<Character>> GetDefaultCharacters();
         public Task<List<CharacterAction>> GetActions(bool allCharacters);
-        public Task<List<Item>> GetItemsByIds(List<string> ids);
-        public Task<List<Spell>> GetSpellsByIds(List<string> ids);
     }
 
     public class ApiService : IApiService
     {
-        private HttpClient client;
-        public ApiService()
+        private HttpClient Client;
+        public ApiService(HttpClient _client)
         {
-            client = new HttpClient { BaseAddress = new Uri("https://roll10.org/api/") };
+            Client = _client;
         }
 
         public async Task<List<CharacterAction>> GetActions(bool allCharacters)
         {
             var actions = new List<CharacterAction>();
-            var request = await client.GetAsync($"collections/actions/records?filter=(all_characters={allCharacters.ToString().ToLower()})");
+            var request = await Client.GetAsync($"collections/actions/records?filter=(all_characters={allCharacters.ToString().ToLower()})");
             var data = await request.Content.ReadAsStringAsync();
             var dynamicData = JsonNode.Parse(data);
             return JsonSerializer.Deserialize<List<CharacterAction>>(dynamicData.AsObject()["items"]);
@@ -33,7 +31,7 @@ namespace Roll10.Services
         public async Task<List<Character>> GetDefaultCharacters()
         {
             var characters = new List<Character>();
-            var request = await client.GetAsync("collections/characters/records?expand=spells,equipment,inventory");
+            var request = await Client.GetAsync("collections/characters/records?expand=spells,equipment,inventory");
             var data = await request.Content.ReadAsStringAsync();
             var dynamicData = JsonNode.Parse(data);
             if(dynamicData != null)
@@ -63,16 +61,6 @@ namespace Roll10.Services
             }
             
             return characters;
-        }
-
-        public Task<List<Item>> GetItemsByIds(List<string> ids)
-        {
-            return Task.FromResult(new List<Item>());
-        }
-
-        public Task<List<Spell>> GetSpellsByIds(List<string> ids)
-        {
-            return Task.FromResult(new List<Spell>());
         }
     }
 }

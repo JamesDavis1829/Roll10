@@ -1,8 +1,9 @@
 @using Roll10.Models;
-@using Roll10.DiceService;
 @using Roll10.Services;
 @inject GlobalRefreshService globalRefreshService;
 @inject ToastService toastService;
+@inject DiceService diceService;
+@inject DiceLogService diceLogService;
 
 @if (TargetCharacter != null)
 {
@@ -162,8 +163,8 @@
 
     public void RollDice(IRollable item)
     {
-        DiceService.PerformRoll(TargetCharacter, item);
-        var roll = DiceService.DiceLog.Last();
+        diceService.PerformRoll(TargetCharacter, item);
+        var roll = diceLogService.DiceLog.Last();
         
         _ = Task.Run( () => toastService.ShowToast(new ToastMessage(
             ToastType.INFO,
