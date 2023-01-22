@@ -1,4 +1,5 @@
 @page "/redirect"
+@using Roll10.Services
 @inject IJSRuntime JS
 @inject NavigationManager navManager
 
@@ -9,7 +10,7 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await JS.InvokeVoidAsync("handleRedirection");
+        await JS.InvokeVoidAsync("handleRedirection", ConfigurationService.Url);
         await base.OnInitializedAsync();
         navManager.NavigateTo("/");
     }

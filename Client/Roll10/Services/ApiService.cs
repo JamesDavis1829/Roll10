@@ -1,4 +1,6 @@
 using System.Dynamic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Roll10.Models;
@@ -9,7 +11,6 @@ namespace Roll10.Services
     {
         public Task<List<Character>> GetDefaultCharacters();
         public Task<List<CharacterAction>> GetActions(bool allCharacters);
-        public Task SubscribeToDiceLog(string diceLogId, Action<string> onLogEvent);
     }
 
     public class ApiService : IApiService
@@ -62,11 +63,6 @@ namespace Roll10.Services
             }
             
             return characters;
-        }
-
-        public async Task SubscribeToDiceLog(string roomId, Action<string> onLogEvent)
-        {
-            
         }
     }
 }

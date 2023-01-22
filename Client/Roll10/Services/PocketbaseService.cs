@@ -16,6 +16,8 @@ namespace Roll10.Services
     {
         private IJSRuntime JS;
         private bool IsInitialized = false;
+        public static Dictionary<string, Action<dynamic>> Callbacks = new Dictionary<string, Action<dynamic>>();
+
         public PocketbaseService(IJSRuntime js)
         {
             JS = js;
@@ -25,13 +27,13 @@ namespace Roll10.Services
         {
             if(IsInitialized)
                 return;
-            await Initialize();
+            await Initialize(ConfigurationService.Url);
             IsInitialized = true;
         } 
 
-        private async Task Initialize()
+        private async Task Initialize(string url)
         {
-            await JS.InvokeVoidAsync("initializePB", null);
+            await JS.InvokeVoidAsync("initializePB", url);
         }
 
         private record AuthReply (
@@ -46,6 +48,19 @@ namespace Roll10.Services
             var results = await JS.InvokeAsync<AuthReply>("listAuth");
             
             return results.authProviders;
+        }
+
+        [JSInvokable]
+        public static void HandleEvent(dynamic eventMessage)
+        {
+            Console.WriteLine(eventMessage);
+        }
+
+        public async Task SubscribeTo(string collection, string pattern, Action<dynamic> callback)
+        {
+            await CheckInitialization();
+            Callbacks[$"{collection}/{pattern}"] = callback;
+            await JS.InvokeVoidAsync("subscribeToStream",collection, pattern);
         }
     }
 }

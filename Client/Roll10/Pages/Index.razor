@@ -3,6 +3,7 @@
 @using Roll10.Components
 @inject Roll10.Services.IApiService apiservice
 @inject Roll10.Services.GlobalRefreshService globalRefreshService
+@inject Roll10.Services.PocketbaseService pb
 
 
 <Toast />
@@ -27,10 +28,8 @@
             this.StateHasChanged();
         };
 
-        _ = Task.Run(() => {  
-            apiservice.SubscribeToDiceLog("testlog", (text) => {
-                Console.WriteLine(text);
-            });
+        await pb.SubscribeTo("diceroomlogs","*", (message) => {
+            Console.WriteLine(message);
         });
     }
 }

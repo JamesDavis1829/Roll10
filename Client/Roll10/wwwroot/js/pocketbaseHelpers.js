@@ -1,5 +1,5 @@
-window.initializePB = () => {
-    window.pb = new PocketBase("https://roll10.org");
+window.initializePB = (url) => {
+    window.pb = new PocketBase(url);
     window.listAuth = async () => {
         return await window.pb.collection('users').listAuthMethods()
     }
@@ -12,8 +12,8 @@ window.setLocation = (location) => {
     window.open(location,"_self") 
 };
 
-window.handleRedirection = () => {
-    const pb = new PocketBase("https://roll10.org");
+window.handleRedirection = (url) => {
+    const pb = new PocketBase(url);
     const redirectUrl = window.location.origin + '/redirect';
 
     // parse the query parameters from the redirected url
@@ -45,4 +45,11 @@ window.handleRedirection = () => {
     .finally(() => {
 
     })
+}
+
+window.subscribeToStream = (collection, pattern) => {
+    pb.collection(collection).subscribe(pattern, function (e) {
+        console.log(e);
+        window.DotNet.invokeMethodAsync("Roll10", "HandleEvent", e)
+    });
 }

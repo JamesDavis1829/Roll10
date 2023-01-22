@@ -8,7 +8,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://roll10.org/api/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri($"{ConfigurationService.Url}/api/") });
 builder.Services.AddScoped<IApiService>(sp => new ApiService(sp.GetService<HttpClient>()));
 builder.Services.AddScoped<GlobalRefreshService>(sp => new GlobalRefreshService());
 builder.Services.AddScoped<ToastService>(sp => new ToastService(
