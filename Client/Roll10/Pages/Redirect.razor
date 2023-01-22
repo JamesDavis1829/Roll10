@@ -1,0 +1,16 @@
+@page "/redirect"
+@inject IJSRuntime JS
+@inject NavigationManager navManager
+
+<div class="absolute grid h-screen w-screen place-items-center">
+    <img src="images/dice.svg" class="w-1/4 h-auto animate-bounce" />
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeVoidAsync("handleRedirection");
+        await base.OnInitializedAsync();
+        navManager.NavigateTo("/");
+    }
+}

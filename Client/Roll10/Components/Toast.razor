@@ -1,6 +1,6 @@
-@using Roll10.Services;
-@inject GlobalRefreshService globalRefreshService;
-@inject ToastService toastService;
+@using Roll10.Services
+@inject GlobalRefreshService globalRefreshService
+@inject ToastService toastService
 
 <div class="fixed top-0 left-1/2 -translate-x-1/2 flex flex-col items-center z-10">
     @foreach(var toastMessage in toastService.Toasts)

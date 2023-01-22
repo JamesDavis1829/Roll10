@@ -1,9 +1,8 @@
 ﻿@page "/"
-@using Roll10.Models;
-@using Roll10.Components;
-@using Roll10.Services;
-@inject Roll10.Services.IApiService apiservice;
-@inject Roll10.Services.GlobalRefreshService globalRefreshService;
+@using Roll10.Models
+@using Roll10.Components
+@inject Roll10.Services.IApiService apiservice
+@inject Roll10.Services.GlobalRefreshService globalRefreshService
 
 
 <Toast />
@@ -27,5 +26,11 @@
         globalRefreshService.RefreshRequested += () => {
             this.StateHasChanged();
         };
+
+        _ = Task.Run(() => {  
+            apiservice.SubscribeToDiceLog("testlog", (text) => {
+                Console.WriteLine(text);
+            });
+        });
     }
 }

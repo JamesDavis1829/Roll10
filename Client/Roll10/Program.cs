@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 using Roll10;
 using Roll10.Services;
 
@@ -15,5 +16,6 @@ builder.Services.AddScoped<ToastService>(sp => new ToastService(
 ));
 builder.Services.AddScoped(sp => new DiceLogService(sp.GetService<IApiService>()));
 builder.Services.AddScoped(sp => new DiceService(sp.GetService<DiceLogService>()));
+builder.Services.AddScoped(sp => new PocketbaseService(sp.GetService<IJSRuntime>()));
 
 await builder.Build().RunAsync();

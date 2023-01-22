@@ -9,6 +9,7 @@ namespace Roll10.Services
     {
         public Task<List<Character>> GetDefaultCharacters();
         public Task<List<CharacterAction>> GetActions(bool allCharacters);
+        public Task SubscribeToDiceLog(string diceLogId, Action<string> onLogEvent);
     }
 
     public class ApiService : IApiService
@@ -61,6 +62,11 @@ namespace Roll10.Services
             }
             
             return characters;
+        }
+
+        public async Task SubscribeToDiceLog(string roomId, Action<string> onLogEvent)
+        {
+            
         }
     }
 }
