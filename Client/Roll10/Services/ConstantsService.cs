@@ -1,4 +1,6 @@
+namespace Roll10.Services;
+
 public static class Constants
 {
-    public static int DiceBase = 10;
+    public static readonly int DiceBase = 10;
 }

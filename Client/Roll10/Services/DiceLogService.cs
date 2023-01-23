@@ -9,14 +9,14 @@ namespace Roll10.Services
 
     public class DiceLogService
     {
-        IApiService ApiService;
+        IApiService _apiService;
 
         public DiceLogService(IApiService apiService)
         {
-            ApiService = apiService;
+            _apiService = apiService;
         }
 
-        public List<DiceLogEntry> DiceLog = new List<DiceLogEntry>();
+        public readonly List<DiceLogEntry> DiceLog = new List<DiceLogEntry>();
 
         public Task JoinDiceRoom(string roomId)
         {

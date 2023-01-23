@@ -1,15 +1,15 @@
 @using Roll10.Services
 @using Roll10.Models
-@inject GlobalRefreshService refreshService
-@inject DiceLogService diceLogService
-@inject PocketbaseService pb
-@inject IJSRuntime JS
+@inject GlobalRefreshService RefreshService
+@inject DiceLogService DiceLogService
+@inject PocketbaseService Pb
+@inject IJSRuntime Js
 
 <div>
     <ul class="list-none">
-        @if(diceLogService.DiceLog.Count > 0)
+        @if(DiceLogService.DiceLog.Count > 0)
         {
-            @foreach(var roll in diceLogService.DiceLog)
+            @foreach(var roll in DiceLogService.DiceLog)
             {
                 <li class="even:bg-slate-200 p-2">
                     <p class="text-center font-bold">@roll.Title</p>
@@ -29,16 +29,16 @@
 {
     protected override async Task OnInitializedAsync()
     {
-        if(await pb.IsLoginValid())
+        if(await Pb.IsLoginValid())
         {
-            await pb.SubscribeTo("diceroomlogs", "*", (message) => {
+            await Pb.SubscribeTo("diceroomlogs", "*", (message) => {
                 Console.WriteLine(message);
             });
         }
 
-        refreshService.RefreshRequested += () => {
+        RefreshService.RefreshRequested += () => {
             this.StateHasChanged();
-            JS.InvokeVoidAsync("scrollElementToBottom","#menu-container");
+            Js.InvokeVoidAsync("scrollElementToBottom","#menu-container");
         };
 
         await base.OnInitializedAsync();

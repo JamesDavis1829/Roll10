@@ -1,16 +1,18 @@
 using Roll10.Models;
 
+namespace Roll10.Services;
+
 public static class CharacterService 
 {
     public static Character ApplyEffect(Character character, int op, string stat)
     {
         return stat.ToUpper() switch {
             "STA" => character with { 
-                    current_stamina = Math.Clamp(character.current_stamina + op, 0, character.stamina) 
-                },
+                current_stamina = Math.Clamp(character.current_stamina + op, 0, character.stamina) 
+            },
             "HP" => character with { 
-                    hp = Math.Clamp(character.hp + op, 0, character.durability) 
-                },
+                hp = Math.Clamp(character.hp + op, 0, character.durability) 
+            },
             _ => throw new Exception("Unknown effect")
         };
     }

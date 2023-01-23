@@ -5,8 +5,8 @@ namespace Roll10.Services
 
     public class DiceService
     {
-        private DiceLogService DiceLogService;
-        private List<string> OpList = new List<string> { "+", "-" };
+        private readonly DiceLogService DiceLogService;
+        private readonly List<string> _opList = new List<string> { "+", "-" };
 
         public DiceService(DiceLogService diceLogService)
         {
@@ -24,10 +24,14 @@ namespace Roll10.Services
                 "INT" => character.intelligence - Constants.DiceBase,
                 "INS" => character.insight - Constants.DiceBase,
                 "ARMOR" => PerformRoll(
-                                character, 
-                                new InlineRollable { dice_roll = string.Join(";",character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList()) }, 
-                                true
-                            ),
+                    character,
+                    new InlineRollable
+                    {
+                        dice_roll = string.Join(";",
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
+                    },
+                    true
+                ),
                 _ => 0
             };
         }
@@ -65,15 +69,14 @@ namespace Roll10.Services
                     var substitutedNumber = 0;
                     var rolledValueLogEntry = "";
 
-                    if(parts[1].Contains("d"))
+                    if(parts[1].Contains('d'))
                     {
                         substitutedNumber = DiceSubstitute(parts[1]);
                         rolledValueLogEntry = parts[1];
                     }
                     else
                     {
-                        int staticValue;
-                        if(int.TryParse(parts[1], out staticValue))
+                        if(int.TryParse(parts[1], out var staticValue))
                         {
                             substitutedNumber = staticValue;
                             rolledValueLogEntry = parts[1];
@@ -148,7 +151,7 @@ namespace Roll10.Services
             }
 
             rollString = rollString.Trim();
-            if(OpList.Contains(rollString.Last().ToString()))
+            if(_opList.Contains(rollString.Last().ToString()))
             {
                 rollString = rollString.Substring(0, rollString.Length - 1);
             }

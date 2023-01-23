@@ -1,9 +1,9 @@
 @using Roll10.Services
-@inject GlobalRefreshService globalRefreshService
-@inject ToastService toastService
+@inject GlobalRefreshService GlobalRefreshService
+@inject ToastService ToastService
 
 <div class="fixed top-0 left-1/2 -translate-x-1/2 flex flex-col items-center z-10">
-    @foreach(var toastMessage in toastService.Toasts)
+    @foreach(var toastMessage in ToastService.Toasts)
     {
         <div class="z-10 p-2 m-2 rounded-md bg-slate-50 shadow-xl shadow-slate-900">
             @(new MarkupString(toastMessage.Message))
@@ -13,10 +13,9 @@
 
 @code
 {
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        globalRefreshService.RefreshRequested += () => {
-            this.StateHasChanged();
-        };
+        GlobalRefreshService.RefreshRequested += this.StateHasChanged;
+        return Task.CompletedTask;
     }
 }

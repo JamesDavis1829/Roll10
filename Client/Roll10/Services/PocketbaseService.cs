@@ -16,26 +16,27 @@ namespace Roll10.Services
 
     public class PocketbaseService 
     {
-        private IJSRuntime JS;
-        private bool IsInitialized = false;
-        public static Dictionary<string, Action<string>> Callbacks = new Dictionary<string, Action<string>>();
+        private readonly IJSRuntime _js;
+        private bool _isInitialized = false;
+        private static readonly Dictionary<string, Action<string>> Callbacks = new Dictionary<string, Action<string>>();
 
         public PocketbaseService(IJSRuntime js)
         {
-            JS = js;
+            _js = js;
+            _isInitialized = false;
         }
 
         private async Task CheckInitialization()
         {
-            if(IsInitialized)
+            if(_isInitialized)
                 return;
             await Initialize(ConfigurationService.Url);
-            IsInitialized = true;
+            _isInitialized = true;
         } 
 
         private async Task Initialize(string url)
         {
-            await JS.InvokeVoidAsync("initializePB", url);
+            await _js.InvokeVoidAsync("initializePB", url);
         }
 
         private record AuthReply (
@@ -47,7 +48,7 @@ namespace Roll10.Services
         public async Task<List<AuthOptions>> GetAuthOptions()
         {
             await CheckInitialization();
-            var results = await JS.InvokeAsync<AuthReply>("listAuth");
+            var results = await _js.InvokeAsync<AuthReply>("listAuth");
             
             return results.authProviders;
         }
@@ -68,19 +69,19 @@ namespace Roll10.Services
         {
             await CheckInitialization();
             Callbacks[collection] = callback;
-            await JS.InvokeVoidAsync("subscribeToStream",collection, pattern);
+            await _js.InvokeVoidAsync("subscribeToStream",collection, pattern);
         }
 
         public async Task<bool> IsLoginValid()
         {
             await CheckInitialization();
-            return await JS.InvokeAsync<bool>("isUserLoggedIn");
+            return await _js.InvokeAsync<bool>("isUserLoggedIn");
         }
 
         public async Task<User?> GetUser()
         {
             await CheckInitialization();
-            var data = await JS.InvokeAsync<string>("getLoginInformation");
+            var data = await _js.InvokeAsync<string>("getLoginInformation");
             return JsonSerializer.Deserialize<User>(data);
         }
     }

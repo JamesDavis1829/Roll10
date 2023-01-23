@@ -1,5 +1,5 @@
 <div class="fixed lg:right-16 lg:bottom-14 right-5 bottom-5 z-10">
-    @if(IsMenuShowing)
+    @if(_isMenuShowing)
     {
         <div style="height: calc(100vh - 10.5rem);" class="w-52 overflow-scroll bg-slate-50 rounded-lg p-3 m-4 shadow-lg shadow-slate-900" id="menu-container">
             <div class="flex flex-row">
@@ -13,11 +13,11 @@
             <div class="h-3"></div>
             <p class="font-bold uppercase text-center">@GetTitle()</p>
             <hr />
-            @if(CurrentMode == Mode.DiceLog)
+            @if(_currentMode == Mode.DiceLog)
             {
                 <DiceLog />
             }
-            @if(CurrentMode == Mode.Settings)
+            @if(_currentMode == Mode.Settings)
             {
                 <SettingsMenu />
             }
@@ -37,17 +37,17 @@
         DiceLog,
         Settings
     }
-    private Mode CurrentMode = Mode.DiceLog;
-    private bool IsMenuShowing = false;
+    private Mode _currentMode = Mode.DiceLog;
+    private bool _isMenuShowing = false;
 
     private void ToggleMenuShowing()
     {
-        IsMenuShowing = !IsMenuShowing;
+        _isMenuShowing = !_isMenuShowing;
     }
 
     private string GetHighlightCss(Mode isSelected)
     {
-        return (isSelected == CurrentMode) switch {
+        return (isSelected == _currentMode) switch {
             true => "ring-4 ring-blue-300/50 ring-offset-2 rounded-full",
             false => ""
         };
@@ -55,12 +55,12 @@
 
     private void ChangeMode(Mode selected)
     {
-        CurrentMode = selected;
+        _currentMode = selected;
     }
 
     private string GetTitle()
     {
-        return CurrentMode switch {
+        return _currentMode switch {
             Mode.DiceLog => "Dice Log",
             Mode.Settings => "Settings",
             _ => throw new Exception("Unhandled mode")

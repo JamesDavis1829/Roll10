@@ -1,17 +1,17 @@
 @page "/redirect"
 @using Roll10.Services
-@inject IJSRuntime JS
-@inject NavigationManager navManager
+@inject IJSRuntime Js
+@inject NavigationManager NavManager
 
 <div class="absolute grid h-screen w-screen place-items-center">
-    <img src="images/dice.svg" class="w-1/4 h-auto animate-bounce" />
+    <img alt="Image of d20" src="images/dice.svg" class="w-1/4 h-auto animate-bounce" />
 </div>
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await JS.InvokeVoidAsync("handleRedirection", ConfigurationService.Url);
+        await Js.InvokeVoidAsync("handleRedirection", ConfigurationService.Url);
         await base.OnInitializedAsync();
-        navManager.NavigateTo("/");
+        NavManager.NavigateTo("/");
     }
 }

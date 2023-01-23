@@ -1,158 +1,158 @@
 @using Roll10.Models
 @using Roll10.Services
-@inject GlobalRefreshService globalRefreshService
-@inject ToastService toastService
-@inject DiceService diceService
-@inject DiceLogService diceLogService
+@inject GlobalRefreshService GlobalRefreshService
+@inject ToastService ToastService
+@inject DiceService DiceService
+@inject DiceLogService DiceLogService
 
-@if (TargetCharacter != null)
-{
-        <div class="flex justify-center">
-            <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
-                <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@TargetCharacter.name</p>
-                <div class="flex flex-wrap justify-center">
-                    @foreach (var stat in GetStats())
-                    {
-                            <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800 hover:cursor-pointer"
-                                title="@stat.Item1" @onclick="() => RollStat(stat.Item2, stat.Item1)">
-                                <div class="h-3"></div>
-                                <p class="text-center font-bold">@stat.Item3</p>
-                                <p class="text-center font-bold">@stat.Item2</p>
-                            </div>
-                    }
-                    <div class="relative w-20 h-20 m-5 rounded-full border-4 border-red-700 bg-red-500 text-white shadow-lg shadow-slate-800"
-                        title="HP">
-                            <div class="h-3"></div>
-                            <p class="text-center font-bold">@TargetCharacter.hp</p>
-                            <p class="text-center font-bold select-none">HP</p>
-                            <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "HP")'>
-                                <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
-                            </div>
-                            <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(-1, "HP")'>
-                                <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
-                            </div>
-                    </div>
-                    <div class="relative w-20 h-20 m-5 rounded-full border-4 border-green-700 bg-green-500 text-white shadow-lg shadow-slate-800"
-                        title="HP">
-                            <div class="h-3"></div>
-                            <p class="text-center font-bold">@TargetCharacter.current_stamina</p>
-                            <p class="text-center font-bold select-none">STA</p>
-                            <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(1, "STA")'>
-                                <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
-                            </div>
-                            <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='() => ApplyStatOperation(-1, "STA")'>
-                                <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
-                            </div>
-                    </div>
+
+<div class="flex justify-center">
+    <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
+        <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@TargetCharacter.name</p>
+        <div class="flex flex-wrap justify-center">
+            @foreach (var stat in GetStats())
+            {
+                <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800 hover:cursor-pointer"
+                     title="@stat.Item1" @onclick="@(() => RollStat(stat.Item2, stat.Item1))">
+                    <div class="h-3"></div>
+                    <p class="text-center font-bold">@stat.Item3</p>
+                    <p class="text-center font-bold">@stat.Item2</p>
                 </div>
-                <div class="flex flex-col lg:flex-row">
-                    <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
-                        <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Actions</p>
-                        <ul class="list-none">
-                        @if(AllCharacterActions.Count() == 0)
-                        {
-                            <p class="italic text-center">None</p>
-                        }
-                        else
-                        {
-                            @foreach (var action in AllCharacterActions)
-                            {
-                                <RollableEntry Name="@action.name" Item="@action" RollDice="@RollDice">
-                                    @if (!string.IsNullOrEmpty(action.description))
-                                    {
-                                        <p class="italic">Description: @action.description</p>
-                                    }
-                                </RollableEntry>
-                            }
-                        }
-                        </ul>
-                    </div>
-                    <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
-                        <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
-                        <ul class="list-none">
-                        @if (TargetCharacter.equipment.Count() == 0)
-                        {
-                            <p class="italic text-center">None</p>
-                        }
-                        else
-                        {
-                            @foreach (var item in TargetCharacter.equipment)
-                            {
-                                <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice" HideDiceRoll="@ItemService.HideDiceRoll(item)">
-                                    @if (item.wield.Count() > 0)
-                                    {
-                                        <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
-                                    }
-                                    @if (!string.IsNullOrEmpty(item.range))
-                                    {
-                                        <p class="italic">Range: @item.range</p>
-                                    }
-                                    @if (!string.IsNullOrEmpty(item.description))
-                                    {
-                                        <p class="italic">Description: @item.description</p>
-                                    }
-                                    <p class="italic">Requirements: STR-@item.strength_requirement
-                                        AGI-@item.agility_requirement INT-@item.intelligence_requirement</p>
-                                </RollableEntry>
-                            }
-                        }
-                        </ul>
-                    </div>
-                    <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
-                        <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
-                        <ul class="list-none">
-                        @if(TargetCharacter.spells.Count() == 0)
-                        {
-                            <p class="italic text-center">None</p>
-                        }
-                        else
-                        {
-                            @foreach (var spell in TargetCharacter.spells)
-                            {
-                                <RollableEntry Name="@spell.name" Item="@spell" RollDice="@RollDice">
-                                    @if (!string.IsNullOrEmpty(spell.range))
-                                    {
-                                        <p class="italic">Range: @spell.range</p>
-                                    }
-                                    @if (!string.IsNullOrEmpty(spell.description))
-                                    {
-                                        <p class="italic">Description: @spell.description</p>
-                                    }
-                                </RollableEntry>
-                            }
-                        }
-                        </ul>
-                    </div>
+            }
+            <div class="relative w-20 h-20 m-5 rounded-full border-4 border-red-700 bg-red-500 text-white shadow-lg shadow-slate-800"
+                 title="HP">
+                <div class="h-3"></div>
+                <p class="text-center font-bold">@TargetCharacter.hp</p>
+                <p class="text-center font-bold select-none">HP</p>
+                <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(1, "HP"))'>
+                    <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
                 </div>
-                <div class="flex flex-row justify-between">
-                    <div>
-                        <button class="m-2" type="button" @onclick="ResetCharacter">Reset</button>
-                    </div>
-                    <div class="flex flex-row">
-                    </div>
+                <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(-1, "HP"))'>
+                    <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
+                </div>
+            </div>
+            <div class="relative w-20 h-20 m-5 rounded-full border-4 border-green-700 bg-green-500 text-white shadow-lg shadow-slate-800"
+                 title="HP">
+                <div class="h-3"></div>
+                <p class="text-center font-bold">@TargetCharacter.current_stamina</p>
+                <p class="text-center font-bold select-none">STA</p>
+                <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(1, "STA"))'>
+                    <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
+                </div>
+                <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(-1, "STA"))'>
+                    <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
                 </div>
             </div>
         </div>
-}
+        <div class="flex flex-col lg:flex-row">
+            <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Actions</p>
+                <ul class="list-none">
+                    @if(!AllCharacterActions.Any())
+                    {
+                        <p class="italic text-center">None</p>
+                    }
+                    else
+                    {
+                        foreach (var action in AllCharacterActions)
+                        {
+                            <RollableEntry Name="@action.name" Item="@action" RollDice="@RollDice">
+                                @if (!string.IsNullOrEmpty(action.description))
+                                {
+                                    <p class="italic">Description: @action.description</p>
+                                }
+                            </RollableEntry>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                <p class="text-center text-white text-lg bg-slate-600 rounded-t-md up">Equipment</p>
+                <ul class="list-none">
+                    @if (!TargetCharacter.equipment.Any())
+                    {
+                        <p class="italic text-center">None</p>
+                    }
+                    else
+                    {
+                        foreach (var item in TargetCharacter.equipment)
+                        {
+                            <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice" HideDiceRoll="@ItemService.HideDiceRoll(item)">
+                                @if (item.wield.Any())
+                                {
+                                    <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
+                                }
+                                @if (!string.IsNullOrEmpty(item.range))
+                                {
+                                    <p class="italic">Range: @item.range</p>
+                                }
+                                @if (!string.IsNullOrEmpty(item.description))
+                                {
+                                    <p class="italic">Description: @item.description</p>
+                                }
+                                <p class="italic">Requirements: STR-@item.strength_requirement
+                                    AGI-@item.agility_requirement INT-@item.intelligence_requirement</p>
+                            </RollableEntry>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="w-auto lg:w-1/3 m-3 border-slate-400 rounded shadow-md shadow-slate-800">
+                <p class="text-center text-white text-lg bg-slate-600 rounded-t-md">Spells</p>
+                <ul class="list-none">
+                    @if(!TargetCharacter.spells.Any())
+                    {
+                        <p class="italic text-center">None</p>
+                    }
+                    else
+                    {
+                        foreach (var spell in TargetCharacter.spells)
+                        {
+                            <RollableEntry Name="@spell.name" Item="@spell" RollDice="@RollDice">
+                                @if (!string.IsNullOrEmpty(spell.range))
+                                {
+                                    <p class="italic">Range: @spell.range</p>
+                                }
+                                @if (!string.IsNullOrEmpty(spell.description))
+                                {
+                                    <p class="italic">Description: @spell.description</p>
+                                }
+                            </RollableEntry>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-row justify-between">
+            <div>
+                <button class="m-2" type="button" @onclick="@ResetCharacter">Reset</button>
+            </div>
+            <div class="flex flex-row">
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+
     [Parameter]
-    public Character Character { get; set; }
+    public Character Character { get; set; } = new Character();
     [Parameter]
     public List<CharacterAction> AllCharacterActions {get;set;} = new List<CharacterAction>();
-    private Character TargetCharacter { get; set; }
 
-    public List<(string, string, int)> GetStats()
+    private Character TargetCharacter { get; set; } = new Character();
+
+    private List<(string, string, int)> GetStats()
     {
-        var vals = new List<(string, string, int)>();
-        vals.Add(("Strength", "STR", TargetCharacter.strength));
-        vals.Add(("Agility", "AGI", TargetCharacter.agility));
-        vals.Add(("Durability", "DUR", TargetCharacter.durability));
-        vals.Add(("Stamina", "STA", TargetCharacter.stamina));
-        vals.Add(("Intelligence", "INT", TargetCharacter.intelligence));
-        vals.Add(("Insight", "INS", TargetCharacter.insight));
+        var values = new List<(string, string, int)>();
+        values.Add(("Strength", "STR", TargetCharacter.strength));
+        values.Add(("Agility", "AGI", TargetCharacter.agility));
+        values.Add(("Durability", "DUR", TargetCharacter.durability));
+        values.Add(("Stamina", "STA", TargetCharacter.stamina));
+        values.Add(("Intelligence", "INT", TargetCharacter.intelligence));
+        values.Add(("Insight", "INS", TargetCharacter.insight));
 
-        return vals;
+        return values;
     }
 
     protected override void OnInitialized()
@@ -161,19 +161,19 @@
         TargetCharacter = Character;
     }
 
-    public void RollDice(IRollable item)
+    private void RollDice(IRollable item)
     {
-        diceService.PerformRoll(TargetCharacter, item);
-        var roll = diceLogService.DiceLog.Last();
+        DiceService.PerformRoll(TargetCharacter, item);
+        var roll = DiceLogService.DiceLog.Last();
         
-        _ = Task.Run( () => toastService.ShowToast(new ToastMessage(
-            ToastType.INFO,
+        _ = Task.Run( () => ToastService.ShowToast(new ToastMessage(
+            ToastType.Info,
             $"<p class=\"text-center font-bold\">{roll.Title}</p><p class=\"text-center italic\">{roll.DiceRoll}</p><p class=\"text-center font-bold text-lg\">{roll.RolledAmount}</p>"
         )));
 
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
         TargetCharacter = effectedCharacter;
-        globalRefreshService.CallRequestRefresh();
+        GlobalRefreshService.CallRequestRefresh();
     }
 
     public void ResetCharacter()
@@ -181,7 +181,7 @@
         TargetCharacter = Character;
     }
 
-    public void ApplyStatOperation(int op, string stat)
+    private void ApplyStatOperation(int op, string stat)
     {
         TargetCharacter = CharacterService.ApplyEffect(TargetCharacter, op, stat);
     }
@@ -213,7 +213,7 @@
         RollDice(initiativeRoll);
     }
     //END TODO
-    public void RollStat(string stat, string name)
+    private void RollStat(string stat, string name)
     {
         var statRoll = new InlineRollable {
             add_base_dice = true,

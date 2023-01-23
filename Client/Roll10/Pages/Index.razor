@@ -1,31 +1,29 @@
 ﻿@page "/"
 @using Roll10.Models
 @using Roll10.Components
-@inject Roll10.Services.IApiService apiservice
-@inject Roll10.Services.GlobalRefreshService globalRefreshService
-@inject Roll10.Services.PocketbaseService pb
+@inject Roll10.Services.IApiService Apiservice
+@inject Roll10.Services.GlobalRefreshService GlobalRefreshService
+@inject Roll10.Services.PocketbaseService Pb
 
 
 <Toast />
 <PopupMenu />
 <div class="flex flex-col items-center">
     <div class="lg:w-11/12 w-full">
-        @foreach (var character in Characters)
+        @foreach (var character in _characters)
         {
-            <CharacterDescription Character="character" AllCharacterActions="CharacterActions"></CharacterDescription>
+            <CharacterDescription Character="character" AllCharacterActions="_characterActions"></CharacterDescription>
         }
     </div>
 </div>
 
 @code{
-    public List<Character> Characters = new List<Character>();
-    public List<CharacterAction> CharacterActions = new List<CharacterAction>();
+    private List<Character> _characters = new List<Character>();
+    private List<CharacterAction> _characterActions = new List<CharacterAction>();
     protected override async Task OnInitializedAsync()
     {
-        Characters = (await apiservice.GetDefaultCharacters()).ToList();
-        CharacterActions = await apiservice.GetActions(true);
-        globalRefreshService.RefreshRequested += () => {
-            this.StateHasChanged();
-        };
+        _characters = (await Apiservice.GetDefaultCharacters()).ToList();
+        _characterActions = await Apiservice.GetActions(true);
+        GlobalRefreshService.RefreshRequested += this.StateHasChanged;
     }
 }
