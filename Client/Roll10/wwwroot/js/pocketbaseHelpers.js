@@ -50,6 +50,28 @@ window.handleRedirection = (url) => {
 window.subscribeToStream = (collection, pattern) => {
     pb.collection(collection).subscribe(pattern, function (e) {
         console.log(e);
-        window.DotNet.invokeMethodAsync("Roll10", "HandleEvent", e)
+        window.DotNet.invokeMethodAsync("Roll10", "HandleEvent", JSON.stringify(e))
     });
+}
+
+window.logout = () => {
+    window.pb.authStore.clear();
+}
+
+window.getLoginInformation = async () => {
+    await window.pb.collection('users').authRefresh();
+    return JSON.stringify(window.pb.authStore.model);
+}
+
+window.isUserLoggedIn = async () => {
+    await window.pb.collection('users').authRefresh();
+    return window.pb.authStore.isValid;
+}
+
+window.scrollElementToBottom = (selector) => {
+    var element = document.querySelector(selector);
+    if(element)
+    {
+        element.scrollTop = element.scrollHeight;
+    }
 }

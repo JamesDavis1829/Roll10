@@ -1,5 +1,7 @@
 using Microsoft.JSInterop;
+using Roll10.Models;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Roll10.Services
 {
@@ -16,7 +18,7 @@ namespace Roll10.Services
     {
         private IJSRuntime JS;
         private bool IsInitialized = false;
-        public static Dictionary<string, Action<dynamic>> Callbacks = new Dictionary<string, Action<dynamic>>();
+        public static Dictionary<string, Action<string>> Callbacks = new Dictionary<string, Action<string>>();
 
         public PocketbaseService(IJSRuntime js)
         {
@@ -51,16 +53,35 @@ namespace Roll10.Services
         }
 
         [JSInvokable]
-        public static void HandleEvent(dynamic eventMessage)
+        public static void HandleEvent(string eventMessage)
         {
-            Console.WriteLine(eventMessage);
+            JsonNode data = JsonNode.Parse(eventMessage) ?? new JsonObject();
+            var index = data.AsObject()?["record"]?.AsObject()?["collectionName"]?.ToString() ?? "";
+            if(Callbacks.ContainsKey(index))
+            {
+                var record = data.AsObject()?["record"]?.ToJsonString() ?? "{}";
+                Callbacks[index](record);
+            }
         }
 
-        public async Task SubscribeTo(string collection, string pattern, Action<dynamic> callback)
+        public async Task SubscribeTo(string collection, string pattern, Action<string> callback)
         {
             await CheckInitialization();
-            Callbacks[$"{collection}/{pattern}"] = callback;
+            Callbacks[collection] = callback;
             await JS.InvokeVoidAsync("subscribeToStream",collection, pattern);
+        }
+
+        public async Task<bool> IsLoginValid()
+        {
+            await CheckInitialization();
+            return await JS.InvokeAsync<bool>("isUserLoggedIn");
+        }
+
+        public async Task<User?> GetUser()
+        {
+            await CheckInitialization();
+            var data = await JS.InvokeAsync<string>("getLoginInformation");
+            return JsonSerializer.Deserialize<User>(data);
         }
     }
 }
