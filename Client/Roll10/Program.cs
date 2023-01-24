@@ -14,8 +14,8 @@ builder.Services.AddScoped<GlobalRefreshService>(sp => new GlobalRefreshService(
 builder.Services.AddScoped<ToastService>(sp => new ToastService(
     sp.GetService<GlobalRefreshService>() ?? new GlobalRefreshService()
 ));
-builder.Services.AddScoped(sp => new DiceLogService(sp.GetService<IApiService>()));
-builder.Services.AddScoped(sp => new DiceService(sp.GetService<DiceLogService>()));
 builder.Services.AddScoped(sp => new PocketbaseService(sp.GetService<IJSRuntime>()));
+builder.Services.AddScoped(sp => new DiceLogService(sp.GetService<IApiService>(), sp.GetService<PocketbaseService>()));
+builder.Services.AddScoped(sp => new DiceService(sp.GetService<DiceLogService>()));
 
 await builder.Build().RunAsync();

@@ -18,7 +18,7 @@ namespace Roll10.Services
     {
         private readonly IJSRuntime _js;
         private bool _isInitialized = false;
-        private static readonly Dictionary<string, Action<string>> Callbacks = new Dictionary<string, Action<string>>();
+        private static readonly Dictionary<string, Func<string, Task>> Callbacks = new ();
 
         public PocketbaseService(IJSRuntime js)
         {
@@ -65,7 +65,7 @@ namespace Roll10.Services
             }
         }
 
-        public async Task SubscribeTo(string collection, string pattern, Action<string> callback)
+        public async Task SubscribeTo(string collection, string pattern, Func<string, Task> callback)
         {
             await CheckInitialization();
             Callbacks[collection] = callback;
@@ -83,6 +83,17 @@ namespace Roll10.Services
             await CheckInitialization();
             var data = await _js.InvokeAsync<string>("getLoginInformation");
             return JsonSerializer.Deserialize<User>(data);
+        }
+
+        public async Task<List<DiceLogEntry>> GetLogs()
+        {
+            var data = await _js.InvokeAsync<string>("getDiceLogs");
+            return JsonSerializer.Deserialize<List<DiceLogEntry>>(data) ?? new List<DiceLogEntry>();
+        }
+
+        public async Task UploadDiceLogEntry(DiceLogEntry entry, string diceRoom)
+        {
+            await _js.InvokeVoidAsync("uploadDiceLog", entry with { room_id = diceRoom });
         }
     }
 }

@@ -5,12 +5,12 @@ namespace Roll10.Services
 
     public class DiceService
     {
-        private readonly DiceLogService DiceLogService;
-        private readonly List<string> _opList = new List<string> { "+", "-" };
+        private readonly DiceLogService _diceLogService;
+        private readonly List<string> _opList = new() { "+", "-" };
 
         public DiceService(DiceLogService diceLogService)
         {
-            DiceLogService = diceLogService;
+            _diceLogService = diceLogService;
         }
 
         private int StatSubstitute(Character character, string stat)
@@ -31,7 +31,7 @@ namespace Roll10.Services
                             character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
                     },
                     true
-                ),
+                ).Result,
                 _ => 0
             };
         }
@@ -49,7 +49,7 @@ namespace Roll10.Services
             return output;
         }
 
-        public int PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public async Task<int> PerformRoll(Character character, IRollable item, bool isSilent = false)
         {
             var readableRoll = "";
             var roll = 0;
@@ -101,11 +101,12 @@ namespace Roll10.Services
 
             if(!isSilent)
             {
-                DiceLogService.DiceLog.Add(new DiceLogEntry(
+                await _diceLogService.AddEntry(new DiceLogEntry(
                     $"{character.name} - {item.name}",
                     RemoveTrailingOperation(readableRoll),
-                    roll.ToString(),
-                    new DateTime()
+                    roll,
+                    new DateTime(),
+                    Constants.GenerateId()
                 ));
             }
 
@@ -116,9 +117,7 @@ namespace Roll10.Services
         {
             var diceRoll = item.dice_roll
                 .Split(";")
-                .Select(d => {
-                    return string.Join(" ",d.Split(" ").Reverse());
-                });
+                .Select(d => string.Join(" ",d.Split(" ").Reverse()));
 
             if(item.add_base_dice)
             {

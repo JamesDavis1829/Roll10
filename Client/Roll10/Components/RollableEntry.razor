@@ -37,7 +37,7 @@
     public IRollable Item { get; set; } = new Item();
 
     [Parameter]
-    public Action<IRollable> RollDice { get; set; } = (arg) => { };
+    public Func<IRollable, Task> RollDice { get; set; } = (arg) => Task.CompletedTask;
     [Parameter]
     public bool HideDiceRoll { get;set; } = false;
 

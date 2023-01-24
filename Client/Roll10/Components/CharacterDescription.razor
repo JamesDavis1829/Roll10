@@ -161,14 +161,14 @@
         TargetCharacter = Character;
     }
 
-    private void RollDice(IRollable item)
+    private async Task RollDice(IRollable item)
     {
-        DiceService.PerformRoll(TargetCharacter, item);
+        await DiceService.PerformRoll(TargetCharacter, item);
         var roll = DiceLogService.DiceLog.Last();
         
         _ = Task.Run( () => ToastService.ShowToast(new ToastMessage(
             ToastType.Info,
-            $"<p class=\"text-center font-bold\">{roll.Title}</p><p class=\"text-center italic\">{roll.DiceRoll}</p><p class=\"text-center font-bold text-lg\">{roll.RolledAmount}</p>"
+            $"<p class=\"text-center font-bold\">{roll.title}</p><p class=\"text-center italic\">{roll.diceroll}</p><p class=\"text-center font-bold text-lg\">{roll.rolledamount}</p>"
         )));
 
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
@@ -185,42 +185,15 @@
     {
         TargetCharacter = CharacterService.ApplyEffect(TargetCharacter, op, stat);
     }
-
-    //TODO: Put these into an actions database
-    public void RestAction()
-    {
-        var restRoll = new InlineRollable { 
-            action_effect = "+ 2 STA",
-            add_base_dice = false,
-            name = "Rest"
-        };
-        RollDice(restRoll);
-    }
-
-    public void RollDefence()
-    {
-        var defenceRoll = CharacterService.GetDefenceRoll(TargetCharacter);
-        RollDice(defenceRoll);
-    }
-
-    public void RollInitiative()
-    {
-        var initiativeRoll = new InlineRollable {
-            add_base_dice = true,
-            name = "Initiative",
-            modifiers ="+ AGI"
-        };
-        RollDice(initiativeRoll);
-    }
-    //END TODO
-    private void RollStat(string stat, string name)
+    
+    private async Task RollStat(string stat, string name)
     {
         var statRoll = new InlineRollable {
             add_base_dice = true,
             name = $"{name} Roll",
             modifiers = $"+ {stat}"
         };
-        RollDice(statRoll);
+        await RollDice(statRoll);
     }
 
     public string FormatOpValString(string opValString)

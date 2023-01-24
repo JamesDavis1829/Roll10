@@ -59,12 +59,17 @@ window.logout = () => {
 }
 
 window.getLoginInformation = async () => {
-    await window.pb.collection('users').authRefresh();
-    return JSON.stringify(window.pb.authStore.model);
+    try 
+    {
+        return JSON.stringify(window.pb.authStore.model);
+    }
+    catch(e)
+    {
+        return {};
+    }
 }
 
 window.isUserLoggedIn = async () => {
-    await window.pb.collection('users').authRefresh();
     return window.pb.authStore.isValid;
 }
 
@@ -73,5 +78,34 @@ window.scrollElementToBottom = (selector) => {
     if(element)
     {
         element.scrollTop = element.scrollHeight;
+    }
+}
+
+window.getDiceLogs = async () => {
+    try 
+    {
+        let list = await window.pb.collection('diceroomlogs').getFullList(200, {
+            sort: '+created',
+        })
+        list = list.map(l => {
+            return {...l, created: new Date(l.created).toISOString()}
+        });
+        return JSON.stringify(list);
+    }
+    catch(e)
+    {
+        console.error(e);
+        return "[]";
+    }
+}
+
+window.uploadDiceLog = async (data) => {
+    try {
+        await window.pb.collection('diceroomlogs').create(data);
+        return true;
+    }
+    catch(e)
+    {
+        return false;
     }
 }

@@ -1,5 +1,7 @@
 @using Roll10.Services
 @using Roll10.Models
+@using System.Text.Json
+@using System.Text.Json.Nodes
 @inject GlobalRefreshService RefreshService
 @inject DiceLogService DiceLogService
 @inject PocketbaseService Pb
@@ -12,9 +14,9 @@
             @foreach(var roll in DiceLogService.DiceLog)
             {
                 <li class="even:bg-slate-200 p-2">
-                    <p class="text-center font-bold">@roll.Title</p>
-                    <p class="text-center italic">@roll.DiceRoll</p>
-                    <p class="text-center font-bold text-lg">@roll.RolledAmount</p>
+                    <p class="text-center font-bold">@roll.title</p>
+                    <p class="text-center italic">@roll.diceroll</p>
+                    <p class="text-center font-bold text-lg">@roll.rolledamount</p>
                 </li>
             }
         }
@@ -31,13 +33,25 @@
     {
         if(await Pb.IsLoginValid())
         {
-            await Pb.SubscribeTo("diceroomlogs", "*", (message) => {
-                Console.WriteLine(message);
-            });
+            var user = await Pb.GetUser();
+            if (!string.IsNullOrEmpty(user?.diceroom))
+            {
+                await DiceLogService.SyncDiceLog();
+                await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
+                {
+                    var eventMessage = JsonNode.Parse(message);
+                    var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(eventMessage.AsObject()["record"].ToJsonString());
+                    if (logEntry != null)
+                    {
+                        if(!DiceLogService.DiceLog.Select(d => d.id).Contains(logEntry.id))
+                            await DiceLogService.AddEntry(logEntry, true);
+                    }
+                });
+            }
         }
 
         RefreshService.RefreshRequested += () => {
-            this.StateHasChanged();
+            StateHasChanged();
             Js.InvokeVoidAsync("scrollElementToBottom","#menu-container");
         };
 

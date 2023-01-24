@@ -30,6 +30,32 @@ namespace Roll10.Services
             return (dynamicData?.AsObject()["items"]).Deserialize<List<CharacterAction>>() ?? new List<CharacterAction>();
         }
 
+        public async Task<List<DiceLogEntry>> GetLogs(string diceRoom)
+        {
+            var diceLogList = new List<DiceLogEntry>();
+            var page = 1;
+            var maxPages = 1;
+            do
+            {
+                var resp = await _client.GetAsync($"/api/collections/diceroomlogs/records?page={page}&sort=-created");
+                var respText = await resp.Content.ReadAsStringAsync();
+                var respObj = JsonNode.Parse(respText);
+                maxPages = (int)(respObj?.AsObject()?["totalPages"] ?? 0);
+                var diceLogEntries = JsonSerializer.Deserialize<List<DiceLogEntry>>(
+                    respObj?.AsObject()?["items"]?.ToJsonString() ?? string.Empty
+                );
+                diceLogList.AddRange(diceLogEntries ?? new List<DiceLogEntry>());
+            } while (page < maxPages);
+
+            return diceLogList;
+        }
+
+        public async Task UploadDiceLogEntry(DiceLogEntry entry, string diceRoom)
+        {
+            var content = new StringContent(JsonSerializer.Serialize((entry with {room_id = diceRoom})));
+            await _client.PostAsync("/api/collections/diceroomlogs", content);
+        }
+
         public async Task<List<Character>> GetDefaultCharacters()
         {
             var characters = new List<Character>();

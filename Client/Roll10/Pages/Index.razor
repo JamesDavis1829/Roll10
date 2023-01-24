@@ -1,9 +1,8 @@
 ﻿@page "/"
 @using Roll10.Models
 @using Roll10.Components
-@inject Roll10.Services.IApiService Apiservice
+@inject Roll10.Services.IApiService ApiService
 @inject Roll10.Services.GlobalRefreshService GlobalRefreshService
-@inject Roll10.Services.PocketbaseService Pb
 
 
 <Toast />
@@ -18,12 +17,12 @@
 </div>
 
 @code{
-    private List<Character> _characters = new List<Character>();
-    private List<CharacterAction> _characterActions = new List<CharacterAction>();
+    private List<Character> _characters = new();
+    private List<CharacterAction> _characterActions = new();
     protected override async Task OnInitializedAsync()
     {
-        _characters = (await Apiservice.GetDefaultCharacters()).ToList();
-        _characterActions = await Apiservice.GetActions(true);
-        GlobalRefreshService.RefreshRequested += this.StateHasChanged;
+        _characters = (await ApiService.GetDefaultCharacters()).ToList();
+        _characterActions = await ApiService.GetActions(true);
+        GlobalRefreshService.RefreshRequested += StateHasChanged;
     }
 }
