@@ -1,4 +1,3 @@
-@implements IDisposable
 @using Roll10.Services
 @using Roll10.Models
 @using System.Text.Json
@@ -30,31 +29,8 @@
 
 @code 
 {
-    private List<IDisposable> _subs = new();
     protected override async Task OnInitializedAsync()
     {
-        _subs.Add(Pb.UserSubject.Subscribe(u =>
-        {
-            if (!string.IsNullOrEmpty(u?.diceroom))
-            {
-                _ = Task.Run(async () =>
-                {
-                    await DiceLogService.SyncDiceLog();
-                    StateHasChanged();
-                    await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
-                    {
-                        var eventMessage = JsonNode.Parse(message);
-                        var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(eventMessage?.AsObject()?["record"]?.ToJsonString() ?? "{}");
-                        if (logEntry != null)
-                        {
-                            if (!DiceLogService.DiceLog.Select(d => d.id).Contains(logEntry.id))
-                                await DiceLogService.AddEntry(logEntry, true);
-                        }
-                    });
-                });
-            }
-        }));
-
         RefreshService.RefreshRequested += () => {
             StateHasChanged();
             _ = Task.Run(ScrollToBottom);
@@ -67,10 +43,5 @@
     private async Task ScrollToBottom()
     {
         await Js.InvokeVoidAsync("scrollElementToBottom","#menu-container");
-    }
-
-    void IDisposable.Dispose()
-    {
-        foreach(var sub in _subs) sub.Dispose(); 
     }
 }

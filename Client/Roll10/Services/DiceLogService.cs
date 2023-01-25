@@ -4,7 +4,7 @@ namespace Roll10.Services
         string title,
         string diceroll,
         int rolledamount,
-        DateTime created,
+        //DateTime created,
         string id,
         string room_id = ""
     );
@@ -13,13 +13,15 @@ namespace Roll10.Services
     {
         private readonly IApiService _apiService;
         private readonly PocketbaseService _pb;
+        private readonly ToastService _toastService;
         public List<DiceLogEntry> DiceLog { get; set; }
         private bool _hasSynced;
 
-        public DiceLogService(IApiService apiService, PocketbaseService pb)
+        public DiceLogService(IApiService apiService, PocketbaseService pb, ToastService toastService)
         {
             _apiService = apiService;
             _pb = pb;
+            _toastService = toastService;
             DiceLog = new();
         }
 
@@ -48,8 +50,15 @@ namespace Roll10.Services
             {
                 await _pb.UploadDiceLogEntry(entry, user.diceroom);
             }
-            
-            DiceLog.Add(entry);
+
+            if (!DiceLog.Select(d => d.id).Contains(entry.id))
+            {
+                DiceLog.Add(entry);
+                await _toastService.ShowToast(new ToastMessage(
+                    ToastType.Info,
+                    $"<p class=\"text-center font-bold\">{entry.title}</p><p class=\"text-center italic\">{entry.diceroll}</p><p class=\"text-center font-bold text-lg\">{entry.rolledamount}</p>"
+                ));
+            }
         }
 
         public Task JoinDiceRoom(string roomId)

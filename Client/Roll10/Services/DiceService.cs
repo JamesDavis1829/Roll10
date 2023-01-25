@@ -105,7 +105,7 @@ namespace Roll10.Services
                     $"{character.name} - {item.name}",
                     RemoveTrailingOperation(readableRoll),
                     roll,
-                    new DateTime(),
+                    //new DateTime(),
                     Constants.GenerateId()
                 ));
             }

@@ -165,12 +165,6 @@
     {
         await DiceService.PerformRoll(TargetCharacter, item);
         var roll = DiceLogService.DiceLog.Last();
-        
-        _ = Task.Run( () => ToastService.ShowToast(new ToastMessage(
-            ToastType.Info,
-            $"<p class=\"text-center font-bold\">{roll.title}</p><p class=\"text-center italic\">{roll.diceroll}</p><p class=\"text-center font-bold text-lg\">{roll.rolledamount}</p>"
-        )));
-
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
         TargetCharacter = effectedCharacter;
         GlobalRefreshService.CallRequestRefresh();

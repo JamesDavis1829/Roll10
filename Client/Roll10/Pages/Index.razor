@@ -1,8 +1,13 @@
 ﻿@page "/"
+@implements IDisposable
 @using Roll10.Models
 @using Roll10.Components
+@using Roll10.Services
+@using System.Text.Json
 @inject Roll10.Services.IApiService ApiService
 @inject Roll10.Services.GlobalRefreshService GlobalRefreshService
+@inject DiceLogService DiceLogService
+@inject PocketbaseService Pb
 
 
 <Toast />
@@ -19,10 +24,44 @@
 @code{
     private List<Character> _characters = new();
     private List<CharacterAction> _characterActions = new();
+    private List<IDisposable> _subs = new();
+    
     protected override async Task OnInitializedAsync()
     {
         _characters = (await ApiService.GetDefaultCharacters()).ToList();
         _characterActions = await ApiService.GetActions(true);
         GlobalRefreshService.RefreshRequested += StateHasChanged;
+        
+        _subs.Add(Pb.UserSubject.Subscribe(u =>
+        {
+            if (!string.IsNullOrEmpty(u?.diceroom))
+            {
+                _ = Task.Run(async () =>
+                {
+                    await DiceLogService.SyncDiceLog();
+                    GlobalRefreshService.CallRequestRefresh();
+                    await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
+                    {
+                        try
+                        {
+                            var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(message);
+                            if (logEntry != null)
+                            {
+                                await DiceLogService.AddEntry(logEntry, true);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    });
+                });
+            }
+        }));
+    }
+    
+    void IDisposable.Dispose()
+    {
+        foreach(var sub in _subs) sub.Dispose(); 
     }
 }
