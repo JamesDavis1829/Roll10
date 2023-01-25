@@ -27,9 +27,6 @@ window.handleRedirection = (url) => {
         throw "State parameters don't match.";
     }
 
-    console.log(provider);
-    console.log(params);
-
     // authenticate
     return pb.collection('users').authWithOAuth2(
         provider.name,
