@@ -13,7 +13,7 @@ namespace Roll10.Services
     {
         private readonly IApiService _apiService;
         private readonly PocketbaseService _pb;
-        public readonly List<DiceLogEntry> DiceLog;
+        public List<DiceLogEntry> DiceLog { get; set; }
         private bool _hasSynced;
 
         public DiceLogService(IApiService apiService, PocketbaseService pb)
@@ -22,7 +22,7 @@ namespace Roll10.Services
             _pb = pb;
             DiceLog = new();
         }
-        
+
         public async Task SyncDiceLog()
         {
             if (!_hasSynced)
@@ -34,6 +34,13 @@ namespace Roll10.Services
                 _hasSynced = true;
             }
         }
+
+        public void ClearLog()
+        {
+            _hasSynced = false;
+            DiceLog = new();
+        }
+
         public async Task AddEntry(DiceLogEntry entry, bool directPush = false)
         {
             var user = await _pb.GetUser();

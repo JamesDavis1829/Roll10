@@ -1,7 +1,7 @@
 <div class="fixed lg:right-16 lg:bottom-14 right-5 bottom-5 z-10">
     @if(_isMenuShowing)
     {
-        <div style="height: calc(100vh - 10.5rem);" class="w-52 overflow-scroll bg-slate-50 rounded-lg p-3 m-4 shadow-lg shadow-slate-900" id="menu-container">
+        <div style="height: calc(100vh - 10.5rem);" class="w-80 overflow-scroll bg-slate-50 rounded-lg p-3 m-4 shadow-lg shadow-slate-900" id="menu-container">
             <div class="flex flex-row">
                 <div class="w-1/2 flex justify-center hover:cursor-pointer" @onclick="() => ChangeMode(Mode.DiceLog)">
                     <img src="images/dicegray.svg" class="h-5 w-5 @GetHighlightCss(Mode.DiceLog)" />

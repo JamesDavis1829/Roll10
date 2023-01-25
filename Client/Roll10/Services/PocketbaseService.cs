@@ -1,3 +1,4 @@
+using System.Reactive.Subjects;
 using Microsoft.JSInterop;
 using Roll10.Models;
 using System.Text.Json;
@@ -19,11 +20,15 @@ namespace Roll10.Services
         private readonly IJSRuntime _js;
         private bool _isInitialized = false;
         private static readonly Dictionary<string, Func<string, Task>> Callbacks = new ();
+        public BehaviorSubject<bool> LoginSubject { get; }
+        public BehaviorSubject<User?> UserSubject { get; }
 
         public PocketbaseService(IJSRuntime js)
         {
             _js = js;
             _isInitialized = false;
+            LoginSubject = new BehaviorSubject<bool>(false);
+            UserSubject = new BehaviorSubject<User?>(null);
         }
 
         private async Task CheckInitialization()
@@ -75,14 +80,18 @@ namespace Roll10.Services
         public async Task<bool> IsLoginValid()
         {
             await CheckInitialization();
-            return await _js.InvokeAsync<bool>("isUserLoggedIn");
+            var isUserValid = await _js.InvokeAsync<bool>("isUserLoggedIn");
+            LoginSubject.OnNext(isUserValid);
+            return isUserValid;
         }
 
         public async Task<User?> GetUser()
         {
             await CheckInitialization();
             var data = await _js.InvokeAsync<string>("getLoginInformation");
-            return JsonSerializer.Deserialize<User>(data);
+            var user = JsonSerializer.Deserialize<User>(data);
+            UserSubject.OnNext(user);
+            return user;
         }
 
         public async Task<List<DiceLogEntry>> GetLogs()
@@ -94,6 +103,13 @@ namespace Roll10.Services
         public async Task UploadDiceLogEntry(DiceLogEntry entry, string diceRoom)
         {
             await _js.InvokeVoidAsync("uploadDiceLog", entry with { room_id = diceRoom });
+        }
+
+        public async Task LogOut()
+        {
+            await _js.InvokeVoidAsync("logout");
+            UserSubject.OnNext(null);
+            LoginSubject.OnNext(false);
         }
     }
 }
