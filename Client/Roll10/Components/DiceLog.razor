@@ -1,3 +1,4 @@
+@implements IDisposable
 @using Roll10.Services
 @using Roll10.Models
 @using System.Text.Json
@@ -29,49 +30,47 @@
 
 @code 
 {
+    private List<IDisposable> _subs = new();
     protected override async Task OnInitializedAsync()
     {
-        //TODO: Use Observable Instead
-        if(await Pb.IsLoginValid())
+        _subs.Add(Pb.UserSubject.Subscribe(u =>
         {
-            var user = await Pb.GetUser();
-            if (!string.IsNullOrEmpty(user?.diceroom))
+            if (!string.IsNullOrEmpty(u?.diceroom))
             {
-                await DiceLogService.SyncDiceLog();
-                await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
+                _ = Task.Run(async () =>
                 {
-                    var eventMessage = JsonNode.Parse(message);
-                    var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(eventMessage?.AsObject()?["record"]?.ToJsonString() ?? "{}");
-                    if (logEntry != null)
+                    await DiceLogService.SyncDiceLog();
+                    StateHasChanged();
+                    await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
                     {
-                        if(!DiceLogService.DiceLog.Select(d => d.id).Contains(logEntry.id))
-                            await DiceLogService.AddEntry(logEntry, true);
-                    }
+                        var eventMessage = JsonNode.Parse(message);
+                        var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(eventMessage?.AsObject()?["record"]?.ToJsonString() ?? "{}");
+                        if (logEntry != null)
+                        {
+                            if (!DiceLogService.DiceLog.Select(d => d.id).Contains(logEntry.id))
+                                await DiceLogService.AddEntry(logEntry, true);
+                        }
+                    });
                 });
             }
-        }
+        }));
 
         RefreshService.RefreshRequested += () => {
             StateHasChanged();
             _ = Task.Run(ScrollToBottom);
         };
-
-        await base.OnInitializedAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await Task.Delay(100);
-            await ScrollToBottom();
-        }
         
-        await base.OnAfterRenderAsync(firstRender);
+        await Pb.GetUser();
+        await base.OnInitializedAsync();
     }
 
     private async Task ScrollToBottom()
     {
         await Js.InvokeVoidAsync("scrollElementToBottom","#menu-container");
+    }
+
+    void IDisposable.Dispose()
+    {
+        foreach(var sub in _subs) sub.Dispose(); 
     }
 }
