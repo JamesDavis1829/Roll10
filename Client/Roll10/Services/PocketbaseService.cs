@@ -93,20 +93,29 @@ namespace Roll10.Services
             UserSubject.OnNext(user);
             return user;
         }
+        
+        public async Task UpdateUser()
+        {
+            await CheckInitialization();
+            await _js.InvokeVoidAsync("updateAuth");
+        }
 
         public async Task<List<DiceLogEntry>> GetLogs()
         {
+            await CheckInitialization();
             var data = await _js.InvokeAsync<string>("getDiceLogs");
             return JsonSerializer.Deserialize<List<DiceLogEntry>>(data) ?? new List<DiceLogEntry>();
         }
 
         public async Task UploadDiceLogEntry(DiceLogEntry entry, string diceRoom)
         {
+            await CheckInitialization();
             await _js.InvokeVoidAsync("uploadDiceLog", entry with { room_id = diceRoom });
         }
 
         public async Task LogOut()
         {
+            await CheckInitialization();
             await _js.InvokeVoidAsync("logout");
             UserSubject.OnNext(null);
             LoginSubject.OnNext(false);

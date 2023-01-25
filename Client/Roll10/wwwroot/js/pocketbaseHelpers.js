@@ -70,6 +70,10 @@ window.isUserLoggedIn = async () => {
     return window.pb.authStore.isValid;
 }
 
+window.updateAuth = () => {
+    return window.pb.collection('users').authRefresh();
+}
+
 window.scrollElementToBottom = (selector) => {
     var element = document.querySelector(selector);
     if(element)

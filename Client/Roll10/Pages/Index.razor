@@ -4,8 +4,8 @@
 @using Roll10.Components
 @using Roll10.Services
 @using System.Text.Json
-@inject Roll10.Services.IApiService ApiService
-@inject Roll10.Services.GlobalRefreshService GlobalRefreshService
+@inject IApiService ApiService
+@inject GlobalRefreshService GlobalRefreshService
 @inject DiceLogService DiceLogService
 @inject PocketbaseService Pb
 
@@ -24,14 +24,15 @@
 @code{
     private List<Character> _characters = new();
     private List<CharacterAction> _characterActions = new();
-    private List<IDisposable> _subs = new();
+    private readonly List<IDisposable> _subs = new();
     
     protected override async Task OnInitializedAsync()
     {
         _characters = (await ApiService.GetDefaultCharacters()).ToList();
         _characterActions = await ApiService.GetActions(true);
+        await Pb.UpdateUser();
         GlobalRefreshService.RefreshRequested += StateHasChanged;
-        
+
         _subs.Add(Pb.UserSubject.Subscribe(u =>
         {
             if (!string.IsNullOrEmpty(u?.diceroom))
