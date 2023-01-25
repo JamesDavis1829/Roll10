@@ -161,10 +161,9 @@
         TargetCharacter = Character;
     }
 
-    private async Task RollDice(IRollable item)
+    private void RollDice(IRollable item)
     {
-        await DiceService.PerformRoll(TargetCharacter, item);
-        var roll = DiceLogService.DiceLog.Last();
+        DiceService.PerformRoll(TargetCharacter, item);
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
         TargetCharacter = effectedCharacter;
         GlobalRefreshService.CallRequestRefresh();
@@ -180,14 +179,14 @@
         TargetCharacter = CharacterService.ApplyEffect(TargetCharacter, op, stat);
     }
     
-    private async Task RollStat(string stat, string name)
+    private void RollStat(string stat, string name)
     {
         var statRoll = new InlineRollable {
             add_base_dice = true,
             name = $"{name} Roll",
             modifiers = $"+ {stat}"
         };
-        await RollDice(statRoll);
+        RollDice(statRoll);
     }
 
     public string FormatOpValString(string opValString)

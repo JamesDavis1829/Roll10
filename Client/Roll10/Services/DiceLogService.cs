@@ -1,3 +1,6 @@
+using System.Reactive.Disposables;
+using System.Reactive.Subjects;
+
 namespace Roll10.Services
 {
     public record DiceLogEntry(
@@ -9,20 +12,32 @@ namespace Roll10.Services
         string room_id = ""
     );
 
-    public class DiceLogService
+    public class DiceLogService: IDisposable
     {
         private readonly IApiService _apiService;
         private readonly PocketbaseService _pb;
         private readonly ToastService _toastService;
-        public List<DiceLogEntry> DiceLog { get; set; }
+        public List<DiceLogEntry> DiceLog { get; set; } = new();
         private bool _hasSynced;
+
+        public Subject<(DiceLogEntry, bool)> AddDiceLogEntrySubject { get; } = new();
+        private readonly List<IDisposable> _subs;
 
         public DiceLogService(IApiService apiService, PocketbaseService pb, ToastService toastService)
         {
             _apiService = apiService;
             _pb = pb;
             _toastService = toastService;
-            DiceLog = new();
+            _subs = new List<IDisposable>
+            {
+                AddDiceLogEntrySubject.Subscribe(values =>
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        await AddEntry(values.Item1, values.Item2);
+                    });
+                })
+            };
         }
 
         public async Task SyncDiceLog()
@@ -43,7 +58,7 @@ namespace Roll10.Services
             DiceLog = new();
         }
 
-        public async Task AddEntry(DiceLogEntry entry, bool directPush = false)
+        private async Task AddEntry(DiceLogEntry entry, bool directPush = false)
         {
             var user = await _pb.GetUser();
             if(!string.IsNullOrEmpty(user?.diceroom) && !directPush)
@@ -64,6 +79,12 @@ namespace Roll10.Services
         public Task JoinDiceRoom(string roomId)
         {
             throw new NotImplementedException();   
+        }
+
+        public void Dispose()
+        {
+            AddDiceLogEntrySubject.Dispose();
+            foreach (var sub in _subs) sub.Dispose();
         }
     }   
 }

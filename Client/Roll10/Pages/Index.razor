@@ -30,7 +30,16 @@
     {
         _characters = (await ApiService.GetDefaultCharacters()).ToList();
         _characterActions = await ApiService.GetActions(true);
-        await Pb.UpdateUser();
+        
+        try
+        {
+            await Pb.UpdateUser();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        
         GlobalRefreshService.RefreshRequested += StateHasChanged;
 
         _subs.Add(Pb.UserSubject.Subscribe(u =>
@@ -48,7 +57,7 @@
                             var logEntry = JsonSerializer.Deserialize<DiceLogEntry>(message);
                             if (logEntry != null)
                             {
-                                await DiceLogService.AddEntry(logEntry, true);
+                                DiceLogService.AddDiceLogEntrySubject.OnNext((logEntry, true));
                             }
                         }
                         catch (Exception e)

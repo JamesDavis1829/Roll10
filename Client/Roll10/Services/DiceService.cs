@@ -31,7 +31,7 @@ namespace Roll10.Services
                             character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
                     },
                     true
-                ).Result,
+                ),
                 _ => 0
             };
         }
@@ -49,7 +49,7 @@ namespace Roll10.Services
             return output;
         }
 
-        public async Task<int> PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public int PerformRoll(Character character, IRollable item, bool isSilent = false)
         {
             var readableRoll = "";
             var roll = 0;
@@ -101,13 +101,13 @@ namespace Roll10.Services
 
             if(!isSilent)
             {
-                await _diceLogService.AddEntry(new DiceLogEntry(
+                _diceLogService.AddDiceLogEntrySubject.OnNext((new DiceLogEntry(
                     $"{character.name} - {item.name}",
                     RemoveTrailingOperation(readableRoll),
                     roll,
                     //new DateTime(),
                     Constants.GenerateId()
-                ));
+                ), false));
             }
 
             return roll;
