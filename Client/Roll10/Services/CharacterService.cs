@@ -21,7 +21,7 @@ public static class CharacterService
         if(string.IsNullOrEmpty(effectString))
             return character;
             
-        var effectParts = effectString.Split(";");
+        var effectParts = effectString.Split(";").Where(p => !string.IsNullOrEmpty(p));
         return effectParts.Aggregate(character, (acc, x) => {
             var operationParts = x.Split(" ");
             var opValue = new {
