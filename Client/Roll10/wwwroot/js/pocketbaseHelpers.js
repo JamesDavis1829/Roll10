@@ -46,13 +46,68 @@ window.handleRedirection = (url) => {
 
 window.subscribeToStream = (collection, pattern) => {
     pb.collection(collection).subscribe(pattern, function (e) {
-        console.log(e);
         window.DotNet.invokeMethodAsync("Roll10", "HandleEvent", JSON.stringify(e))
     });
 }
 
 window.logout = () => {
     window.pb.authStore.clear();
+}
+
+window.scrollElementToBottom = (selector) => {
+    var element = document.querySelector(selector);
+    if(element)
+    {
+        element.scrollTop = element.scrollHeight;
+    }
+}
+
+window.getFullList = async (collectionName, sort, filter, expand) => {
+    try
+    {
+        let list = await window.pb.collection(collectionName).getFullList(200, {
+            sort,
+            filter,
+            expand
+        })
+        let expandList = (expand || "").split(",");
+        list = list.map(l => {
+            for(let entry of expandList)
+            {
+                if(l["expand"][entry])
+                {
+                    l[entry] = l["expand"][entry]
+                }
+                else
+                {
+                    l[entry] = [];
+                }
+            }
+            return {...l, created: new Date(l.created).toISOString()}
+        });
+        return list
+    }
+    catch(e)
+    {
+        console.error(e);
+        return [];
+    }
+}
+
+window.patchItem = async (collectionName, recordId, data) => {
+    var parsedData = JSON.parse(data);
+    await window.pb.collection(collectionName).update(recordId, parsedData);
+}
+
+window.createItem = async (collectionName, data) => {
+    try {
+        await window.pb.collection(collectionName).create(data);
+        return true;
+    }
+    catch(e)
+    {
+        return false;
+    }
 }
 
 window.getLoginInformation = async () => {
@@ -74,14 +129,6 @@ window.updateAuth = () => {
     return window.pb.collection('users').authRefresh();
 }
 
-window.scrollElementToBottom = (selector) => {
-    var element = document.querySelector(selector);
-    if(element)
-    {
-        element.scrollTop = element.scrollHeight;
-    }
-}
-
 window.getDiceLogs = async () => {
     try 
     {
@@ -91,12 +138,12 @@ window.getDiceLogs = async () => {
         list = list.map(l => {
             return {...l, created: new Date(l.created).toISOString()}
         });
-        return JSON.stringify(list);
+        return list
     }
     catch(e)
     {
         console.error(e);
-        return "[]";
+        return [];
     }
 }
 

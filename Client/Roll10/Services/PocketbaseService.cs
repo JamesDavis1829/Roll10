@@ -100,17 +100,16 @@ namespace Roll10.Services
             await _js.InvokeVoidAsync("updateAuth");
         }
 
-        public async Task<List<DiceLogEntry>> GetLogs()
+        public async Task<List<T>> GetFullList<T>(string collectionName, string sort = "+created", string filter = "", string expand = "")
         {
             await CheckInitialization();
-            var data = await _js.InvokeAsync<string>("getDiceLogs");
-            return JsonSerializer.Deserialize<List<DiceLogEntry>>(data) ?? new List<DiceLogEntry>();
+            return await _js.InvokeAsync<List<T>>("getFullList", collectionName, sort, filter, expand);
         }
 
-        public async Task UploadDiceLogEntry(DiceLogEntry entry, string diceRoom)
+        public async Task<bool> CreateItem<T>(string collectionName, T item)
         {
             await CheckInitialization();
-            await _js.InvokeVoidAsync("uploadDiceLog", entry with { room_id = diceRoom });
+            return await _js.InvokeAsync<bool>("createItem", collectionName, item);
         }
 
         public async Task LogOut()

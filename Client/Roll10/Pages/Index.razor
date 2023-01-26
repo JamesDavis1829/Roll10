@@ -4,7 +4,6 @@
 @using Roll10.Components
 @using Roll10.Services
 @using System.Text.Json
-@inject IApiService ApiService
 @inject GlobalRefreshService GlobalRefreshService
 @inject DiceLogService DiceLogService
 @inject PocketbaseService Pb
@@ -28,8 +27,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _characters = (await ApiService.GetDefaultCharacters()).ToList();
-        _characterActions = await ApiService.GetActions(true);
+        _characters = await Pb.GetFullList<Character>("characters","","","spells,equipment,inventory");
+        _characters = _characters.Select(c => c with { hp = c.durability, current_stamina = c.stamina }).ToList();
+        _characterActions = await Pb.GetFullList<CharacterAction>("actions", "+created", "all_characters=true");
         
         try
         {
