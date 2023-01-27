@@ -9,26 +9,30 @@
 @inject DiceLogService DiceLogService
 @inject ToastService ToastService
 
+
 <div class="h-3">@*spacer*@</div>
 @if (!string.IsNullOrEmpty(CurrentUser?.email))
 {
     <p class="text-center">@CurrentUser.email</p>
     <div class="text-center my-4">
-        <btn class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" @onclick="LogOut">Log Out</btn>
+        <btn class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" @onclick="LogOut">Log Out</btn>
     </div>
-    <EditForm Model="@_idForm" class="text-center my-4" OnValidSubmit="@UpdateDiceRoom">
+    <EditForm Model="@_idForm" class="text-center my-4" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <label class="block text-gray-700 text-sm font-bold mb-2" for="idEntry">
             Dice Room
         </label>
         <InputText
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            class="input focus:outline-none focus:shadow-outline"
             id="idEntry"
             @bind-Value="_idForm.IdEntry"/>
         <div class="h-4"></div>
         <ValidationSummary></ValidationSummary>
         <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit">Change Room</button>
     </EditForm>
+    <div class="text-center my-4">
+        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" onclick="@CreateNewDiceRoom">Create New Room</button>
+    </div>
 }
 else
 {
@@ -41,6 +45,7 @@ else
 @code {
     User? CurrentUser { get; set; } = null;
     private List<IDisposable> _subs = new();
+    private bool IsLoading { get; set; } = false;
 
     public class IdFormModel
     {
@@ -51,15 +56,41 @@ else
 
     private IdFormModel _idForm = new();
 
-    private async Task UpdateDiceRoom()
+    private async Task HandleValidSubmit()
     {
-        var dataString = JsonSerializer.Serialize(new { diceroom = _idForm.IdEntry });
+        IsLoading = true;
+        await UpdateDiceRoom(_idForm.IdEntry!);
+        IsLoading = false;
+    }
+
+    private async Task UpdateDiceRoom(string roomId)
+    {
+        var dataString = JsonSerializer.Serialize(new { diceroom = roomId });
         var result = await Pb.UpdateItem("users", CurrentUser?.id ?? "", dataString);
         await Pb.UpdateUser();
+        _ = result switch
+        {
+            true => ToastService.ShowToast(new ToastMessage(ToastType.Info, "Dice room updated!.")),
+            false => ToastService.ShowToast(new ToastMessage(ToastType.Warning, "Dice room could not be updated."))
+        };
+    }
+
+    private async Task CreateNewDiceRoom()
+    {
+        IsLoading = true;
+        var id = Constants.GenerateId();
+        var dataString = JsonSerializer.Serialize(new { id, name = id });
+        var result = await Pb.CreateItem("dicerooms", dataString);
+        _ = result switch {
+            true => ToastService.ShowToast(new ToastMessage(ToastType.Info, "Created a new dice room.")),
+            false => ToastService.ShowToast(new ToastMessage(ToastType.Warning, "Could not create dice room."))
+        };
+
         if (result)
         {
-            await ToastService.ShowToast(new ToastMessage(ToastType.Info, "Dice room updated!."));
+            await UpdateDiceRoom(id);
         }
+        IsLoading = false;
     }
 
     protected override async Task OnInitializedAsync()
