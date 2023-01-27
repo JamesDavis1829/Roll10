@@ -48,6 +48,7 @@
             {
                 _ = Task.Run(async () =>
                 {
+                    DiceLogService.ClearLog();
                     await DiceLogService.SyncDiceLog();
                     GlobalRefreshService.CallRequestRefresh();
                     await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>

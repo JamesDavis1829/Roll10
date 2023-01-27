@@ -90,7 +90,6 @@ namespace Roll10.Services
             await CheckInitialization();
             var data = await _js.InvokeAsync<string>("getLoginInformation");
             var user = JsonSerializer.Deserialize<User>(data);
-            UserSubject.OnNext(user);
             return user;
         }
         
@@ -98,6 +97,8 @@ namespace Roll10.Services
         {
             await CheckInitialization();
             await _js.InvokeVoidAsync("updateAuth");
+            var user = await GetUser();
+            UserSubject.OnNext(user);
         }
 
         public async Task<List<T>> GetFullList<T>(string collectionName, string sort = "+created", string filter = "", string expand = "")
@@ -110,6 +111,12 @@ namespace Roll10.Services
         {
             await CheckInitialization();
             return await _js.InvokeAsync<bool>("createItem", collectionName, item);
+        }
+
+        public async Task<bool> UpdateItem(string collectionName, string recordId, object patchParams)
+        {
+            await CheckInitialization();
+            return await _js.InvokeAsync<bool>("patchItem", collectionName, recordId, patchParams);
         }
 
         public async Task LogOut()

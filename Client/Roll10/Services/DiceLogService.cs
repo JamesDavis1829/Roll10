@@ -60,7 +60,7 @@ namespace Roll10.Services
         private async Task AddEntry(DiceLogEntry entry, bool directPush = false)
         {
             var user = await _pb.GetUser();
-            if(string.IsNullOrEmpty(user?.diceroom) == false && directPush)
+            if(!string.IsNullOrEmpty(user?.diceroom) && !directPush)
             {
                 await _pb.CreateItem(_logCollectionName, entry with { room_id = user.diceroom });
                 return;
@@ -74,11 +74,6 @@ namespace Roll10.Services
                     $"<p class=\"text-center font-bold\">{entry.title}</p><p class=\"text-center italic\">{entry.diceroll}</p><p class=\"text-center font-bold text-lg\">{entry.rolledamount}</p>"
                 ));
             }
-        }
-
-        public Task JoinDiceRoom(string roomId)
-        {
-            throw new NotImplementedException();   
         }
 
         public void Dispose()

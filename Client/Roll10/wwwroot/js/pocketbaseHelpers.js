@@ -94,9 +94,17 @@ window.getFullList = async (collectionName, sort, filter, expand) => {
     }
 }
 
-window.patchItem = async (collectionName, recordId, data) => {
-    var parsedData = JSON.parse(data);
-    await window.pb.collection(collectionName).update(recordId, parsedData);
+window.patchItem = async (collectionName, recordId, stringData) => {
+    try {
+        let data = JSON.parse(stringData);
+        await window.pb.collection(collectionName).update(recordId, data);
+        return true;
+    }
+    catch(e)
+    {
+        console.error(e);
+        return false;
+    }
 }
 
 window.createItem = async (collectionName, data) => {

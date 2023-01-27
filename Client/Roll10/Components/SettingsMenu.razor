@@ -2,8 +2,12 @@
 @using Roll10.Services
 @using Roll10.Models
 @using System.Reactive
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.Forms
 @inject PocketbaseService Pb
 @inject DiceLogService DiceLogService
+@inject ToastService ToastService
 
 <div class="h-3">@*spacer*@</div>
 @if (!string.IsNullOrEmpty(CurrentUser?.email))
@@ -12,6 +16,19 @@
     <div class="text-center my-4">
         <btn class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" @onclick="LogOut">Log Out</btn>
     </div>
+    <EditForm Model="@_idForm" class="text-center my-4" OnValidSubmit="@UpdateDiceRoom">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="idEntry">
+            Dice Room
+        </label>
+        <InputText
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="idEntry"
+            @bind-Value="_idForm.IdEntry"/>
+        <div class="h-4"></div>
+        <ValidationSummary></ValidationSummary>
+        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit">Change Room</button>
+    </EditForm>
 }
 else
 {
@@ -25,11 +42,32 @@ else
     User? CurrentUser { get; set; } = null;
     private List<IDisposable> _subs = new();
 
+    public class IdFormModel
+    {
+        [Required]
+        [RegularExpression("[a-z0-9]{15}", ErrorMessage = "Id must be 15 characters" )]
+        public string? IdEntry { get; set; }
+    }
+
+    private IdFormModel _idForm = new();
+
+    private async Task UpdateDiceRoom()
+    {
+        var dataString = JsonSerializer.Serialize(new { diceroom = _idForm.IdEntry });
+        var result = await Pb.UpdateItem("users", CurrentUser?.id ?? "", dataString);
+        await Pb.UpdateUser();
+        if (result)
+        {
+            await ToastService.ShowToast(new ToastMessage(ToastType.Info, "Dice room updated!."));
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         _subs.Add(Pb.UserSubject.Subscribe(user =>
         {
             CurrentUser = user;
+            _idForm.IdEntry = user?.diceroom;
         }));
         await Pb.GetUser();
         await base.OnInitializedAsync();
