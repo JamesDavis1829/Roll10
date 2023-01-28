@@ -6,7 +6,7 @@
     <div class="flex justify-between">
         <div class="w-9/12 p-2">
             <p class="font-bold">@Name</p>
-            @if(!string.IsNullOrEmpty(@Item.dice_roll))
+            @if(!string.IsNullOrEmpty(Item.dice_roll))
             {
                 <p class="italic">Roll: @DiceService.HumanReadableRollString(@Item)</p>
             }
@@ -20,7 +20,7 @@
             @if(!HideDiceRoll)
             {
                 <img alt="image of dice for rolls" src="images/dice.svg" class="h-8 w-8 absolute top-2 right-2 hover:cursor-pointer"
-                    @onclick="() => RollDice(Item)" />
+                    @onclick="() => RollDice(Item)" data-id="@Item.id"/>
             }
         </div>
     </div>

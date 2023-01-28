@@ -14,7 +14,7 @@
         <div class="flex justify-center items-center flex-col p-3">
             @foreach(var option in Options)
             {
-                <button class="btn w-full bg-blue-500 hover:bg-blue-700 text-white m-1" type="button" @onclick="() => LoginWithOption(option)">@ToTitleCase(option.name)</button>
+                <button id='"login-with-" + @option.name' class="btn w-full bg-blue-500 hover:bg-blue-700 text-white m-1" type="button" @onclick="() => LoginWithOption(option)">@ToTitleCase(option.name)</button>
             }
             <br />
             <a class="btn w-full bg-gray-300 hover:bg-gray-400 m-1" href="/">Back</a>

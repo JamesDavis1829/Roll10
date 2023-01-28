@@ -6,13 +6,15 @@
 @inject DiceLogService DiceLogService
 
 
-<div class="flex justify-center">
+<div id="@TargetCharacter.id" class="flex justify-center">
     <div class="rounded shadow-lg shadow-slate-800 bg-slate-50 w-full m-5">
         <p class="text-center rounded-t font-extrabold text-white bg-slate-600 text-xl uppercase">@TargetCharacter.name</p>
         <div class="flex flex-wrap justify-center">
             @foreach (var stat in GetStats())
             {
-                <div class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800 hover:cursor-pointer"
+                <div
+                    id='@TargetCharacter.id + "-" + @stat.Item1'
+                    class="w-20 h-20 m-5 rounded-full border-4 border-slate-400 bg-slate-700 text-white shadow-lg shadow-slate-800 hover:cursor-pointer"
                      title="@stat.Item1" @onclick="@(() => RollStat(stat.Item2, stat.Item1))">
                     <div class="h-3"></div>
                     <p class="text-center font-bold">@stat.Item3</p>
@@ -24,10 +26,16 @@
                 <div class="h-3"></div>
                 <p class="text-center font-bold">@TargetCharacter.hp</p>
                 <p class="text-center font-bold select-none">HP</p>
-                <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(1, "HP"))'>
+                <div
+                    id='@TargetCharacter.id + "-hp-increment"'
+                    class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" 
+                    @onclick='@(() => ApplyStatOperation(1, "HP"))'>
                     <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
                 </div>
-                <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(-1, "HP"))'>
+                <div
+                    id='@TargetCharacter.id + "-hp-decrement"'
+                    class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" 
+                    @onclick='@(() => ApplyStatOperation(-1, "HP"))'>
                     <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
                 </div>
             </div>
@@ -36,10 +44,16 @@
                 <div class="h-3"></div>
                 <p class="text-center font-bold">@TargetCharacter.current_stamina</p>
                 <p class="text-center font-bold select-none">STA</p>
-                <div class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(1, "STA"))'>
+                <div
+                    id='@TargetCharacter.id + "-stamina-increment"'
+                    class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer" 
+                    @onclick='@(() => ApplyStatOperation(1, "STA"))'>
                     <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
                 </div>
-                <div class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" @onclick='@(() => ApplyStatOperation(-1, "STA"))'>
+                <div
+                    id='@TargetCharacter.id + "-stamina-decrement"'
+                    class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer" 
+                    @onclick='@(() => ApplyStatOperation(-1, "STA"))'>
                     <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
                 </div>
             </div>
@@ -126,7 +140,7 @@
         </div>
         <div class="flex flex-row justify-between">
             <div>
-                <button class="m-2" type="button" @onclick="@ResetCharacter">Reset</button>
+                <button id='@TargetCharacter.id + "-reset"' class="m-2" type="button" @onclick="@ResetCharacter">Reset</button>
             </div>
             <div class="flex flex-row">
             </div>
@@ -145,13 +159,15 @@
 
     private List<(string, string, int)> GetStats()
     {
-        var values = new List<(string, string, int)>();
-        values.Add(("Strength", "STR", TargetCharacter.strength));
-        values.Add(("Agility", "AGI", TargetCharacter.agility));
-        values.Add(("Durability", "DUR", TargetCharacter.durability));
-        values.Add(("Stamina", "STA", TargetCharacter.stamina));
-        values.Add(("Intelligence", "INT", TargetCharacter.intelligence));
-        values.Add(("Insight", "INS", TargetCharacter.insight));
+        var values = new List<(string, string, int)>
+        {
+            ("Strength", "STR", TargetCharacter.strength),
+            ("Agility", "AGI", TargetCharacter.agility),
+            ("Durability", "DUR", TargetCharacter.durability),
+            ("Stamina", "STA", TargetCharacter.stamina),
+            ("Intelligence", "INT", TargetCharacter.intelligence),
+            ("Insight", "INS", TargetCharacter.insight)
+        };
 
         return values;
     }
@@ -188,10 +204,5 @@
             modifiers = $"+ {stat}"
         };
         RollDice(statRoll);
-    }
-
-    public string FormatOpValString(string opValString)
-    {
-        return "";
     }
 }

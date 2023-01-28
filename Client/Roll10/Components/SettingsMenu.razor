@@ -19,26 +19,26 @@
     </div>
     <EditForm Model="@_idForm" class="text-center my-4" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator></DataAnnotationsValidator>
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="idEntry">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="dice-room-id-entry">
             Dice Room
         </label>
         <InputText
             class="input focus:outline-none focus:shadow-outline"
-            id="idEntry"
+            id="dice-room-id-entry"
             @bind-Value="_idForm.IdEntry"/>
         <div class="h-4"></div>
         <ValidationSummary></ValidationSummary>
-        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit">Change Room</button>
+        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit" id="dice-room-submit">Change Room</button>
     </EditForm>
     <div class="text-center my-4">
-        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" onclick="@CreateNewDiceRoom">Create New Room</button>
+        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" onclick="@CreateNewDiceRoom" id="create-new-dice-room">Create New Room</button>
     </div>
 }
 else
 {
     <p class="text-center">You must log in to use settings.</p>
     <div class="text-center my-4">
-        <a href="/login" class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer">Log In</a>
+        <a href="/login" id="login-button" class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer">Log In</a>
     </div>
 }
 
