@@ -10,7 +10,7 @@ let Setup () =
 [<Test>]
 let ApplyEffectAddsToStats () =
     let character = { Character.Default with hp = 10; durability = 20; current_stamina = 10; stamina = 13 }
-    let staminaCharacter = applyEffect character 2 "STA"
+    let staminaCharacter = applyEffect character 2 "sta"
     let hpCharacter = applyEffect character -9 "HP"
     
     Assert.AreEqual(staminaCharacter.current_stamina, 12)

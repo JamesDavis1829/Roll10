@@ -9,6 +9,7 @@
         <Compile Include="Helpers.fs" />
         <Compile Include="Rollable.fs" />
         <Compile Include="Character.fs" />
+        <Compile Include="Dice.fs" />
         <Compile Include="Library.fs" />
     </ItemGroup>
 

@@ -27,7 +27,7 @@ let applyEffect character op (stat:string) =
     match upperStat with
     | "STA" -> { character with current_stamina = Math.Clamp(character.current_stamina + op, 0, character.stamina)  }
     | "HP" -> { character with hp = Math.Clamp(character.hp + op, 0, character.durability)  }
-    | _ -> failwith $"Invalid effect applicant ({upperStat})"
+    | _ -> failwith $"Invalid effect applicator ({upperStat})"
     
 let parseEffect (effectString:string) =
     let parts = effectString.Split(" ") |> Array.toList |> removeEmptyStrings
@@ -50,4 +50,4 @@ let applyEffects character (effectString:string) =
             let (op, stat) = parseEffect head
             applyEffects (applyEffect character op stat) tail
     
-    applyEffects character effects    
+    applyEffects character effects

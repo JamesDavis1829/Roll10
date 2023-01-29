@@ -36,7 +36,7 @@ type Spell = {
 with
     static member Default = {name="";action_effect="";dice_roll="";modifiers="";intelligence_requirement=0;range="";description="";id="";add_base_dice=false}
 
-type Rollable = Item | Equipment | Spell
+type Rollable = Item of Item | Spell of Spell
 
 let shouldHideDiceRoll item =
     match item.category with
