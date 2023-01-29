@@ -1,0 +1,47 @@
+@page "/login"
+@using Roll10.Services
+@inject PocketbaseService Pb
+@inject IJSRuntime Js
+
+<div class="absolute grid h-screen w-screen place-items-center">
+    <div class="rounded-lg bg-slate-100 shadow-lg shadow-black p-5">
+        <div class="text-center">
+            <img src="images/dice.svg" class="h-10 y-10 m-auto"/>
+        </div>
+        <h1 class="text-center uppercase font-bold">Log in to Roll10</h1>
+        <hr />
+        <div class="h-2"></div>
+        <div class="flex justify-center items-center flex-col p-3">
+            @foreach(var option in Options)
+            {
+                <button id='"login-with-" + @option.name' class="btn w-full bg-blue-500 hover:bg-blue-700 text-white m-1" type="button" @onclick="() => LoginWithOption(option)">@ToTitleCase(option.name)</button>
+            }
+            <br />
+            <a class="btn w-full bg-gray-300 hover:bg-gray-400 m-1" href="/">Back</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<AuthOptions> Options {get;set;} = new List<AuthOptions>();
+    protected override async Task OnInitializedAsync()
+    {
+        Options = await Pb.GetAuthOptions();
+        await base.OnInitializedAsync();
+    }
+
+    private string ToTitleCase(string text)
+    {
+        return new System.Globalization.CultureInfo("en-US",false).TextInfo.ToTitleCase(text);
+    }
+
+    private async Task LoginWithOption(AuthOptions option)
+    {
+        await Js.InvokeVoidAsync("setLocalStorage", "provider", System.Text.Json.JsonSerializer.Serialize(option));
+        var origin = await Js.InvokeAsync<string>("getOrigin", null);
+        Console.WriteLine($"{option.authUrl}{origin}/redirect");
+        await Js.InvokeVoidAsync("setLocation", $"{option.authUrl}{origin}/redirect");
+    }
+}
+
+

@@ -1,5 +1,6 @@
 public interface IRollable
 {
+    string id { get; init; }
     bool add_base_dice {get; init;}
     string action_effect {get; init;}
     string dice_roll {get; init;}
@@ -9,6 +10,7 @@ public interface IRollable
 
 public class InlineRollable : IRollable
 {
+    public string id { get; init; } = "InlineRollable";
     public bool add_base_dice { get; init; }
     public string action_effect { get; init; } = "";
     public string dice_roll { get; init; } = "";

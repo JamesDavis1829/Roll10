@@ -1,20 +1,19 @@
 using Roll10.Models;
 
-namespace Roll10.DiceService
+namespace Roll10.Services
 {
-    public record DiceLogEntry(
-        string Title,
-        string DiceRoll,
-        string RolledAmount
-    );
 
-    public static class DiceService
+    public class DiceService
     {
-        private static List<string> OpList = new List<string> { "+", "-" };
+        private readonly DiceLogService _diceLogService;
+        private readonly List<string> _opList = new() { "+", "-" };
 
-        public static List<DiceLogEntry> DiceLog = new List<DiceLogEntry>();
+        public DiceService(DiceLogService diceLogService)
+        {
+            _diceLogService = diceLogService;
+        }
 
-        private static int StatSubstitute(Character character, string stat)
+        private int StatSubstitute(Character character, string stat)
         {
             return stat.ToUpper() switch 
             {
@@ -25,15 +24,19 @@ namespace Roll10.DiceService
                 "INT" => character.intelligence - Constants.DiceBase,
                 "INS" => character.insight - Constants.DiceBase,
                 "ARMOR" => PerformRoll(
-                                character, 
-                                new InlineRollable { dice_roll = string.Join(";",character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList()) }, 
-                                true
-                            ),
+                    character,
+                    new InlineRollable
+                    {
+                        dice_roll = string.Join(";",
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
+                    },
+                    true
+                ),
                 _ => 0
             };
         }
 
-        private static int DiceSubstitute(string diceString)
+        private int DiceSubstitute(string diceString)
         {
             var parts = diceString.Split("d");
             var output = 0;
@@ -46,7 +49,7 @@ namespace Roll10.DiceService
             return output;
         }
 
-        public static int PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public int PerformRoll(Character character, IRollable item, bool isSilent = false)
         {
             var readableRoll = "";
             var roll = 0;
@@ -66,15 +69,14 @@ namespace Roll10.DiceService
                     var substitutedNumber = 0;
                     var rolledValueLogEntry = "";
 
-                    if(parts[1].Contains("d"))
+                    if(parts[1].Contains('d'))
                     {
                         substitutedNumber = DiceSubstitute(parts[1]);
                         rolledValueLogEntry = parts[1];
                     }
                     else
                     {
-                        int staticValue;
-                        if(int.TryParse(parts[1], out staticValue))
+                        if(int.TryParse(parts[1], out var staticValue))
                         {
                             substitutedNumber = staticValue;
                             rolledValueLogEntry = parts[1];
@@ -99,23 +101,23 @@ namespace Roll10.DiceService
 
             if(!isSilent)
             {
-                DiceLog.Add(new DiceLogEntry(
+                _diceLogService.AddDiceLogEntrySubject.OnNext((new DiceLogEntry(
                     $"{character.name} - {item.name}",
                     RemoveTrailingOperation(readableRoll),
-                    roll.ToString()
-                ));
+                    roll,
+                    //new DateTime(),
+                    Constants.GenerateId()
+                ), false));
             }
 
             return roll;
         }
 
-        public static string HumanReadableRollString(IRollable item)
+        public string HumanReadableRollString(IRollable item)
         {
             var diceRoll = item.dice_roll
                 .Split(";")
-                .Select(d => {
-                    return string.Join(" ",d.Split(" ").Reverse());
-                });
+                .Select(d => string.Join(" ",d.Split(" ").Reverse()));
 
             if(item.add_base_dice)
             {
@@ -140,7 +142,7 @@ namespace Roll10.DiceService
             return RemoveTrailingOperation(rollString);
         }
 
-        private static string RemoveTrailingOperation(string rollString)
+        private string RemoveTrailingOperation(string rollString)
         {
             if(string.IsNullOrEmpty(rollString))
             {
@@ -148,7 +150,7 @@ namespace Roll10.DiceService
             }
 
             rollString = rollString.Trim();
-            if(OpList.Contains(rollString.Last().ToString()))
+            if(_opList.Contains(rollString.Last().ToString()))
             {
                 rollString = rollString.Substring(0, rollString.Length - 1);
             }
