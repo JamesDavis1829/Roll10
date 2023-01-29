@@ -2,8 +2,8 @@ namespace Roll10.Services
 {
     public enum ToastType 
     {
-        INFO = 0,
-        WARNING
+        Info = 0,
+        Warning
     }
 
     public record ToastMessage(
@@ -13,8 +13,8 @@ namespace Roll10.Services
 
     public class ToastService 
     {
-        public List<ToastMessage> Toasts = new List<ToastMessage>();
-        public GlobalRefreshService _refreshService;
+        public readonly List<ToastMessage> Toasts = new List<ToastMessage>();
+        private readonly GlobalRefreshService _refreshService;
 
         public ToastService(GlobalRefreshService refreshService)
         {

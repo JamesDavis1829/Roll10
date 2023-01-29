@@ -1,16 +1,18 @@
 using Roll10.Models;
 
+namespace Roll10.Services;
+
 public static class CharacterService 
 {
     public static Character ApplyEffect(Character character, int op, string stat)
     {
         return stat.ToUpper() switch {
             "STA" => character with { 
-                    current_stamina = Math.Clamp(character.current_stamina + op, 0, character.stamina) 
-                },
+                current_stamina = Math.Clamp(character.current_stamina + op, 0, character.stamina) 
+            },
             "HP" => character with { 
-                    hp = Math.Clamp(character.hp + op, 0, character.durability) 
-                },
+                hp = Math.Clamp(character.hp + op, 0, character.durability) 
+            },
             _ => throw new Exception("Unknown effect")
         };
     }
@@ -19,7 +21,7 @@ public static class CharacterService
         if(string.IsNullOrEmpty(effectString))
             return character;
             
-        var effectParts = effectString.Split(";");
+        var effectParts = effectString.Split(";").Where(p => !string.IsNullOrEmpty(p));
         return effectParts.Aggregate(character, (acc, x) => {
             var operationParts = x.Split(" ");
             var opValue = new {
@@ -35,25 +37,5 @@ public static class CharacterService
 
             return ApplyEffect(acc, operation, operationParts[2]);
         });
-    }
-
-    public static IRollable GetDefenceRoll(Character character)
-    {
-        var diceRoll = new List<string>();
-        foreach(var item in character.equipment)
-        {
-            if(item.category == "armor")
-            {
-                diceRoll.Add(item.dice_roll);
-            }
-        }
-
-        return new InlineRollable {
-            action_effect = "- 1 STA",
-            add_base_dice = true,
-            name = "Defend",
-            modifiers = "+ AGI",
-            dice_roll = string.Join(";",diceRoll)
-        };
     }
 }
