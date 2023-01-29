@@ -9,6 +9,7 @@ namespace Roll10.Models
         public string modifiers { get; init; } = "";
         public string name { get; init; } = "";
         public string description {get; init; } = "";
+        
         public bool all_character {get; init; }
     }
 }

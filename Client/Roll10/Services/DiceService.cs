@@ -17,12 +17,12 @@ namespace Roll10.Services
         {
             return stat.ToUpper() switch 
             {
-                "STR" => character.strength - Constants.DiceBase,
-                "AGI" => character.agility - Constants.DiceBase,
-                "DUR" => character.durability - Constants.DiceBase,
-                "STA" => character.stamina - Constants.DiceBase,
-                "INT" => character.intelligence - Constants.DiceBase,
-                "INS" => character.insight - Constants.DiceBase,
+                "STR" => character.strength - Helpers.DiceBase,
+                "AGI" => character.agility - Helpers.DiceBase,
+                "DUR" => character.durability - Helpers.DiceBase,
+                "STA" => character.stamina - Helpers.DiceBase,
+                "INT" => character.intelligence - Helpers.DiceBase,
+                "INS" => character.insight - Helpers.DiceBase,
                 "ARMOR" => PerformRoll(
                     character,
                     new InlineRollable
@@ -59,7 +59,7 @@ namespace Roll10.Services
                 var opList = item.dice_roll.Split(";").ToList();
                 if(item.add_base_dice)
                 {
-                    opList.Add($"+ 1d{Constants.DiceBase}");
+                    opList.Add($"+ 1d{Helpers.DiceBase}");
                 }
                 opList.AddRange(item.modifiers.Split(";").ToList());
                 opList = opList.Where(s => !string.IsNullOrEmpty(s)).ToList();
@@ -106,7 +106,7 @@ namespace Roll10.Services
                     RemoveTrailingOperation(readableRoll),
                     roll,
                     //new DateTime(),
-                    Constants.GenerateId()
+                    Helpers.GenerateId()
                 ), false));
             }
 
@@ -121,7 +121,7 @@ namespace Roll10.Services
 
             if(item.add_base_dice)
             {
-                diceRoll = diceRoll.Prepend($"1d{Constants.DiceBase} +");
+                diceRoll = diceRoll.Prepend($"1d{Helpers.DiceBase} +");
             }
 
             var modifiers = item.modifiers

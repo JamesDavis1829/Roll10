@@ -78,7 +78,7 @@ else
     private async Task CreateNewDiceRoom()
     {
         IsLoading = true;
-        var id = Constants.GenerateId();
+        var id = Helpers.GenerateId();
         var dataString = JsonSerializer.Serialize(new { id, name = id });
         var result = await Pb.CreateItem("dicerooms", dataString);
         _ = result switch {
