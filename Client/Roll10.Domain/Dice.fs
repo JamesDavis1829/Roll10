@@ -51,7 +51,7 @@ let diceSubstitute (diceString:string) =
             | _ ->
                 let roll = Random().Next(die) + 1
                 rollDie (acc+roll) (x-1)
-        rollDie numberOfRolls 0
+        rollDie 0 numberOfRolls
     else
         failwith $"Dice should be two parts found {parts.Length}"
 
@@ -59,7 +59,7 @@ let statSubstitute character (stat:string) performRoll =
     match stat.ToUpper() with
     | "STR" -> character.strength - BaseDice
     | "AGI" -> character.agility - BaseDice
-    | "DUR" -> character.agility - BaseDice
+    | "DUR" -> character.durability - BaseDice
     | "STA" -> character.stamina - BaseDice
     | "INT" -> character.intelligence - BaseDice
     | "INS" -> character.insight - BaseDice
@@ -75,7 +75,7 @@ let rec performRoll character (item: Rollable) =
     let rollText = List<string>();
     let rec processRolls acc (x:string list) =
         match x with
-        | [] -> 0
+        | [] -> acc
         | head :: tail -> 
             let parts = head.Split(" ")
             let subbedNumber =
@@ -94,5 +94,4 @@ let rec performRoll character (item: Rollable) =
             
             rollText.Add($"{parts[1]}({subbedNumber})")
             processRolls accumulatedRoll tail
-    
     (processRolls 0 (createRollList item)), String.Join(" + ", rollText)
