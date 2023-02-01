@@ -27,7 +27,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _characters = await Pb.GetFullList<Character>("characters","","","spells,equipment,inventory");
+        _characters = await Pb.GetFullList<Character>("characters","","","spells,equipment,inventory,actions");
         _characters = _characters.Select(c => c with { hp = c.durability, current_stamina = c.stamina }).ToList();
         _characterActions = await Pb.GetFullList<CharacterAction>("actions", "+created", "all_characters=true");
         
