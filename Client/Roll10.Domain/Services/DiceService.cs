@@ -6,7 +6,7 @@ namespace Roll10.Domain.Services
 
     public static class DiceService
     {
-        private static readonly List<string> _opList = new() { "+", "-" };
+        private static readonly List<string> OpList = new() { "+", "-" };
 
         private static int StatSubstitute(Character character, string stat)
         {
@@ -23,9 +23,10 @@ namespace Roll10.Domain.Services
                     new InlineRollable
                     {
                         dice_roll = string.Join(";",
-                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
-                    },
-                    true
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll)),
+                        modifiers = string.Join(";",
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.category)),
+                    }
                 ).Item1,
                 _ => 0
             };
@@ -44,7 +45,7 @@ namespace Roll10.Domain.Services
             return output;
         }
 
-        public static (int, string) PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public static (int, string) PerformRoll(Character character, IRollable item)
         {
             var readableRoll = "";
             var roll = 0;
@@ -133,7 +134,7 @@ namespace Roll10.Domain.Services
             }
 
             rollString = rollString.Trim();
-            if(_opList.Contains(rollString.Last().ToString()))
+            if(OpList.Contains(rollString.Last().ToString()))
             {
                 rollString = rollString.Substring(0, rollString.Length - 1);
             }

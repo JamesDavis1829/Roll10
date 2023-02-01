@@ -1,16 +1,10 @@
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
+using Roll10.Domain.Models;
 
 namespace Roll10.Services
 {
-    public record DiceLogEntry(
-        string title,
-        string diceroll,
-        int rolledamount,
-        //DateTime created,
-        string id,
-        string room_id = ""
-    );
+
 
     public class DiceLogService: IDisposable
     {
