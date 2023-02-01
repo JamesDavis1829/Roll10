@@ -1,4 +1,4 @@
-namespace Roll10.Services;
+namespace Roll10.Domain.Services;
 
 public static class Helpers
 {

@@ -24,7 +24,8 @@
         return message.Type switch
         {
             ToastType.Info => "bg-slate-50",
-            ToastType.Warning => "bg-red-50"
+            ToastType.Warning => "bg-red-50",
+            _ => ""
         };
     }
 }

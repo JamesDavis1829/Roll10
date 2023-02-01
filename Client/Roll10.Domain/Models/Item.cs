@@ -1,4 +1,6 @@
-namespace Roll10.Models
+using Roll10.Domain.Interfaces;
+
+namespace Roll10.Domain.Models
 {
     public record Item: IDbRecord, IRollable
     {
@@ -6,7 +8,7 @@ namespace Roll10.Models
         public int strength_requirement {get; init;}
         public int agility_requirement {get; init;}
         public int intelligence_requirement {get; init;}
-        public IEnumerable<string> wield {get; init;}
+        public IEnumerable<string> wield { get; init; } = new List<string>();
         public string action_effect {get; init;} = "";
         public string dice_roll {get; init;} = "";
         public string modifiers {get; init;} = "";

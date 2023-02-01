@@ -1,10 +1,11 @@
 @implements IDisposable
 @using Roll10.Services
-@using Roll10.Models
 @using System.Reactive
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
 @using Microsoft.AspNetCore.Components.Forms
+@using Roll10.Domain.Models
+@using Roll10.Domain.Services
 @inject PocketbaseService Pb
 @inject DiceLogService DiceLogService
 @inject ToastService ToastService

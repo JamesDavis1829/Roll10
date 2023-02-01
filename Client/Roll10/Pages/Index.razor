@@ -1,9 +1,9 @@
 ﻿@page "/"
 @implements IDisposable
-@using Roll10.Models
 @using Roll10.Components
 @using Roll10.Services
 @using System.Text.Json
+@using Roll10.Domain.Models
 @inject GlobalRefreshService GlobalRefreshService
 @inject DiceLogService DiceLogService
 @inject PocketbaseService Pb
@@ -51,7 +51,7 @@
                     DiceLogService.ClearLog();
                     await DiceLogService.SyncDiceLog();
                     GlobalRefreshService.CallRequestRefresh();
-                    await Pb.SubscribeTo("diceroomlogs", "*", async (message) =>
+                    await Pb.SubscribeTo("diceroomlogs", "*",  (message) =>
                     {
                         try
                         {
@@ -65,6 +65,7 @@
                         {
                             Console.WriteLine(e);
                         }
+                        return Task.CompletedTask;
                     });
                 });
             }

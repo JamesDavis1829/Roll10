@@ -1,4 +1,6 @@
-namespace Roll10.Models
+using Roll10.Domain.Interfaces;
+
+namespace Roll10.Domain.Models
 {
     public record Character : IDbRecord
     {

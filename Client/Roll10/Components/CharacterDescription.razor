@@ -1,8 +1,9 @@
-@using Roll10.Models
 @using Roll10.Services
+@using Roll10.Domain.Interfaces
+@using Roll10.Domain.Models
+@using Roll10.Domain.Services
 @inject GlobalRefreshService GlobalRefreshService
 @inject ToastService ToastService
-@inject DiceService DiceService
 @inject DiceLogService DiceLogService
 
 
@@ -180,7 +181,15 @@
 
     private void RollDice(IRollable item)
     {
-        DiceService.PerformRoll(TargetCharacter, item);
+        var results = DiceService.PerformRoll(TargetCharacter, item);
+        DiceLogService.AddDiceLogEntrySubject.OnNext((new DiceLogEntry(
+                $"{TargetCharacter.name} - {item.name}",
+                results.Item2,
+                results.Item1,
+                Helpers.GenerateId()
+            ), 
+            false)
+        );
         var effectedCharacter = CharacterService.ApplyEffects(TargetCharacter, item.action_effect);
         TargetCharacter = effectedCharacter;
         GlobalRefreshService.CallRequestRefresh();

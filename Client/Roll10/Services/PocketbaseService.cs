@@ -1,8 +1,8 @@
 using System.Reactive.Subjects;
 using Microsoft.JSInterop;
-using Roll10.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Roll10.Domain.Models;
 
 namespace Roll10.Services
 {

@@ -1,19 +1,14 @@
-using Roll10.Models;
+using Roll10.Domain.Interfaces;
+using Roll10.Domain.Models;
 
-namespace Roll10.Services
+namespace Roll10.Domain.Services
 {
 
-    public class DiceService
+    public static class DiceService
     {
-        private readonly DiceLogService _diceLogService;
-        private readonly List<string> _opList = new() { "+", "-" };
+        private static readonly List<string> _opList = new() { "+", "-" };
 
-        public DiceService(DiceLogService diceLogService)
-        {
-            _diceLogService = diceLogService;
-        }
-
-        private int StatSubstitute(Character character, string stat)
+        private static int StatSubstitute(Character character, string stat)
         {
             return stat.ToUpper() switch 
             {
@@ -31,12 +26,12 @@ namespace Roll10.Services
                             character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
                     },
                     true
-                ),
+                ).Item1,
                 _ => 0
             };
         }
 
-        private int DiceSubstitute(string diceString)
+        private static int DiceSubstitute(string diceString)
         {
             var parts = diceString.Split("d");
             var output = 0;
@@ -49,7 +44,7 @@ namespace Roll10.Services
             return output;
         }
 
-        public int PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public static (int, string) PerformRoll(Character character, IRollable item, bool isSilent = false)
         {
             var readableRoll = "";
             var roll = 0;
@@ -98,22 +93,10 @@ namespace Roll10.Services
                     };
                 });
             }
-
-            if(!isSilent)
-            {
-                _diceLogService.AddDiceLogEntrySubject.OnNext((new DiceLogEntry(
-                    $"{character.name} - {item.name}",
-                    RemoveTrailingOperation(readableRoll),
-                    roll,
-                    //new DateTime(),
-                    Helpers.GenerateId()
-                ), false));
-            }
-
-            return roll;
+            return (roll, RemoveTrailingOperation(readableRoll));
         }
 
-        public string HumanReadableRollString(IRollable item)
+        public static string HumanReadableRollString(IRollable item)
         {
             var diceRoll = item.dice_roll
                 .Split(";")
@@ -142,7 +125,7 @@ namespace Roll10.Services
             return RemoveTrailingOperation(rollString);
         }
 
-        private string RemoveTrailingOperation(string rollString)
+        private static string RemoveTrailingOperation(string rollString)
         {
             if(string.IsNullOrEmpty(rollString))
             {

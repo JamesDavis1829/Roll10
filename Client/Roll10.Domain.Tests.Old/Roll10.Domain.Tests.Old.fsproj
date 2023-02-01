@@ -5,6 +5,7 @@
 
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <RootNamespace>Roll10.Domain.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,10 +22,6 @@
         <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
         <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
         <PackageReference Include="coverlet.collector" Version="3.1.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Roll10.Domain\Roll10.Domain.fsproj" />
     </ItemGroup>
 
 </Project>

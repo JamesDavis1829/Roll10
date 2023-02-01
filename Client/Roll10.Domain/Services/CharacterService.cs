@@ -1,6 +1,6 @@
-using Roll10.Models;
+using Roll10.Domain.Models;
 
-namespace Roll10.Services;
+namespace Roll10.Domain.Services;
 
 public static class CharacterService 
 {
