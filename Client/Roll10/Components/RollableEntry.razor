@@ -46,14 +46,11 @@
     private string FormatOpValString(string opValString)
     {
         return string.Join(" ", opValString
-                .Split(";")
-                .Select(m => {
-                    var parts = m.Split(" ");
-                    if(parts.Count() > 2)
-                    {
-                        parts[2] = parts[2].ToUpper();
-                    }
-                    return string.Join(" ", parts);
-                }));
+            .Split(";")
+            .Select(m =>
+            {
+                var parts = m.ToUpper().Split(" ");
+                return string.Join(" ", parts);
+            }));
     }
 }

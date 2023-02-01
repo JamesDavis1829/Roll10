@@ -18,5 +18,6 @@ namespace Roll10.Domain.Models
         public IEnumerable<Item> inventory {get; set;} = new List<Item>();
         public IEnumerable<CharacterAction> actions { get; set; } = new List<CharacterAction>();
         public string id {get; init;} = "";
+        public string caster_type { get; init; } = "";
     }
 }
