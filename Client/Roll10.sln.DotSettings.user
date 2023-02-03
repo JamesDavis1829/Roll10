@@ -20,6 +20,7 @@
     &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.DiceServiceTests.PerformRoll&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.HelperTests.CanCreateId&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.ItemServiceTests.HideDiceRollWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.DiceServiceTests.HumanReadableEffectString&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e5359ede_002D06b0_002D47af_002D8976_002D38b162812724/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CharacterTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;

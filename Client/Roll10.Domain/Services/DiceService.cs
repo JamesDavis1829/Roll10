@@ -125,6 +125,25 @@ namespace Roll10.Domain.Services
             return RemoveTrailingOperation(rollString);
         }
 
+        public static string HumanReadableEffectString(Character character, IRollable rollable)
+        {
+            var parts = rollable.action_effect.Split(";").Where(s => !string.IsNullOrEmpty(s));
+
+            var condensed = parts.GroupBy(p => p.Split(" ")[2]).Select(g =>
+            {
+                var roll = g.AsEnumerable().Select(p => p.Split(" ").Take(2)).Select(p => string.Join("", p));
+                var finalVal = roll.Aggregate(0, (acc, x) => acc + CharacterService.SubstituteEffectValue(character, x.Replace("+", "")));
+                return $"{(finalVal >= 0 ? '+' : '-')} {Math.Abs(finalVal)} {g.Key}";
+            });
+
+            return string.Join(" ", condensed
+                .Select(m =>
+                {
+                    var parts = m.ToUpper().Split(" ");
+                    return string.Join(" ", parts);
+                }));
+        }
+
         private static string RemoveTrailingOperation(string rollString)
         {
             if(string.IsNullOrEmpty(rollString))

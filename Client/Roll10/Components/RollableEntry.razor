@@ -13,7 +13,7 @@
             }
             @if (!string.IsNullOrEmpty(Item.action_effect))
             {
-                <p class="italic">Effect: @FormatOpValString(@Item.action_effect)</p>
+                <p class="italic">Effect: @DiceService.HumanReadableEffectString(Character, Item)</p>
             }
             @ChildContent
         </div>
@@ -31,14 +31,19 @@
 {
     [Parameter]
     public string Name { get; set; } = "";
+    
     [Parameter]
     public RenderFragment? ChildContent { get;set; }
-
+    
+    [Parameter]
+    public Character Character { get; set; }
+    
     [Parameter]
     public IRollable Item { get; set; } = new Item();
 
     [Parameter]
     public Action<IRollable> RollDice { get; set; } = (arg) => { };
+    
     [Parameter]
     public bool HideDiceRoll { get;set; } = false;
 

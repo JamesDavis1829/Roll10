@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using Roll10.Domain.Interfaces;
 using Roll10.Domain.Models;
 using Roll10.Domain.Services;
 
@@ -44,5 +45,16 @@ public class DiceServiceTests
         
         Assert.That(roll, Is.LessThanOrEqualTo(24).And.GreaterThanOrEqualTo(2));
         Assert.That(new Regex(@"3d8\(\d+\) \+ STA\(-1\) \+ DUR\(1\)").IsMatch(rollString), Is.True);
+    }
+
+    [Test]
+    public void HumanReadableEffectString()
+    {
+        var rollable = new InlineRollable { action_effect = "- 2 STA;+ CASTERMOD STA;+ 2 HP;" };
+        var character = new Character { caster_type = "full" };
+
+        var rollString = DiceService.HumanReadableEffectString(character, rollable);
+        
+        Assert.That(rollString, Is.EqualTo("+ 1 STA + 2 HP"));
     }
 }

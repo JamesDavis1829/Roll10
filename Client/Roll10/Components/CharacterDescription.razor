@@ -71,7 +71,7 @@
                     {
                         foreach (var action in AllCharacterActions.Concat(TargetCharacter.actions))
                         {
-                            <RollableEntry Name="@action.name" Item="@action" RollDice="@RollDice">
+                            <RollableEntry Name="@action.name" Item="@action" RollDice="@RollDice" Character="@Character">
                                 @if (!string.IsNullOrEmpty(action.description))
                                 {
                                     <p class="italic">Description: @action.description</p>
@@ -92,7 +92,7 @@
                     {
                         foreach (var item in TargetCharacter.equipment)
                         {
-                            <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice" HideDiceRoll="@ItemService.HideDiceRoll(item)">
+                            <RollableEntry Name="@item.name" Item="@item" RollDice="@RollDice" HideDiceRoll="@ItemService.HideDiceRoll(item)" Character="@Character">
                                 @if (item.wield.Any())
                                 {
                                     <p class="italic">Wielding: @string.Join(", ",item.wield)</p>
@@ -123,7 +123,7 @@
                     {
                         foreach (var spell in TargetCharacter.spells)
                         {
-                            <RollableEntry Name="@spell.name" Item="@spell" RollDice="@RollDice">
+                            <RollableEntry Name="@spell.name" Item="@spell" RollDice="@RollDice" Character="@Character">
                                 @if (!string.IsNullOrEmpty(spell.range))
                                 {
                                     <p class="italic">Range: @spell.range</p>

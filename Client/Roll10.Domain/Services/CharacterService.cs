@@ -55,7 +55,7 @@ public static class CharacterService
         return ApplyMaxAndMinimums(effectedCharacter);
     }
     
-    private static int SubstituteEffectValue(Character character, string val)
+    public static int SubstituteEffectValue(Character character, string val)
     {
         return val.ToUpper() switch
         {
