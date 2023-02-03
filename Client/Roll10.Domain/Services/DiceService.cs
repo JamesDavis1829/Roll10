@@ -101,6 +101,7 @@ namespace Roll10.Domain.Services
         {
             var diceRoll = item.dice_roll
                 .Split(";")
+                .Where(s => !string.IsNullOrEmpty(s))
                 .Select(d => string.Join(" ",d.Split(" ").Reverse()));
 
             if(item.add_base_dice)
@@ -110,6 +111,7 @@ namespace Roll10.Domain.Services
 
             var modifiers = item.modifiers
                 .Split(";")
+                .Where(s => !string.IsNullOrEmpty(s))
                 .Select(m => {
                     var parts = m.Split(" ");
                     if(parts.Count() > 1)
@@ -120,9 +122,6 @@ namespace Roll10.Domain.Services
                 });
 
             var rollString = string.Join(" ", diceRoll.Concat(modifiers));
-            
-            
-
             return RemoveTrailingOperation(rollString);
         }
 

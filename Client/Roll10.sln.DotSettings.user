@@ -10,26 +10,21 @@
     &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.RollableTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d253b424_002D69b6_002D4df6_002Da808_002D8595d7af0232/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CharacterTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d253b424_002D69b6_002D4df6_002Da808_002D8595d7af0232/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CharacterTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.CharacterTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.CreateRollListWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.HumanReadableWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.DiceSubstituteWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.HelperTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.RollableTests&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.Tests.CharacterMaxAndMinWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.Tests.ApplyEffectWithoutMaxAndMinWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.Tests.ApplyEffectWithMaxAndMinWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.Tests.ApplyEffectsWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.DiceServiceTests.HumanReadableRollWorks&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.DiceServiceTests.PerformRoll&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.HelperTests.CanCreateId&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.ItemServiceTests.HideDiceRollWorks&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e5359ede_002D06b0_002D47af_002D8976_002D38b162812724/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CharacterTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e5359ede_002D06b0_002D47af_002D8976_002D38b162812724/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CharacterTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.CharacterTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.CreateRollListWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.HumanReadableWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests.DiceSubstituteWorks&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.DiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.HelperTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::5D67B823-30FC-4F7F-9C1E-07789A236596::net7.0::Roll10.Domain.Tests.RollableTests&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::3A90AD33-19C4-4E75-83DA-98962A01AE02::net7.0::Roll10.Domain.Tests.Tests.CharacterMaxAndMinWorks&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Rollable/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

@@ -17,9 +17,9 @@ namespace Roll10.Domain.Models
         public Spell(string name, string action_effect, string dice_roll, string modifiers, int intelligence_requirement, string range, string description, string id, bool add_base_dice)
         {
             this.name = name;
+            //All spells will have their caster mods added
             this.action_effect = action_effect + "+ castermod sta;";
             this.dice_roll = dice_roll;
-            //All spells will have their caster mods added
             this.modifiers = modifiers;
             this.intelligence_requirement = intelligence_requirement;
             this.range = range;
