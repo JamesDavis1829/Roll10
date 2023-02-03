@@ -13,7 +13,7 @@ namespace Roll10.Services
 
     public class ToastService 
     {
-        public readonly List<ToastMessage> Toasts = new List<ToastMessage>();
+        public readonly List<ToastMessage> Toasts = new();
         private readonly GlobalRefreshService _refreshService;
 
         public ToastService(GlobalRefreshService refreshService)

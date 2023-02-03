@@ -1,4 +1,4 @@
-namespace Roll10.Models
+namespace Roll10.Domain.Interfaces
 {
     public interface IDbRecord 
     {

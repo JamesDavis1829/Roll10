@@ -1,42 +1,38 @@
-using Roll10.Models;
+using Roll10.Domain.Interfaces;
+using Roll10.Domain.Models;
 
-namespace Roll10.Services
+namespace Roll10.Domain.Services
 {
 
-    public class DiceService
+    public static class DiceService
     {
-        private readonly DiceLogService _diceLogService;
-        private readonly List<string> _opList = new() { "+", "-" };
+        private static readonly List<string> OpList = new() { "+", "-" };
 
-        public DiceService(DiceLogService diceLogService)
-        {
-            _diceLogService = diceLogService;
-        }
-
-        private int StatSubstitute(Character character, string stat)
+        private static int StatSubstitute(Character character, string stat)
         {
             return stat.ToUpper() switch 
             {
-                "STR" => character.strength - Constants.DiceBase,
-                "AGI" => character.agility - Constants.DiceBase,
-                "DUR" => character.durability - Constants.DiceBase,
-                "STA" => character.stamina - Constants.DiceBase,
-                "INT" => character.intelligence - Constants.DiceBase,
-                "INS" => character.insight - Constants.DiceBase,
+                "STR" => character.strength - Helpers.DiceBase,
+                "AGI" => character.agility - Helpers.DiceBase,
+                "DUR" => character.durability - Helpers.DiceBase,
+                "STA" => character.stamina - Helpers.DiceBase,
+                "INT" => character.intelligence - Helpers.DiceBase,
+                "INS" => character.insight - Helpers.DiceBase,
                 "ARMOR" => PerformRoll(
                     character,
                     new InlineRollable
                     {
                         dice_roll = string.Join(";",
-                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll).ToList())
-                    },
-                    true
-                ),
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll)),
+                        modifiers = string.Join(";",
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.category)),
+                    }
+                ).Item1,
                 _ => 0
             };
         }
 
-        private int DiceSubstitute(string diceString)
+        private static int DiceSubstitute(string diceString)
         {
             var parts = diceString.Split("d");
             var output = 0;
@@ -49,7 +45,7 @@ namespace Roll10.Services
             return output;
         }
 
-        public int PerformRoll(Character character, IRollable item, bool isSilent = false)
+        public static (int, string) PerformRoll(Character character, IRollable item)
         {
             var readableRoll = "";
             var roll = 0;
@@ -59,7 +55,7 @@ namespace Roll10.Services
                 var opList = item.dice_roll.Split(";").ToList();
                 if(item.add_base_dice)
                 {
-                    opList.Add($"+ 1d{Constants.DiceBase}");
+                    opList.Add($"+ 1d{Helpers.DiceBase}");
                 }
                 opList.AddRange(item.modifiers.Split(";").ToList());
                 opList = opList.Where(s => !string.IsNullOrEmpty(s)).ToList();
@@ -98,34 +94,24 @@ namespace Roll10.Services
                     };
                 });
             }
-
-            if(!isSilent)
-            {
-                _diceLogService.AddDiceLogEntrySubject.OnNext((new DiceLogEntry(
-                    $"{character.name} - {item.name}",
-                    RemoveTrailingOperation(readableRoll),
-                    roll,
-                    //new DateTime(),
-                    Constants.GenerateId()
-                ), false));
-            }
-
-            return roll;
+            return (roll, RemoveTrailingOperation(readableRoll));
         }
 
-        public string HumanReadableRollString(IRollable item)
+        public static string HumanReadableRollString(IRollable item)
         {
             var diceRoll = item.dice_roll
                 .Split(";")
+                .Where(s => !string.IsNullOrEmpty(s))
                 .Select(d => string.Join(" ",d.Split(" ").Reverse()));
 
             if(item.add_base_dice)
             {
-                diceRoll = diceRoll.Prepend($"1d{Constants.DiceBase} +");
+                diceRoll = diceRoll.Prepend($"1d{Helpers.DiceBase} +");
             }
 
             var modifiers = item.modifiers
                 .Split(";")
+                .Where(s => !string.IsNullOrEmpty(s))
                 .Select(m => {
                     var parts = m.Split(" ");
                     if(parts.Count() > 1)
@@ -136,13 +122,10 @@ namespace Roll10.Services
                 });
 
             var rollString = string.Join(" ", diceRoll.Concat(modifiers));
-            
-            
-
             return RemoveTrailingOperation(rollString);
         }
 
-        private string RemoveTrailingOperation(string rollString)
+        private static string RemoveTrailingOperation(string rollString)
         {
             if(string.IsNullOrEmpty(rollString))
             {
@@ -150,7 +133,7 @@ namespace Roll10.Services
             }
 
             rollString = rollString.Trim();
-            if(_opList.Contains(rollString.Last().ToString()))
+            if(OpList.Contains(rollString.Last().ToString()))
             {
                 rollString = rollString.Substring(0, rollString.Length - 1);
             }

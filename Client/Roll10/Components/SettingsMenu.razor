@@ -1,10 +1,11 @@
 @implements IDisposable
 @using Roll10.Services
-@using Roll10.Models
 @using System.Reactive
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
 @using Microsoft.AspNetCore.Components.Forms
+@using Roll10.Domain.Models
+@using Roll10.Domain.Services
 @inject PocketbaseService Pb
 @inject DiceLogService DiceLogService
 @inject ToastService ToastService
@@ -28,7 +29,7 @@
             @bind-Value="_idForm.IdEntry"/>
         <div class="h-4"></div>
         <ValidationSummary></ValidationSummary>
-        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit" id="dice-room-submit">Change Room</button>
+        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit" id="dice-room-submit">Join Room</button>
     </EditForm>
     <div class="text-center my-4">
         <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" onclick="@CreateNewDiceRoom" id="create-new-dice-room">Create New Room</button>
@@ -78,7 +79,7 @@ else
     private async Task CreateNewDiceRoom()
     {
         IsLoading = true;
-        var id = Constants.GenerateId();
+        var id = Helpers.GenerateId();
         var dataString = JsonSerializer.Serialize(new { id, name = id });
         var result = await Pb.CreateItem("dicerooms", dataString);
         _ = result switch {

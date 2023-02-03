@@ -1,8 +1,8 @@
 using System.Reactive.Subjects;
 using Microsoft.JSInterop;
-using Roll10.Models;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Roll10.Domain.Models;
 
 namespace Roll10.Services
 {
@@ -18,7 +18,7 @@ namespace Roll10.Services
     public class PocketbaseService 
     {
         private readonly IJSRuntime _js;
-        private bool _isInitialized = false;
+        private bool _isInitialized;
         private static readonly Dictionary<string, Func<string, Task>> Callbacks = new ();
         public BehaviorSubject<bool> LoginSubject { get; }
         public BehaviorSubject<User?> UserSubject { get; }
