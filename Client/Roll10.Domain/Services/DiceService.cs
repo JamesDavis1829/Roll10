@@ -25,7 +25,7 @@ namespace Roll10.Domain.Services
                         dice_roll = string.Join(";",
                             character.equipment.Where(e => e.category == "armor").Select(a => a.dice_roll)),
                         modifiers = string.Join(";",
-                            character.equipment.Where(e => e.category == "armor").Select(a => a.category)),
+                            character.equipment.Where(e => e.category == "armor").Select(a => a.modifiers)),
                     }
                 ).Item1,
                 _ => 0
