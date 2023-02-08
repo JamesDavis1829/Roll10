@@ -1,1 +1,1 @@
-npx tailwindcss -i input.css -o ../Roll10/wwwroot/css/main.css --watch
+npx tailwindcss -i input.css -o ../Roll10Angular/src/assets/main.css --watch

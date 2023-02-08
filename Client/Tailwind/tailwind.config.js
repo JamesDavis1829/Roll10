@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["../Roll10/**/*.{html,js,razor}"],
+  content: ["../Roll10Angular/**/*.{html,js,razor}"],
   theme: {
     extend: {},
   },
