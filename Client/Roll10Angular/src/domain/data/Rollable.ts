@@ -1,9 +1,10 @@
 import { BaseDice, RemoveTrailingOperation } from "src/Helpers";
 import { match } from "ts-pattern";
-import { ICharacter, SubstituteEffectValue } from "./Character";
+import { CharacterStats, ICharacter, StatSubstitue, SubstituteEffectValue } from "./Character";
 import * as _ from "lodash";
 
-export interface IRollable {
+export interface IRollable 
+{
     id: string;
     add_base_dice: boolean;
     action_effect: string;
@@ -12,7 +13,8 @@ export interface IRollable {
     name: string;
 }
 
-export function DiceSubstitute(diceString: string) {
+export function DiceSubstitute(diceString: string)
+{
     var parts = diceString.split("d");
     var rolls = parseInt(parts[0]);
     var maxValue = parseInt(parts[1]);
@@ -23,29 +25,8 @@ export function DiceSubstitute(diceString: string) {
     }, 0)
 }
 
-type CharacterStats = "STR" | "AGI" | "DUR" | "STA" | "INT" | "INS" | "ARMOR"
-
-export function StatSubstitue(character: ICharacter, stat: CharacterStats)
+export function PerformRoll(character: ICharacter, item: IRollable): { rollString: string, roll: number } 
 {
-    return match(stat)
-        .with("STR", () => { return character.strength - BaseDice })
-        .with("AGI", () => { return character.agility - BaseDice })
-        .with("DUR", () => { return character.durability - BaseDice })
-        .with("STA", () => { return character.stamina - BaseDice })
-        .with("INT", () => { return character.intelligence - BaseDice })
-        .with("INS", () => { return character.insight - BaseDice })
-        .with("ARMOR", () => { return PerformRoll(character, {
-            dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
-            modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
-            id: "",
-            add_base_dice : false,
-            action_effect: "",
-            name: ""
-        }).roll})
-        .exhaustive();
-}
-
-export function PerformRoll(character: ICharacter, item: IRollable): { rollString: string, roll: number } {
     var roll = 0;
     var rollString = "";
 
