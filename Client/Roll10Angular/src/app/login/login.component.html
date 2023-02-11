@@ -1,0 +1,17 @@
+<div class="absolute grid h-screen w-screen place-items-center">
+    <div class="rounded-lg bg-slate-100 shadow-lg shadow-black p-5">
+        <div class="text-center">
+            <img src="assets/images/dice.svg" class="h-10 y-10 m-auto"/>
+        </div>
+        <h1 class="text-center uppercase font-bold">Log in to Roll10</h1>
+        <hr />
+        <div class="h-2"></div>
+        <div class="flex justify-center items-center flex-col p-3">
+            <ng-container *ngFor="let option of authMethods.authProviders">
+                <button [id]='"login-with-" + option.name' class="btn w-full bg-blue-500 hover:bg-blue-700 text-white m-1" type="button" (click)="LoginWithOption(option)">{{ToTitleCase(option.name)}}</button>
+            </ng-container>
+            <br />
+            <a class="btn w-full bg-gray-300 hover:bg-gray-400 m-1" href="/">Back</a>
+        </div>
+    </div>
+</div>

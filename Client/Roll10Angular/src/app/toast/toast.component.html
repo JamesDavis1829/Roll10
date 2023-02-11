@@ -1,0 +1,10 @@
+<div class="fixed top-0 left-1/2 -translate-x-1/2 flex flex-col items-center z-50">
+    <ng-container *ngFor="let toastMessage of toastService.toastList">
+        <div [ngClass]="{
+          'z-10 p-2 m-2 rounded-md shadow-xl shadow-slate-900': true,
+          'bg-slate-50': toastMessage.type == 'Info',
+          'bg-red-50': toastMessage.type == 'Warning'
+        }" [innerHTML]="toastMessage.message">
+        </div>
+    </ng-container>
+</div>
