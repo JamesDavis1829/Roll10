@@ -4,21 +4,19 @@ export type Nullable<T> = T | null;
 
 export const Clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
-export const GenerateId = () => 
+export const GenerateId = () =>
 {
     const chars = "abcdefghijklmopqrstuvwxyz";
-    return Array(15).map(_ => {
-        return chars[Math.random() * chars.length]
-    }).reduce((acc, val) => {
-        return acc + val;
-    })
+    return [...Array(15).keys()].map(_ => {
+        return chars.charAt(Math.random() * chars.length);
+    }).join('');
 }
 
-export const RemoveTrailingOperation = (rollString: string) => 
+export const RemoveTrailingOperation = (rollString: string) =>
 {
     if(!rollString)
         return "";
-    
+
     rollString = rollString.trim();
     if(["+","-"].includes(rollString))
     {

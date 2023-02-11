@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import PocketBase, { Admin, Record } from "pocketbase";
-import { BehaviorSubject } from 'rxjs';
-import { Url } from 'src/Configuration';
-import { ForceCast, Nullable } from 'src/Helpers';
-import { IUser } from "../domain/data/User";
+import {Injectable} from '@angular/core';
+import PocketBase, {Admin, Record} from "pocketbase";
+import {BehaviorSubject} from 'rxjs';
+import {Url} from 'src/Configuration';
+import {ForceCast, Nullable} from 'src/Helpers';
+import {IUser} from "../domain/data/User";
 
 export interface IAuthOptions {
   authUrl: string
@@ -18,7 +18,7 @@ export interface IAuthOptions {
   providedIn: 'root'
 })
 export class PocketBaseService {
-  
+
   private pb = new PocketBase(Url);
   public userSubject = new BehaviorSubject<Nullable<IUser>>(null);
   public callbacks: {
@@ -53,7 +53,7 @@ export class PocketBaseService {
     try
     {
       let newUser = await this.pb.collection("users").authRefresh();
-      this.userSubject.next(ForceCast<IUser>(newUser.token));
+      this.userSubject.next(ForceCast<IUser>(newUser.record));
     }
     catch(e)
     {
@@ -72,21 +72,16 @@ export class PocketBaseService {
             expand
         });
         let expandList = (expand || "").split(",");
-        let castedList = list.map(l => {
-            for(let entry of expandList)
-            {
-                if(l["expand"][entry])
-                {
-                    l[entry] = l["expand"][entry]
-                }
-                else
-                {
-                    l[entry] = [];
-                }
+        return list.map(l => {
+          for (let entry of expandList) {
+            if (l["expand"][entry]) {
+              l[entry] = l["expand"][entry]
+            } else {
+              l[entry] = [];
             }
-            return l;
+          }
+          return l;
         }).map(l => ForceCast<T>(l));
-        return castedList;
     }
     catch(e)
     {
@@ -95,7 +90,7 @@ export class PocketBaseService {
     }
   }
 
-  public async CreateItem<T extends {}>(collection: string, item: T)
+  public async CreateItem<T extends {}>(collection: string, item: Partial<T>)
   {
     try
     {
@@ -135,5 +130,33 @@ export class PocketBaseService {
     this.pb.collection(collection).subscribe(pattern, (e) => {
       this.callbacks[collection](e.record);
     });
+  }
+
+  public async HandleAuthRedirect()
+  {
+    const redirectUrl = window.location.origin + '/redirect';
+
+    // parse the query parameters from the redirected url
+    const params = (new URL(window.location.toString())).searchParams;
+
+    // load the previously stored provider's data
+    const provider = JSON.parse(localStorage.getItem('provider') ?? "{}")
+
+    // compare the redirect's state param and the stored provider's one
+    if (provider.state !== params.get('state')) {
+        throw "State parameters don't match.";
+    }
+
+    // authenticate
+    return this.pb.collection('users').authWithOAuth2(
+        provider.name,
+        params.get('code') ?? "",
+        provider.codeVerifier,
+        redirectUrl,
+        // pass optional user create data
+        {
+            emailVisibility: false,
+        }
+    );
   }
 }
