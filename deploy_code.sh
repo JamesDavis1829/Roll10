@@ -1,4 +1,5 @@
 cd ./Client/Roll10Angular
+npm install
 npm run build
 cd ../../
 sudo rm -r ./Server/pb_public
