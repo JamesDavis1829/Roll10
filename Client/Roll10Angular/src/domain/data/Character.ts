@@ -4,8 +4,9 @@ import { IItem } from './Item';
 import { ISpell } from "./Spell";
 import { match } from "ts-pattern";
 import { PerformRoll } from './Rollable';
+import {ICharacterAction} from "./CharacterAction";
 
-export interface ICharacter extends IDbRecord 
+export interface ICharacter extends IDbRecord
 {
     name: string;
     strength: number;
@@ -20,13 +21,19 @@ export interface ICharacter extends IDbRecord
     equipment: Array<IItem>;
     inventory: Array<IItem>;
     caster_type: "none" | "quarter" | "half" | "full";
+    actions: Array<ICharacterAction>;
+}
+
+export const defaultCharacter:ICharacter = {
+  actions: [], hp: 0, name: "", insight: 0, agility: 0, caster_type: "none", current_stamina: 0, durability: 0,
+  equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0
 }
 
 export type StatOperands = "STA" | "HP";
 
 export type CharacterStats = "STR" | "AGI" | "DUR" | "STA" | "INT" | "INS" | "ARMOR"
 
-export function StatSubstitue(character: ICharacter, stat: CharacterStats)
+export function StatSubstitute(character: ICharacter, stat: CharacterStats)
 {
     return match(stat)
         .with("STR", () => { return character.strength - BaseDice })
@@ -35,7 +42,8 @@ export function StatSubstitue(character: ICharacter, stat: CharacterStats)
         .with("STA", () => { return character.stamina - BaseDice })
         .with("INT", () => { return character.intelligence - BaseDice })
         .with("INS", () => { return character.insight - BaseDice })
-        .with("ARMOR", () => { return PerformRoll(character, {
+        .with("ARMOR", () => {
+          return PerformRoll(character, {
             dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
             modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
             id: "",
@@ -46,7 +54,7 @@ export function StatSubstitue(character: ICharacter, stat: CharacterStats)
         .exhaustive();
 }
 
-export function ApplyMaxAndMinimums(character: ICharacter): ICharacter 
+export function ApplyMaxAndMinimums(character: ICharacter): ICharacter
 {
     return  {
         ...character,
@@ -55,9 +63,9 @@ export function ApplyMaxAndMinimums(character: ICharacter): ICharacter
     }
 }
 
-export function ApplyEffect(character: ICharacter, op: number, stat: StatOperands, applyMaxAndMin = true): ICharacter 
+export function ApplyEffect(character: ICharacter, op: number, stat: StatOperands, applyMaxAndMin = true): ICharacter
 {
-    var appliedCharacter = match(stat)
+    var appliedCharacter = match(stat.toUpperCase() as StatOperands)
         .with("STA", () => { return {...character, current_stamina: character.current_stamina + op}})
         .with("HP", () => { return {...character, hp: character.hp + op}})
         .exhaustive()
@@ -72,18 +80,18 @@ export function ApplyEffects(character: ICharacter, effectString: string): IChar
 {
     if(!effectString)
         return {...character};
-    
-    var effects = effectString.split(";").filter(e => !e);
+
+    var effects = effectString.split(";").filter(e => !!e);
     var effectedCharacter = effects.reduce((acc, value) => {
-        var operationParts = value.split(" ").filter(v => !v);
+        var operationParts = value.split(" ").filter(v => !!v);
         var opValue = {
             operation: operationParts[0],
             value: SubstituteEffectValue(character, operationParts[1])
         }
 
         var operation = match(opValue.operation)
-            .with("+", (v) => { return  opValue.value})
-            .with("-", (v) => { return -opValue.value })
+            .with("+", () => { return  opValue.value})
+            .with("-", () => { return -opValue.value })
             .otherwise(val => {
                 console.error(`Invalid operand ${val}`)
                 return 0

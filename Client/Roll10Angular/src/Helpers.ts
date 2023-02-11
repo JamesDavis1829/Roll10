@@ -4,6 +4,8 @@ export type Nullable<T> = T | null;
 
 export const Clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
+export const IsNotNull = (x:any) => (x != null && true);
+
 export const GenerateId = () =>
 {
     const chars = "abcdefghijklmopqrstuvwxyz";
@@ -18,7 +20,7 @@ export const RemoveTrailingOperation = (rollString: string) =>
         return "";
 
     rollString = rollString.trim();
-    if(["+","-"].includes(rollString))
+    if(["+","-"].includes(rollString.charAt(rollString.length - 1)))
     {
         rollString = rollString.substring(0, rollString.length - 1);
     }

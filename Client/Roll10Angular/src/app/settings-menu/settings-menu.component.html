@@ -1,0 +1,27 @@
+<div class="h-3"><!--spacer--></div>
+<ng-container *ngIf="currentUser?.email; else notLoggedIn">
+    <p class="text-center">{{currentUser?.email}}</p>
+    <div class="text-center my-4">
+        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" (click)="Logout()">Log Out</button>
+    </div>
+    <form class="text-center my-4" (submit)="HandleSubmit()">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="dice-room-id-entry">
+            Dice Room
+        </label>
+        <input class="input focus:outline-none focus:shadow-outline" id="dice-room-id-entry" [formControl]="idEntry" />
+        <p *ngIf="idEntry.errors && idEntry.dirty" class="text-red-600">
+          {{idEntry.errors['pattern'] ? 'Id must be 15 characters' : ''}}
+        </p>
+        <div class="h-4"></div>
+        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit" id="dice-room-submit">Join Room</button>
+    </form>
+    <div class="text-center my-4">
+        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" (click)="CreateNewDiceRoom()" id="create-new-dice-room">Create New Room</button>
+    </div>
+</ng-container>
+<ng-template #notLoggedIn>
+    <p class="text-center">You must log in to use settings.</p>
+    <div class="text-center my-4">
+        <a href="/login" id="login-button" class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer">Log In</a>
+    </div>
+</ng-template>

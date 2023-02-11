@@ -1,0 +1,30 @@
+<div class="fixed lg:right-16 lg:bottom-14 right-5 bottom-5 z-10">
+  <ng-container *ngIf="isMenuShowing">
+    <div style="height: calc(100vh - 10.5rem);" class="w-80 overflow-scroll bg-slate-50 rounded-lg p-3 m-4 shadow-lg shadow-slate-900" id="menu-container">
+      <div class="flex flex-row">
+        <div class="w-1/2 flex justify-center hover:cursor-pointer" (click)="ChangeMode('DiceLog')">
+          <img src="assets/images/dicegray.svg" [ngClass]="{'h-5 w-5': true, 'ring-4 ring-blue-300/50 ring-offset-2 rounded-full': mode == 'DiceLog'}" />
+        </div>
+        <div class="w-1/2 flex justify-center hover:cursor-pointer" (click)="ChangeMode('Settings')">
+          <img src="assets/images/gear.svg"  [ngClass]="{'h-5 w-5': true, 'ring-4 ring-blue-300/50 ring-offset-2 rounded-full': mode == 'Settings'}" />
+        </div>
+      </div>
+      <div class="h-3"></div>
+      <p class="font-bold uppercase text-center">{{GetTitle()}}</p>
+      <hr />
+      <ng-container [ngSwitch]="mode">
+        <ng-container *ngSwitchCase="'Settings'">
+          <app-settings-menu />
+        </ng-container>
+        <ng-container *ngSwitchCase="'DiceLog'">
+          <app-dice-log></app-dice-log>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+  <div class="flex justify-end w-full">
+    <div class="rounded-full bg-slate-50 shadow-lg shadow-slate-900">
+      <img src="assets/images/dice.svg" class="h-14 w-14" (click)="ToggleMenuShowing()" id="popup-menu" />
+    </div>
+  </div>
+</div>

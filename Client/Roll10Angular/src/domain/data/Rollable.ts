@@ -1,9 +1,9 @@
-import { BaseDice, RemoveTrailingOperation } from "src/Helpers";
+import {BaseDice, RemoveTrailingOperation} from "src/Helpers";
 import { match } from "ts-pattern";
-import { CharacterStats, ICharacter, StatSubstitue, SubstituteEffectValue } from "./Character";
+import { CharacterStats, ICharacter, StatSubstitute, SubstituteEffectValue } from "./Character";
 import * as _ from "lodash";
 
-export interface IRollable 
+export interface IRollable
 {
     id: string;
     add_base_dice: boolean;
@@ -13,51 +13,55 @@ export interface IRollable
     name: string;
 }
 
+export const defaultRollable: IRollable = {
+  id: "", name: "", add_base_dice: false, action_effect: "", dice_roll: "", modifiers: ""
+}
+
 export function DiceSubstitute(diceString: string)
 {
-    var parts = diceString.split("d");
-    var rolls = parseInt(parts[0]);
-    var maxValue = parseInt(parts[1]);
-    return Array(rolls).map(_ => {
-        return Math.round(Math.random() * maxValue) + 1;
+    let parts = diceString.split("d");
+    let rolls = parseInt(parts[0]);
+    let maxValue = parseInt(parts[1]);
+    return [...Array(rolls).keys()].map(_ => {
+        return Math.round(Math.random() * maxValue);
     }).reduce((x, acc) => {
         return acc + x;
     }, 0)
 }
 
-export function PerformRoll(character: ICharacter, item: IRollable): { rollString: string, roll: number } 
+export function PerformRoll(character: ICharacter, item: IRollable): { rollString: string, roll: number }
 {
-    var roll = 0;
-    var rollString = "";
+    let roll = 0;
+    let rollString = "";
 
-    if (!!item.dice_roll || item.add_base_dice) {
-        var opList = item.dice_roll.split(";").filter(d => !d);
+    if (!!item.dice_roll || item.add_base_dice || !!item.modifiers) {
+        let opList = item.dice_roll.split(";").filter(d => !!d);
         if (item.add_base_dice)
-            opList.push(`+ 1d${BaseDice};`)
+            opList.push(`+ 1d${BaseDice}`)
 
-        opList.concat(item.modifiers.split(";").filter(m => !m));
+        opList = opList.concat(item.modifiers.split(";").filter(m => !!m));
 
         roll = opList.reduce((acc, x) => {
-            var parts = x.split(" ");
+            let parts = x.split(" ");
 
-            var substitutedNumber = 0;
-            var rolledValueLogEntry = "";
+            let substitutedNumber = 0;
+            let rolledValueLogEntry: string;
 
-            if (parts[1].includes("d")) {
+            if (/\dd\d/.test(parts[1])) {
                 substitutedNumber = DiceSubstitute(parts[1])
                 rolledValueLogEntry = parts[1];
             }
             else
             {
-                var staticValue = parseInt(parts[1]);
-                if(staticValue)
+                let staticValue = parseInt(parts[1]);
+                if(!isNaN(staticValue))
                 {
                     substitutedNumber = staticValue;
                     rolledValueLogEntry = parts[1];
                 }
                 else
                 {
-                    substitutedNumber = StatSubstitue(character, parts[1].toUpperCase() as CharacterStats);
+                    substitutedNumber = StatSubstitute(character, parts[1].toUpperCase() as CharacterStats);
                     rolledValueLogEntry = parts[1].toUpperCase();
                 }
             }
@@ -74,24 +78,24 @@ export function PerformRoll(character: ICharacter, item: IRollable): { rollStrin
         }, 0)
     }
 
-    return { rollString, roll }
+    return { rollString: RemoveTrailingOperation(rollString), roll }
 }
 
 export function HumanReadableRollString(item: IRollable)
 {
-    var diceRoll = item.dice_roll
+    let diceRoll = item.dice_roll
         .split(";")
-        .filter(d => !d)
+        .filter(d => !!d)
         .map(d => d.split(" ").reverse().join(" "))
-    
+
     if(item.add_base_dice)
         diceRoll = [`1d${BaseDice} +`, ...diceRoll];
 
-    var modifiers = item.modifiers
+    let modifiers = item.modifiers
         .split(";")
-        .filter(m => !m)
+        .filter(m => !!m)
         .map(m => {
-            var parts = m.split(" ");
+            let parts = m.split(" ");
             if(parts.length > 1)
             {
                 parts[1] = parts[1].toUpperCase();
@@ -99,25 +103,25 @@ export function HumanReadableRollString(item: IRollable)
             return parts.reverse().join(" ");
         })
 
-    var rollString = diceRoll.concat(modifiers).join(" ");
+    let rollString = diceRoll.concat(modifiers).join(" ");
     return RemoveTrailingOperation(rollString);
 }
 
 export function HumanReadableEffectString(character: ICharacter, rollable: IRollable)
 {
-    var parts = rollable.action_effect.split(";").filter(a => !a);
+    let parts = rollable.action_effect.split(";").filter(a => !!a);
 
-    var grouped = _.chain(parts).groupBy(p => p.split(" ")[2]);
-    var condensedList = grouped.keys().map(k => {
-        var roll = grouped.get(k).map(p => p.split(" ").slice(0,2)).map(p => p.join(""));
-        var finalVal = roll.value().reduce((acc, x) => {
+    let grouped = _.chain(parts).groupBy(p => p.split(" ")[2]);
+    let condensedList = grouped.keys().map(k => {
+        let roll = grouped.get(k).map(p => p.split(" ").slice(0,2)).map(p => p.join(""));
+        let finalVal = roll.value().reduce((acc, x) => {
             return acc + SubstituteEffectValue(character, x.replace("+", ""))
         }, 0)
         return `${(finalVal >= 0 ? "+" : "-")} ${Math.abs(finalVal)} ${k}`;
     })
 
     return condensedList.map(m => {
-        var parts = m.toUpperCase().split(" ");
+        let parts = m.toUpperCase().split(" ");
         return parts.join(" ");
     }).join(" ");
 }

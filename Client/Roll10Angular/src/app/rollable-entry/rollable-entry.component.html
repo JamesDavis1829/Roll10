@@ -1,0 +1,20 @@
+<li class="even:bg-slate-200">
+  <div class="flex justify-between">
+    <div class="w-9/12 p-2">
+      <p class="font-bold">{{name}}</p>
+      <ng-container *ngIf="item.dice_roll">
+        <p class="italic">Roll: {{humanReadableRollString(item)}}</p>
+      </ng-container>
+      <ng-container *ngIf="item.action_effect">
+        <p class="italic">Effect: {{humanReadableEffectString(character, item)}}</p>
+      </ng-container>
+      <ng-content></ng-content>
+    </div>
+    <div class="relative w-8">
+      <ng-container *ngIf="!hideDiceRoll">
+        <img alt="image of dice for rolls" src="assets/images/dice.svg" class="h-8 w-8 absolute top-2 right-2 hover:cursor-pointer"
+             (click)="rollDice(item)" [id]="item.id"/>
+      </ng-container>
+    </div>
+  </div>
+</li>

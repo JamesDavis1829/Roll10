@@ -11,6 +11,9 @@ import {ReactiveFormsModule} from "@angular/forms";
 import { PopupMenuComponent } from './popup-menu/popup-menu.component';
 import { LoadingComponent } from './loading/loading.component';
 import { DiceLogComponent } from './dice-log/dice-log.component';
+import { CharacterDescriptionComponent } from './character-description/character-description.component';
+import { RollableEntryComponent } from './rollable-entry/rollable-entry.component';
+import { CharacterListComponent } from './character-list/character-list.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import { DiceLogComponent } from './dice-log/dice-log.component';
     SettingsMenuComponent,
     PopupMenuComponent,
     LoadingComponent,
-    DiceLogComponent
+    DiceLogComponent,
+    CharacterDescriptionComponent,
+    RollableEntryComponent,
+    CharacterListComponent
   ],
     imports: [
         BrowserModule,
