@@ -23,7 +23,7 @@ export function DiceSubstitute(diceString: string)
     let rolls = parseInt(parts[0]);
     let maxValue = parseInt(parts[1]);
     return [...Array(rolls).keys()].map(_ => {
-        return Math.round(Math.random() * maxValue);
+        return Math.floor(Math.random() * maxValue) + 1;
     }).reduce((x, acc) => {
         return acc + x;
     }, 0)
