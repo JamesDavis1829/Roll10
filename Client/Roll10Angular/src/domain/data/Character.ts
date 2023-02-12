@@ -12,8 +12,10 @@ export interface ICharacter extends IDbRecord
     strength: number;
     agility: number;
     durability: number;
+    max_hp: number;
     hp: number;
     stamina: number;
+    max_stamina: number;
     current_stamina: number;
     intelligence: number;
     insight: number;
@@ -22,11 +24,13 @@ export interface ICharacter extends IDbRecord
     inventory: Array<IItem>;
     caster_type: "none" | "quarter" | "half" | "full";
     actions: Array<ICharacterAction>;
+    level: number;
 }
 
 export const defaultCharacter:ICharacter = {
   actions: [], hp: 0, name: "", insight: 0, agility: 0, caster_type: "none", current_stamina: 0, durability: 0,
-  equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0
+  equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0, level: 0,
+  max_hp: 0, max_stamina: 0
 }
 
 export type StatOperands = "STA" | "HP";
@@ -58,8 +62,8 @@ export function ApplyMaxAndMinimums(character: ICharacter): ICharacter
 {
     return  {
         ...character,
-        current_stamina: Clamp(character.current_stamina, 0, character.stamina),
-        hp: Clamp(character.hp, 0, character.durability)
+        current_stamina: Clamp(character.current_stamina, 0, character.max_stamina),
+        hp: Clamp(character.hp, 0, character.max_hp)
     }
 }
 
