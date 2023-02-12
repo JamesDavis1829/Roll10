@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ICharacter} from "../../domain/data/Character";
 import {ICharacterAction} from "../../domain/data/CharacterAction";
-import PocketBase from "pocketbase";
 import {PocketBaseService} from "../pocket-base.service";
+import {IDSLEquation} from "../../domain/data/DSLEquation";
+import {EvaluateDSL} from "../../domain/dsl/DSL";
 
 @Component({
   selector: 'app-character-list',
@@ -23,12 +24,27 @@ export class CharacterListComponent implements OnInit{
 
   async Initialize()
   {
-    [this.characters, this.actions] = await Promise.all([
+    let equations: IDSLEquation[];
+    [this.characters, this.actions,equations] = await Promise.all([
       this.pb.GetFullList<ICharacter>("characters","","","spells,equipment,inventory,actions"),
-      this.pb.GetFullList<ICharacterAction>("actions", "+created", "all_characters=true")
+      this.pb.GetFullList<ICharacterAction>("actions", "+created", "all_characters=true"),
+      this.pb.GetFullList<IDSLEquation>("dslequations")
     ])
+
+    let staEquation:IDSLEquation = equations.find(he => he.id == "hvk4ebqxzgsvlk8") ?? { id:"", equation: "", name: "" };
+    let hpEquation:IDSLEquation = equations.find(sta => sta.id == "g7328zqjzmfptfl") ?? { id: "", equation: "", name: "" };
+
     this.characters = this.characters.map(c => {
-      return { ...c, hp: c.durability, current_stamina: c.stamina };
+      let maxHp = EvaluateDSL(c, hpEquation.equation);
+      let maxSta = EvaluateDSL(c, staEquation.equation);
+
+      return {
+        ...c,
+        hp: maxHp.value,
+        max_hp: maxHp.value,
+        current_stamina: maxSta.value,
+        max_stamina: maxSta.value
+      }
     })
   }
 }
