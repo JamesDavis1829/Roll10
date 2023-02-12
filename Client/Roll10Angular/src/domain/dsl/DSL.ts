@@ -1,7 +1,7 @@
 import * as angu from 'angu'
 import {ApplyMaxAndMinimums, ICharacter} from "../data/Character";
 import {BaseDice} from "../../Helpers";
-import {PerformRoll} from "../data/Rollable";
+import {defaultRollable, PerformRoll} from "../data/Rollable";
 
 type Any = angu.Value;
 
@@ -32,12 +32,10 @@ export function basicLanguage (character:ICharacter, dslString: string) : DSLRet
       'int': (character.intelligence - BaseDice),
       'ins': (character.insight - BaseDice),
       'armor': PerformRoll(character, {
+        ...defaultRollable,
         dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
         modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
-        id: "",
-        add_base_dice : false,
-        action_effect: "",
-        name: ""
+        add_base_dice : false
       }).roll,
       'lvl': character.level,
       'sethp': (a: Any) => {

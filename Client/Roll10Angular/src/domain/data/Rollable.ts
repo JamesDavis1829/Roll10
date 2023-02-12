@@ -11,10 +11,11 @@ export interface IRollable
     dice_roll: string;
     modifiers: string;
     name: string;
+    description: string;
 }
 
 export const defaultRollable: IRollable = {
-  id: "", name: "", add_base_dice: false, action_effect: "", dice_roll: "", modifiers: ""
+  id: "", name: "", add_base_dice: false, action_effect: "", dice_roll: "", modifiers: "", description: ""
 }
 
 export function DiceSubstitute(diceString: string)

@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ApplyEffect, ApplyEffects, defaultCharacter, ICharacter, StatOperands} from "../../domain/data/Character";
 import {ICharacterAction} from "../../domain/data/CharacterAction";
-import {GenerateId, Nullable} from "../../Helpers";
-import {IRollable, PerformRoll} from "../../domain/data/Rollable";
+import {GenerateId} from "../../Helpers";
+import {defaultRollable, IRollable, PerformRoll} from "../../domain/data/Rollable";
 import {DiceLogService} from "../dice-log.service";
 import { HideDiceRoll } from "../../domain/data/Item";
 
@@ -49,7 +49,8 @@ export class CharacterDescriptionComponent implements OnInit {
         rolledamount: results.roll,
         diceroll: results.rollString,
         room_id: "",
-        id: GenerateId()
+        id: GenerateId(),
+        description: item.description
       }
     });
 
@@ -68,12 +69,10 @@ export class CharacterDescriptionComponent implements OnInit {
 
   public RollStat(stat: string, name: string) {
     let statRoll: IRollable = {
-      id: "",
+      ...defaultRollable,
       name: `${name} Roll`,
       modifiers: `+ ${stat}`,
-      action_effect: "",
-      add_base_dice: true,
-      dice_roll: ""
+      add_base_dice: true
     };
     this.RollDice(statRoll);
   }

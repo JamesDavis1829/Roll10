@@ -3,7 +3,7 @@ import { IDbRecord } from '../interfaces/IDbRecord'
 import { IItem } from './Item';
 import { ISpell } from "./Spell";
 import { match } from "ts-pattern";
-import { PerformRoll } from './Rollable';
+import {defaultRollable, PerformRoll} from './Rollable';
 import {ICharacterAction} from "./CharacterAction";
 
 export interface ICharacter extends IDbRecord
@@ -48,12 +48,10 @@ export function StatSubstitute(character: ICharacter, stat: CharacterStats)
         .with("INS", () => { return character.insight - BaseDice })
         .with("ARMOR", () => {
           return PerformRoll(character, {
+            ...defaultRollable,
             dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
             modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
-            id: "",
             add_base_dice : false,
-            action_effect: "",
-            name: ""
         }).roll})
         .exhaustive();
 }

@@ -27,7 +27,7 @@ export class DiceLogService {
   constructor(
     private pb: PocketBaseService,
     private toast: ToastService
-  ) 
+  )
   {
     this.subs.push(this.addDiceLogSubject.subscribe(next => {
       this.AddEntry(next);
@@ -68,7 +68,14 @@ export class DiceLogService {
       let toastMessage:IToastMessage = {
         id: GenerateId(),
         type: 'Info',
-        message: `<p class=\"text-center font-bold\">${push.entry.title}</p><p class=\"text-center italic\">${push.entry.diceroll}</p><p class=\"text-center font-bold text-lg\">${push.entry.rolledamount}</p>`
+        message: `
+            <p class=\"text-center font-bold\">${push.entry.title}</p>
+            <p class=\"text-center italic\">${push.entry.diceroll}</p>
+            <p class=\"text-center font-bold text-lg\">${push.entry.rolledamount}</p>
+            <div class=\"w-32\">
+                <p class=\"text-center text-sm\">${push.entry.description}</p>
+            </div>
+        `
       }
       this.toast.ShowToast(toastMessage);
     }
