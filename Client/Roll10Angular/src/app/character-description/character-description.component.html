@@ -59,9 +59,7 @@
           </ng-container>
           <ng-template #actionsList>
             <ng-container *ngFor="let action of allCharacterActions.concat(this.targetCharacter.actions)">
-              <app-rollable-entry [name]="action.name" [item]="action" [rollDice]="RollDice.bind(this)" [character]="targetCharacter">
-                <p class="italic">Description: {{action.description}}</p>
-              </app-rollable-entry>
+              <app-rollable-entry [name]="action.name" [item]="action" [rollDice]="RollDice.bind(this)" [character]="targetCharacter"></app-rollable-entry>
             </ng-container>
           </ng-template>
         </ul>
@@ -81,11 +79,8 @@
                 <ng-container *ngIf="item.range">
                   <p class="italic">Range: {{item.range}}</p>
                 </ng-container>
-                <ng-container *ngIf="item.description">
-                  <p class="italic">Description: {{item.description}}</p>
-                </ng-container>
-                <p class="italic">Requirements: STR-{{item.strength_requirement}}
-                  AGI-{{item.agility_requirement}} INT-{{item.intelligence_requirement}}</p>
+                <p class="italic">Requirements: STR({{item.strength_requirement}})
+                  AGI({{item.agility_requirement}}) INT({{item.intelligence_requirement}})</p>
               </app-rollable-entry>
             </ng-container>
           </ng-template>
@@ -103,10 +98,7 @@
                 <ng-container *ngIf="spell.range">
                   <p class="italic">Range: {{spell.range}}</p>
                 </ng-container>
-                <ng-container *ngIf="spell.description">
-                  <p class="italic">Description: {{spell.description}}</p>
-                </ng-container>
-                <p class="italic">Requirements: INT-{{spell.intelligence_requirement}}</p>
+                <p class="italic">Requirements: INT({{spell.intelligence_requirement}})</p>
               </app-rollable-entry>
             </ng-container>
           </ng-template>
