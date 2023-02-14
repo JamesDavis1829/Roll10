@@ -1,10 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ApplyEffect, ApplyEffects, defaultCharacter, ICharacter, StatOperands} from "../../domain/data/Character";
+import {ApplyEffect, defaultCharacter, ICharacter, StatOperands} from "../../domain/data/Character";
 import {ICharacterAction} from "../../domain/data/CharacterAction";
 import {GenerateId} from "../../Helpers";
-import {defaultRollable, IRollable, PerformRoll} from "../../domain/data/Rollable";
+import {defaultRollable, IRollable} from "../../domain/data/Rollable";
 import {DiceLogService} from "../dice-log.service";
 import { HideDiceRoll } from "../../domain/data/Item";
+import {EvaluateDSL} from "../../domain/dsl/DSL";
 
 @Component({
   selector: 'app-character-description',
@@ -42,19 +43,18 @@ export class CharacterDescriptionComponent implements OnInit {
 
   public RollDice(item: IRollable)
   {
-    let results = PerformRoll(this.targetCharacter, item);
+    let results = EvaluateDSL(this.targetCharacter, item.dslEquation);
+    this.targetCharacter = results.character;
     this.diceLogService.addDiceLogSubject.next({
       directPush: false, entry: {
         title: `${this.targetCharacter.name} - ${item.name}`,
-        rolledamount: results.roll,
+        rolledamount: results.value,
         diceroll: results.rollString,
         room_id: "",
         id: GenerateId(),
         description: item.description
       }
-    });
-
-    this.targetCharacter = ApplyEffects(this.targetCharacter, item.action_effect);
+    })
   }
 
   public ResetCharacter()
@@ -71,8 +71,7 @@ export class CharacterDescriptionComponent implements OnInit {
     let statRoll: IRollable = {
       ...defaultRollable,
       name: `${name} Roll`,
-      modifiers: `+ ${stat}`,
-      add_base_dice: true
+      dslEquation:`roll(1,10) + ${stat}()`
     };
     this.RollDice(statRoll);
   }

@@ -1,13 +1,16 @@
 import * as angu from 'angu'
 import {ApplyMaxAndMinimums, ICharacter} from "../data/Character";
 import {BaseDice} from "../../Helpers";
-import {defaultRollable, PerformRoll} from "../data/Rollable";
+import {DiceSubstitute} from "../data/Rollable";
+import * as _ from "lodash";
+import {match} from "ts-pattern";
 
 type Any = angu.Value;
 
 export type DSLReturn = {
   character: ICharacter,
-  value: number
+  value: number,
+  rollString: string
 }
 export function EvaluateDSL(character:ICharacter, evaluationString: string)
 {
@@ -21,23 +24,34 @@ export function EvaluateDSL(character:ICharacter, evaluationString: string)
 export function basicLanguage (character:ICharacter, dslString: string) : DSLReturn {
 
   let mutableCharacter = {...character};
+  let diceRolls:{diceString: string, rolledValue: number}[] = [];
+  let rollStat = (stat: number, name: string) => {
+    diceRolls.push({
+      rolledValue: stat,
+      diceString: name
+    })
+    return stat
+  }
   // Put the context behind a function to guarantee that no
   // state is shared between subsequent evaluate calls.
   const ctx: () => angu.Context = () => ({
     scope: {
-      'str': (character.strength - BaseDice),
-      'agi': (character.agility - BaseDice),
-      'dur': (character.durability - BaseDice),
-      'sta': (character.stamina - BaseDice),
-      'int': (character.intelligence - BaseDice),
-      'ins': (character.insight - BaseDice),
-      'armor': PerformRoll(character, {
-        ...defaultRollable,
-        dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
-        modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
-        add_base_dice : false
-      }).roll,
-      'lvl': character.level,
+      'str': () => rollStat(character.strength - BaseDice, "STR"),
+      'agi': () => rollStat(character.agility - BaseDice, "AGI"),
+      'dur': () => rollStat(character.durability - BaseDice, "DUR"),
+      'sta': () => rollStat(character.stamina - BaseDice, "STA"),
+      'int': () => rollStat(character.intelligence - BaseDice, "INT"),
+      'ins': () => rollStat(character.insight - BaseDice, "INS"),
+      'armor': () => {
+        let armor = _.chain(character.equipment)
+          .filter(c => c.category == 'armor')
+          .map(a => EvaluateDSL(character, a.dslEquation))
+          .map(r => r.value)
+          .sum()
+          .value();
+        return rollStat(armor, "ARMOR");
+      },
+      'lvl': () => rollStat(character.level,"LVL"),
       'sethp': (a: Any) => {
         mutableCharacter = {...mutableCharacter, hp: a.eval()};
         mutableCharacter = ApplyMaxAndMinimums(mutableCharacter);
@@ -46,14 +60,44 @@ export function basicLanguage (character:ICharacter, dslString: string) : DSLRet
         mutableCharacter = {...mutableCharacter, current_stamina: a.eval()};
         mutableCharacter = ApplyMaxAndMinimums(mutableCharacter);
       },
-      // Our basic calculator bits from above:
+      'addsta': (a: Any) => {
+        mutableCharacter = {...mutableCharacter, current_stamina: mutableCharacter.current_stamina + a.eval() };
+        mutableCharacter = ApplyMaxAndMinimums(mutableCharacter);
+      },
+      'addhp': (a: Any) => {
+        mutableCharacter = {...mutableCharacter, hp: mutableCharacter.hp + a.eval()};
+        mutableCharacter = ApplyMaxAndMinimums(mutableCharacter);
+      },
+      'roll': (a: Any, b: Any) => {
+        let diceString = `${a.eval()}d${b.eval()}`;
+        let roll = DiceSubstitute(diceString);
+        diceRolls.push({
+          rolledValue: roll,
+          diceString
+        })
+        return roll;
+      },
+      'const': (a: Any) => {
+        let value = a.eval();
+        diceRolls.push({
+          rolledValue: value,
+          diceString: value.toString()
+        })
+        return value;
+      },
+      'castermod': () => match(character.caster_type)
+          .with("none", () => 0)
+          .with("quarter", () => 1)
+          .with("half", () => 2)
+          .with("full", () => 3)
+          .exhaustive(),
       '-': (a: Any, b: Any) => a.eval() - b.eval(),
       '+': (a: Any, b: Any) => a.eval() + b.eval(),
       '/': (a: Any, b: Any) => a.eval() / b.eval(),
       '*': (a: Any, b: Any) => {
         let aVal = a.eval()
         const bVal = b.eval()
-        // Bit of fun; if we pass string * number, repeat string
+        //if we pass string * number, repeat string
         // that number of times:
         if (typeof aVal === 'string') {
           const t = aVal
@@ -92,6 +136,7 @@ export function basicLanguage (character:ICharacter, dslString: string) : DSLRet
 
   return {
     character: mutableCharacter,
-    value: parseInt(roll)
+    value: parseInt(roll),
+    rollString: diceRolls.map(dR => `${dR.diceString}(${dR.rolledValue})`).join(" + ")
   };
 }

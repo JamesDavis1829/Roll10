@@ -3,8 +3,8 @@ import { IDbRecord } from '../interfaces/IDbRecord'
 import { IItem } from './Item';
 import { ISpell } from "./Spell";
 import { match } from "ts-pattern";
-import {defaultRollable, PerformRoll} from './Rollable';
 import {ICharacterAction} from "./CharacterAction";
+import {EvaluateDSL} from "../dsl/DSL";
 
 export interface ICharacter extends IDbRecord
 {
@@ -46,13 +46,7 @@ export function StatSubstitute(character: ICharacter, stat: CharacterStats)
         .with("STA", () => { return character.stamina - BaseDice })
         .with("INT", () => { return character.intelligence - BaseDice })
         .with("INS", () => { return character.insight - BaseDice })
-        .with("ARMOR", () => {
-          return PerformRoll(character, {
-            ...defaultRollable,
-            dice_roll: character.equipment.filter(c => c.category == 'armor').map(c => c.dice_roll).join(";"),
-            modifiers: character.equipment.filter(c => c.category == 'armor').map(c => c.modifiers).join(";"),
-            add_base_dice : false,
-        }).roll})
+        .with("ARMOR", () => EvaluateDSL(character, "armor()").value)
         .exhaustive();
 }
 
@@ -109,12 +103,7 @@ export function SubstituteEffectValue(character: ICharacter, val: string)
 {
     return match(val.toUpperCase())
         .with("CASTERMOD", () => {
-            return match(character.caster_type)
-                .with("none", () => 0)
-                .with("quarter", () => 1)
-                .with("half", () => 2)
-                .with("full", () => 3)
-                .exhaustive()
+            return EvaluateDSL(character,'castermod()').value;
         })
         .otherwise((val) => parseInt(val))
 }

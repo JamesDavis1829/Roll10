@@ -1,9 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {
-  defaultRollable,
-  HumanReadableEffectString,
-  HumanReadableRollString,
+  defaultRollable, HumanReadableDSLEffectString,
   IRollable
 } from "../../domain/data/Rollable";
 
@@ -23,7 +21,5 @@ export class RollableEntryComponent {
   rollDice: Function = () => { console.warn("Roll Dice is being called with default")};
   @Input()
   hideDiceRoll = false;
-
-  humanReadableRollString = HumanReadableRollString;
-  humanReadableEffectString = HumanReadableEffectString;
+  humanReadableEffectString = HumanReadableDSLEffectString;
 }

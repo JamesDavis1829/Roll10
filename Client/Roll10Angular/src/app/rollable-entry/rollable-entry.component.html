@@ -2,10 +2,10 @@
   <div class="flex justify-between">
     <div class="w-9/12 p-2">
       <p class="font-bold">{{name}}</p>
-      <ng-container *ngIf="item.dice_roll">
-        <p class="italic">Roll: {{humanReadableRollString(item)}}</p>
+      <ng-container *ngIf="item.humanReadable">
+        <p class="italic">Roll: {{item.humanReadable}}</p>
       </ng-container>
-      <ng-container *ngIf="item.action_effect">
+      <ng-container *ngIf="item.dslEquation">
         <p class="italic">Effect: {{humanReadableEffectString(character, item)}}</p>
       </ng-container>
       <ng-content></ng-content>
