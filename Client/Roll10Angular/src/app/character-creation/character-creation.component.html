@@ -1,0 +1,77 @@
+<form [formGroup]="characterPoints" (ngSubmit)="OnSubmit()">
+  <h1 class="text-center font-bold text-lg">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h1>
+  <hr />
+  <div class="flex flex-wrap justify-center">
+    <app-round-inc-and-dec
+      Id="str-input"
+      Name="STR"
+      [Value]="characterPoints.controls.str.value ?? 0"
+      Title="Strength"
+      (Decrement)="ChangeControlValue(characterPoints.controls.str, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.str, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+    <app-round-inc-and-dec
+      Id="agi-input"
+      Name="AGI"
+      [Value]="characterPoints.controls.agi.value ?? 0"
+      Title="Agility"
+      (Decrement)="ChangeControlValue(characterPoints.controls.agi, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.agi, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+    <app-round-inc-and-dec
+      Id="dur-input"
+      Name="DUR"
+      [Value]="characterPoints.controls.dur.value ?? 0"
+      Title="Durability"
+      (Decrement)="ChangeControlValue(characterPoints.controls.dur, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.dur, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+    <app-round-inc-and-dec
+      Id="sta-input"
+      Name="STA"
+      [Value]="characterPoints.controls.sta.value ?? 0"
+      Title="Stamina"
+      (Decrement)="ChangeControlValue(characterPoints.controls.sta, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.sta, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+    <app-round-inc-and-dec
+      Id="int-input"
+      Name="INT"
+      [Value]="characterPoints.controls.int.value ?? 0"
+      Title="Intelligence"
+      (Decrement)="ChangeControlValue(characterPoints.controls.int, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.int, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+    <app-round-inc-and-dec
+      Id="ins-input"
+      Name="INS"
+      [Value]="characterPoints.controls.ins.value ?? 0"
+      Title="Insight"
+      (Decrement)="ChangeControlValue(characterPoints.controls.ins, -1)"
+      (Increment)="ChangeControlValue(characterPoints.controls.ins, 1)"
+      [HideButtons]="false"
+      Color="border-slate-400 bg-slate-700"
+    />
+  </div>
+
+  <ng-container *ngIf="characterPoints.controls.points.errors as error">
+    <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
+  </ng-container>
+</form>
+
+<ng-template #errorTemplate let-error="error" let-name="name">
+  {{name}} {{error | json}}
+  <p class="text-red-600" *ngIf="error?.['min']">
+    {{name}} must be above {{error['min']['actual']}}
+  </p>
+</ng-template>

@@ -618,8 +618,16 @@ video {
   display: flex;
 }
 
+.table {
+  display: table;
+}
+
 .grid {
   display: grid;
+}
+
+.hidden {
+  display: none;
 }
 
 .h-10 {
