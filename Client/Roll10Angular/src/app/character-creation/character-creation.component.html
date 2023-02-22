@@ -1,6 +1,14 @@
 <form [formGroup]="characterPoints" (ngSubmit)="OnSubmit()">
   <h1 class="text-center font-bold text-lg">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h1>
   <hr />
+  <div class="flex justify-center">
+    <div class="w-40">
+      <label>Level</label>
+      <select class="input" formControlName="level" (change)="CalculatePoints()">
+          <option *ngFor="let num of levelKeys" [ngValue]="num">{{num}}</option>
+      </select>
+    </div>
+  </div>
   <div class="flex flex-wrap justify-center">
     <app-round-inc-and-dec
       Id="str-input"
@@ -63,10 +71,29 @@
       Color="border-slate-400 bg-slate-700"
     />
   </div>
-
-  <ng-container *ngIf="characterPoints.controls.points.errors as error">
-    <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
-  </ng-container>
+  <div class="text-center">
+    <ng-container *ngIf="characterPoints.controls.points.errors as error">
+      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
+    </ng-container>
+  </div>
+  <div class="flex flex-wrap justify-center">
+    <app-round-inc-and-dec
+      [HideButtons]="true"
+      [Value]="shadowCharacter.max_hp"
+      [Id]="'character-max-hp'"
+      Name="HP"
+      Title="HP"
+      Color="border-red-700 bg-red-500"
+    />
+    <app-round-inc-and-dec
+      [HideButtons]="true"
+      [Value]="shadowCharacter.max_stamina"
+      [Id]="'character-max-sta'"
+      Name="STA"
+      Title="Stamina"
+      Color="border-green-700 bg-green-500"
+    />
+  </div>
 </form>
 
 <ng-template #errorTemplate let-error="error" let-name="name">

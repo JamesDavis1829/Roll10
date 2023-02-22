@@ -26,7 +26,7 @@ export class RoundIncAndDecComponent {
   GetTopLevelCss()
   {
     return {
-      'relative w-20 h-20 m-5 rounded-full border-4 text-white shadow-lg shadow-slate-800': true,
+      'round-counter': true,
       [this.Color]: true
     }
   }
