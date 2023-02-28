@@ -13,7 +13,7 @@
     <app-round-inc-and-dec
       Id="str-input"
       Name="STR"
-      [Value]="characterPoints.controls.str.value ?? 0"
+      [Value]="shadowCharacter.strength"
       Title="Strength"
       (Decrement)="ChangeControlValue(characterPoints.controls.str, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.str, 1)"
@@ -23,7 +23,7 @@
     <app-round-inc-and-dec
       Id="agi-input"
       Name="AGI"
-      [Value]="characterPoints.controls.agi.value ?? 0"
+      [Value]="shadowCharacter.agility"
       Title="Agility"
       (Decrement)="ChangeControlValue(characterPoints.controls.agi, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.agi, 1)"
@@ -33,7 +33,7 @@
     <app-round-inc-and-dec
       Id="dur-input"
       Name="DUR"
-      [Value]="characterPoints.controls.dur.value ?? 0"
+      [Value]="shadowCharacter.durability"
       Title="Durability"
       (Decrement)="ChangeControlValue(characterPoints.controls.dur, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.dur, 1)"
@@ -43,7 +43,7 @@
     <app-round-inc-and-dec
       Id="sta-input"
       Name="STA"
-      [Value]="characterPoints.controls.sta.value ?? 0"
+      [Value]="shadowCharacter.stamina"
       Title="Stamina"
       (Decrement)="ChangeControlValue(characterPoints.controls.sta, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.sta, 1)"
@@ -53,7 +53,7 @@
     <app-round-inc-and-dec
       Id="int-input"
       Name="INT"
-      [Value]="characterPoints.controls.int.value ?? 0"
+      [Value]="shadowCharacter.intelligence"
       Title="Intelligence"
       (Decrement)="ChangeControlValue(characterPoints.controls.int, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.int, 1)"
@@ -63,20 +63,13 @@
     <app-round-inc-and-dec
       Id="ins-input"
       Name="INS"
-      [Value]="characterPoints.controls.ins.value ?? 0"
+      [Value]="shadowCharacter.insight"
       Title="Insight"
       (Decrement)="ChangeControlValue(characterPoints.controls.ins, -1)"
       (Increment)="ChangeControlValue(characterPoints.controls.ins, 1)"
       [HideButtons]="false"
       Color="border-slate-400 bg-slate-700"
     />
-  </div>
-  <div class="text-center">
-    <ng-container *ngIf="characterPoints.controls.points.errors as error">
-      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
-    </ng-container>
-  </div>
-  <div class="flex flex-wrap justify-center">
     <app-round-inc-and-dec
       [HideButtons]="true"
       [Value]="shadowCharacter.max_hp"
@@ -94,10 +87,47 @@
       Color="border-green-700 bg-green-500"
     />
   </div>
+  <div class="flex justify-center">
+    <div class="w40">
+      <label>Ancestry</label>
+      <select class="input" formControlName="ancestry" (change)="CalculatePoints()">
+        <option *ngFor="let opt of ancestryOptions" [ngValue]="opt">{{opt}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="flex justify-center">
+    <ng-container *ngIf="shadowCharacter.level >= 3">
+      <ng-container *ngTemplateOutlet="abiTemplate;context:{level: 3, formGroup: abiThirdLevel}"></ng-container>
+    </ng-container>
+  </div>
+  <div class="text-center">
+    <ng-container *ngIf="characterPoints.controls.points.errors as error">
+      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
+    </ng-container>
+  </div>
 </form>
 
+<ng-template #abiTemplate let-level="level" let-formGroup="formGroup">
+  <form [formGroup]="formGroup">
+    <br />
+    <h3><b>ABI Level {{level}}</b></h3>
+    <div class="w-40">
+      <label>ABI</label>
+      <select class="input" [formControlName]="'abi-' + level + '-1'" (change)="CalculatePoints()">
+        <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
+      </select>
+    </div>
+    <div class="w-40">
+      <label>ABI</label>
+      <select class="input" [formControlName]="'abi-' + level + '-2'" (change)="CalculatePoints()">
+        <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
+      </select>
+    </div>
+  </form>
+</ng-template>
+
 <ng-template #errorTemplate let-error="error" let-name="name">
-  {{name}} {{error | json}}
+<!--  {{name}} {{error | json}}-->
   <p class="text-red-600" *ngIf="error?.['min']">
     {{name}} must be above {{error['min']['actual']}}
   </p>
