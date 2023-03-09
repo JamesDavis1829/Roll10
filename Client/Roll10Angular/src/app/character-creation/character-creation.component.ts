@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms"
 import * as _ from "lodash";
-import {CharacterStatOption, CharacterStats, Clamp, GenerateId, Nullable, characterStatOptions} from "../../Helpers";
+import {CharacterStatOption, characterStatOptions, CharacterStats, Clamp, GenerateId} from "../../Helpers";
 import {PocketBaseService} from "../pocket-base.service";
 import {IDSLEquation} from "../../domain/data/DSLEquation";
 import {defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import {match} from "ts-pattern";
-import { AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
+import {AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
 
 const minStatValue = 8;
 const maxStatValue = 20;
@@ -22,7 +22,8 @@ const doubleCostCutOff = 12;
 @Component({
   selector: 'app-character-creation',
   templateUrl: './character-creation.component.html',
-  styleUrls: ['./character-creation.component.css']
+  styleUrls: ['./character-creation.component.css','../../assets/css/pico.min.css'],
+  encapsulation: ViewEncapsulation.ShadowDom,
 })
 export class CharacterCreationComponent {
   maxLevel = maxLevel;

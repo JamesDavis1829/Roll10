@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthMethodsList, AuthProviderInfo } from 'pocketbase';
-import { PocketBaseService } from '../pocket-base.service';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {AuthMethodsList, AuthProviderInfo} from 'pocketbase';
+import {PocketBaseService} from '../pocket-base.service';
 import * as _ from "lodash";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css', '../../assets/main.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class LoginComponent implements OnInit {
   public authMethods: AuthMethodsList = {
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   {
 
   }
-  
+
   async ngOnInit() {
     this.authMethods = await this.pb.getAuthOptions();
   }
@@ -34,6 +35,6 @@ export class LoginComponent implements OnInit {
     window.localStorage.setItem("provider",JSON.stringify(info));
     let origin = window.location.origin
     console.log(`${info.authUrl}${origin}/redirect`);
-    window.open(`${info.authUrl}${origin}/redirect`,"_self") 
+    window.open(`${info.authUrl}${origin}/redirect`,"_self")
   }
 }

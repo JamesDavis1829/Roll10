@@ -1,11 +1,12 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import { ToastService } from '../toast.service';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
+import {ToastService} from '../toast.service';
 import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.css']
+  styleUrls: ['./toast.component.css', '../../assets/main.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class ToastComponent implements OnInit, OnDestroy{
   subs: Array<Subscription> = [];
