@@ -1,11 +1,25 @@
+<div class="h-5"></div>
 <form [formGroup]="characterPoints" (ngSubmit)="OnSubmit()">
-  <h1 class="text-center font-bold text-lg">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h1>
-  <hr />
+  <h1 class="text-center font-bold text-lg">Character Creation</h1>
+  <div class="h-5"></div>
+  <div class="flex justify-center">
+    <div class="w-96">
+      <label for="name-input">Name</label>
+      <input id="name-input" formControlName="name" type="text" class="input" maxlength="100" minlength="1" (change)="CalculatePoints()" />
+    </div>
+  </div>
   <div class="flex justify-center">
     <div class="w-40">
       <label>Level</label>
       <select class="input" formControlName="level" (change)="CalculatePoints()">
           <option *ngFor="let num of levelKeys" [ngValue]="num">{{num}}</option>
+      </select>
+    </div>
+    <div class="w-16"></div>
+    <div class="w-40">
+      <label>Ancestry</label>
+      <select class="input" formControlName="ancestry" (change)="CalculatePoints()">
+        <option *ngFor="let opt of ancestryOptions" [ngValue]="opt">{{opt}}</option>
       </select>
     </div>
   </div>
@@ -87,14 +101,7 @@
       Color="border-green-700 bg-green-500"
     />
   </div>
-  <div class="flex justify-center">
-    <div class="w40">
-      <label>Ancestry</label>
-      <select class="input" formControlName="ancestry" (change)="CalculatePoints()">
-        <option *ngFor="let opt of ancestryOptions" [ngValue]="opt">{{opt}}</option>
-      </select>
-    </div>
-  </div>
+  <h2 class="text-center font-bold">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h2>
   <div class="flex justify-center">
     <ng-container *ngIf="shadowCharacter.level >= 3">
       <ng-container *ngTemplateOutlet="abiTemplate;context:{level: 3, formGroup: abiThirdLevel}"></ng-container>
@@ -102,8 +109,15 @@
   </div>
   <div class="text-center">
     <ng-container *ngIf="characterPoints.controls.points.errors as error">
-      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points'}"></ng-container>
+      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points', message:'must be above'}"></ng-container>
     </ng-container>
+    <ng-container *ngIf="characterPoints.controls.name.errors as error">
+      <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Name', message: 'must be'}"></ng-container>
+    </ng-container>
+  </div>
+  <div class="h-4"></div>
+  <div class="flex flex-row justify-center">
+    <button class="btn bg-blue-500 hover:bg-blue-700 text-white disabled:bg-slate-500 disabled:hover:bg-slate-400" [disabled]="!IsFormValid()">Create Character</button>
   </div>
 </form>
 
@@ -111,24 +125,27 @@
   <form [formGroup]="formGroup">
     <br />
     <h3><b>ABI Level {{level}}</b></h3>
-    <div class="w-40">
-      <label>ABI</label>
-      <select class="input" [formControlName]="'abi-' + level + '-1'" (change)="CalculatePoints()">
-        <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
-      </select>
-    </div>
-    <div class="w-40">
-      <label>ABI</label>
-      <select class="input" [formControlName]="'abi-' + level + '-2'" (change)="CalculatePoints()">
-        <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
-      </select>
+    <div class="flex flex-row">
+      <div class="w-40">
+        <label>ABI</label>
+        <select class="input" [formControlName]="'abi-' + level + '-1'" (change)="CalculatePoints()">
+          <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
+        </select>
+      </div>
+      <div class="w-16"></div>
+      <div class="w-40">
+        <label>ABI</label>
+        <select class="input" [formControlName]="'abi-' + level + '-2'" (change)="CalculatePoints()">
+          <option *ngFor="let option of characterStatOptions" [ngValue]="option">{{option}}</option>
+        </select>
+      </div>
     </div>
   </form>
 </ng-template>
 
-<ng-template #errorTemplate let-error="error" let-name="name">
+<ng-template #errorTemplate let-error="error" let-name="name" let-message="message">
 <!--  {{name}} {{error | json}}-->
   <p class="text-red-600" *ngIf="error?.['min']">
-    {{name}} must be above {{error['min']['actual']}}
+    {{name}} {{message}} {{error['min']['actual']}}
   </p>
 </ng-template>

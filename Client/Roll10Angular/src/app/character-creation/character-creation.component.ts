@@ -29,6 +29,7 @@ export class CharacterCreationComponent {
   levelKeys = [...Array(maxLevel).keys()].map(k => k + 1);
   shadowCharacter: ICharacter = {...defaultCharacter, id: GenerateId()};
   characterPoints = new FormGroup({
+    name: new FormControl("", [Validators.required]),
     level: new FormControl(minLevel, [Validators.required, Validators.min(minLevel), Validators.max(maxLevel)]),
     ancestry: new FormControl<AncestryOption>("Human", [Validators.required]),
     str: new FormControl(minStatValue, this.GetValidators()),
@@ -70,7 +71,15 @@ export class CharacterCreationComponent {
 
   OnSubmit()
   {
+    if(this.IsFormValid())
+    {
 
+    }
+  }
+
+  public IsFormValid()
+  {
+    return this.characterPoints.valid && (this.characterPoints.controls.points.value ?? 1) == 0
   }
 
   public CalculatePoints()
@@ -97,6 +106,7 @@ export class CharacterCreationComponent {
     this.shadowCharacter.agility = this.characterPoints.controls.agi.value ?? 0;
     this.shadowCharacter.strength = this.characterPoints.controls.str.value ?? 0;
     this.shadowCharacter.durability = this.characterPoints.controls.dur.value ?? 0;
+    this.shadowCharacter.name = this.characterPoints.controls.name.value ?? "";
 
     if(this.shadowCharacter.level >= 3)
     {
