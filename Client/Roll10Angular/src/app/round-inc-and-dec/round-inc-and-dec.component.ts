@@ -3,7 +3,7 @@ import {Component, EventEmitter, Input, Output, ViewEncapsulation} from '@angula
 @Component({
   selector: 'app-round-inc-and-dec',
   templateUrl: './round-inc-and-dec.component.html',
-  styleUrls: ['./round-inc-and-dec.component.css', '../../assets/main.css'],
+  styleUrls: ['./round-inc-and-dec.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class RoundIncAndDecComponent {

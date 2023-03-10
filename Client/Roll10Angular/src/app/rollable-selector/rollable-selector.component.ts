@@ -7,7 +7,7 @@ import * as _ from "lodash";
 @Component({
   selector: 'app-rollable-selector',
   templateUrl: './rollable-selector.component.html',
-  styleUrls: ['./rollable-selector.component.css','../../assets/css/pico.min.css'],
+  styleUrls: ['./rollable-selector.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class RollableSelectorComponent implements OnChanges {

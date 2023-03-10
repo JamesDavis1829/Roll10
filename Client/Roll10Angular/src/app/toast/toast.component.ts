@@ -5,7 +5,7 @@ import {Subscription} from "rxjs";
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
-  styleUrls: ['./toast.component.css', '../../assets/main.css'],
+  styleUrls: ['./toast.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class ToastComponent implements OnInit, OnDestroy{

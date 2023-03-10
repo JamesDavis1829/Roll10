@@ -6,7 +6,7 @@ import * as _ from "lodash";
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css', '../../assets/main.css'],
+  styleUrls: ['./login.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class LoginComponent implements OnInit {

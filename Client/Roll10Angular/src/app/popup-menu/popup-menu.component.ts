@@ -6,7 +6,7 @@ export type PopUpMode = "DiceLog" | "Settings";
 @Component({
   selector: 'app-popup-menu',
   templateUrl: './popup-menu.component.html',
-  styleUrls: ['./popup-menu.component.css', '../../assets/main.css'],
+  styleUrls: ['./popup-menu.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class PopupMenuComponent {

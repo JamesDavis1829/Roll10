@@ -26,7 +26,7 @@ const doubleCostCutOff = 12;
 @Component({
   selector: 'app-character-creation',
   templateUrl: './character-creation.component.html',
-  styleUrls: ['./character-creation.component.css','../../assets/css/pico.min.css'],
+  styleUrls: ['./character-creation.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom,
 })
 export class CharacterCreationComponent {

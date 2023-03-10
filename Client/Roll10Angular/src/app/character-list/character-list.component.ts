@@ -48,8 +48,8 @@ export class CharacterListComponent implements OnInit{
           max_stamina: maxSta.value
         }
       })
-      .sortBy('owner')
-      .reverse()
+      .sortBy('name')
       .value();
+    this.characters = _.chain([this.characters.filter(c => !!c.owner), this.characters.filter(c => !c.owner)]).flatten().value();
   }
 }

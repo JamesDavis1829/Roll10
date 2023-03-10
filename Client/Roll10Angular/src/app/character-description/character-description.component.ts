@@ -10,7 +10,7 @@ import {EvaluateDSL} from "../../domain/dsl/DSL";
 @Component({
   selector: 'app-character-description',
   templateUrl: './character-description.component.html',
-  styleUrls: ['./character-description.component.css', '../../assets/main.css'],
+  styleUrls: ['./character-description.component.css'],
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class CharacterDescriptionComponent implements OnInit {
