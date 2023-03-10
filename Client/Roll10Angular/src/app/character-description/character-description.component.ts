@@ -1,16 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {ApplyEffect, defaultCharacter, ICharacter, StatOperands} from "../../domain/data/Character";
 import {ICharacterAction} from "../../domain/data/CharacterAction";
-import {GenerateId} from "../../Helpers";
+import {CharacterStats, GenerateId} from "../../Helpers";
 import {defaultRollable, IRollable} from "../../domain/data/Rollable";
 import {DiceLogService} from "../dice-log.service";
-import { HideDiceRoll } from "../../domain/data/Item";
+import {HideDiceRoll} from "../../domain/data/Item";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 
 @Component({
   selector: 'app-character-description',
   templateUrl: './character-description.component.html',
-  styleUrls: ['./character-description.component.css']
+  styleUrls: ['./character-description.component.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class CharacterDescriptionComponent implements OnInit {
 
@@ -27,14 +28,7 @@ export class CharacterDescriptionComponent implements OnInit {
 
   public GetStats()
   {
-    return [
-      {name: "Strength", abbreviation: "STR", stat: this.targetCharacter.strength},
-      {name: "Agility", abbreviation: "AGI", stat: this.targetCharacter.agility},
-      {name: "Durability", abbreviation: "DUR", stat: this.targetCharacter.durability},
-      {name: "Stamina", abbreviation: "STA", stat: this.targetCharacter.stamina},
-      {name: "Intelligence", abbreviation: "INT", stat: this.targetCharacter.intelligence},
-      {name: "Insight", abbreviation: "INS", stat: this.targetCharacter.insight}
-    ]
+    return CharacterStats(this.targetCharacter);
   }
 
   ngOnInit(): void {

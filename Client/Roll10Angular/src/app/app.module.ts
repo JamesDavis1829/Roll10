@@ -14,6 +14,9 @@ import { DiceLogComponent } from './dice-log/dice-log.component';
 import { CharacterDescriptionComponent } from './character-description/character-description.component';
 import { RollableEntryComponent } from './rollable-entry/rollable-entry.component';
 import { CharacterListComponent } from './character-list/character-list.component';
+import { CharacterCreationComponent } from './character-creation/character-creation.component';
+import { RoundIncAndDecComponent } from './round-inc-and-dec/round-inc-and-dec.component';
+import { RollableSelectorComponent } from './rollable-selector/rollable-selector.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { CharacterListComponent } from './character-list/character-list.componen
     DiceLogComponent,
     CharacterDescriptionComponent,
     RollableEntryComponent,
-    CharacterListComponent
+    CharacterListComponent,
+    CharacterCreationComponent,
+    RoundIncAndDecComponent,
+    RollableSelectorComponent
   ],
     imports: [
         BrowserModule,

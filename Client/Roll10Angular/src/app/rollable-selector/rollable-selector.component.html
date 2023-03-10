@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="/assets/css/pico.min.css">
+<details role="list">
+  <summary aria-haspopup="listbox">{{GetFormLabel()}}</summary>
+  <ul role="listbox">
+    <li *ngFor="let control of this.SelectForm.controls | keyvalue">
+      <label>
+        <input type="checkbox" [formControl]="control.value" (change)="OnFormChange()">
+        {{control.key}}
+      </label>
+    </li>
+  </ul>
+</details>

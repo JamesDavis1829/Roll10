@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { PocketBaseService } from '../pocket-base.service';
+import {Component, ViewEncapsulation} from '@angular/core';
+import {Router} from '@angular/router';
+import {PocketBaseService} from '../pocket-base.service';
 
 @Component({
   selector: 'app-redirect',
   templateUrl: './redirect.component.html',
-  styleUrls: ['./redirect.component.css']
+  styleUrls: ['./redirect.component.css'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class RedirectComponent {
 

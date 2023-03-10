@@ -1,6 +1,32 @@
+import {defaultCharacter, ICharacter} from "./domain/data/Character";
+
 export const BaseDice = 10;
 
+export interface ICharacterStats {
+  name: string;
+  abbreviation: string;
+  stat: number
+}
+
+export const characterStatOptions = ["Strength","Agility","Durability","Stamina","Intelligence","Insight"] as const;
+export type CharacterStatOption = typeof characterStatOptions[number];
+
+export const CharacterStats = (character: ICharacter) => {
+  return [
+    {name: "Strength", abbreviation: "STR", stat: character.strength},
+    {name: "Agility", abbreviation: "AGI", stat: character.agility},
+    {name: "Durability", abbreviation: "DUR", stat: character.durability},
+    {name: "Stamina", abbreviation: "STA", stat: character.stamina},
+    {name: "Intelligence", abbreviation: "INT", stat: character.intelligence},
+    {name: "Insight", abbreviation: "INS", stat: character.insight}
+  ] as ICharacterStats[];
+}
+
 export type Nullable<T> = T | null;
+export type Selectable<T> = {
+  isSelected: boolean;
+  item: T;
+}
 
 export const Clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 

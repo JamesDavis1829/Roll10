@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="/assets/main.css">
+<div [ngClass]="GetTopLevelCss()" [title]="Title" [id]='Id + "-" + Name'>
+  <div class="h-3"></div>
+  <p class="text-center font-bold">{{Value}}</p>
+  <p class="text-center font-bold select-none">{{Name}}</p>
+  <div
+    [id]='Id + "-" + Name + "-increment"'
+    class="absolute h-20 w-7 top-0 left-0 hover:cursor-pointer"
+    (click)="Increment.emit()"
+    [hidden]="HideButtons"
+  >
+    <span class="absolute top-5 left-1 font-extrabold select-none">+</span>
+  </div>
+  <div
+    [id]='Id + "-" + Name + "-decrement"'
+    class="absolute h-20 w-7 top-0 right-0 hover:cursor-pointer"
+    (click)="Decrement.emit()"
+    [hidden]="HideButtons"
+  >
+    <span class="absolute top-5 right-1 font-extrabold select-none">-</span>
+  </div>
+</div>
