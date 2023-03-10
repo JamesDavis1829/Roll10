@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
-    "build": "ng build --aot",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "tailwind": "npx tailwindcss -i input.css -o ./src/assets/main.css --watch"
