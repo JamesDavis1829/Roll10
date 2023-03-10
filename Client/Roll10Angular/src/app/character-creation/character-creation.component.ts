@@ -1,16 +1,20 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms"
 import * as _ from "lodash";
-import {CharacterStatOption, characterStatOptions, CharacterStats, Clamp, GenerateId} from "../../Helpers";
+import {CharacterStatOption, characterStatOptions, CharacterStats, Clamp, GenerateId, Selectable} from "../../Helpers";
 import {PocketBaseService} from "../pocket-base.service";
 import {IDSLEquation} from "../../domain/data/DSLEquation";
 import {defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import {match} from "ts-pattern";
 import {AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
+import {IItem} from "../../domain/data/Item";
+import {ISpell} from "../../domain/data/Spell";
+import {IRollable} from "../../domain/data/Rollable";
+import {Router} from "@angular/router";
 
 const minStatValue = 8;
-const maxStatValue = 20;
+const maxStatValue = 13;
 
 const minLevel = 1;
 //later will be 10 when feats are implemented
@@ -49,10 +53,13 @@ export class CharacterCreationComponent {
   hpEquation!: IDSLEquation;
   staEquation!: IDSLEquation;
 
+  itemChoices: IItem[] = [];
+  spellChoices: ISpell[] = [];
+
   characterStatOptions = characterStatOptions;
   ancestryOptions = ancestryOptions;
 
-  constructor(private pb: PocketBaseService)
+  constructor(private pb: PocketBaseService, private router: Router )
   {
     this.OnInitAsync();
   }
@@ -62,6 +69,8 @@ export class CharacterCreationComponent {
     let equations = await this.pb.GetFullList<IDSLEquation>("dslequations");
     this.staEquation = equations.find(he => he.id == "hvk4ebqxzgsvlk8") ?? { id:"", equation: "", name: "" };
     this.hpEquation = equations.find(sta => sta.id == "g7328zqjzmfptfl") ?? { id: "", equation: "", name: "" };
+    this.spellChoices = await this.pb.GetFullList<ISpell>("spells")
+    this.itemChoices = await this.pb.GetFullList<IItem>("items");
     this.FillInCharacter();
   }
 
@@ -72,9 +81,29 @@ export class CharacterCreationComponent {
 
   OnSubmit()
   {
+    let user = this.pb.GetUser();
+
+    if(user == null)
+    {
+      window.alert('You must be logged in to create characters');
+    }
+
     if(this.IsFormValid())
     {
-
+      let characterToUpload = {
+        ...this.shadowCharacter,
+        spells: this.shadowCharacter.spells.map(s => s.id),
+        equipment: this.shadowCharacter.equipment.map(s => s.id)
+      };
+      characterToUpload.owner = user?.id ?? "";
+      this.pb.CreateItem<any>("characters",characterToUpload)
+        .then(_ => {
+          this.router.navigateByUrl!("");
+        })
+        .catch(e => {
+          console.error(e);
+          window.alert('Character was not able to be created.')
+        })
     }
   }
 
@@ -156,5 +185,15 @@ export class CharacterCreationComponent {
       .with("Intelligence", () => { return {...character, intelligence: character.intelligence + 1}})
       .with("Stamina", () => { return {...character, stamina: character.stamina + 1}})
       .exhaustive();
+  }
+
+  public AddItemsToCharacter(items: Selectable<IRollable>[])
+  {
+    this.shadowCharacter.equipment = items.filter(i => i.isSelected).map(i => i.item as IItem);
+  }
+
+  public AddSpellsToCharacter(spells: Selectable<IRollable>[])
+  {
+    this.shadowCharacter.spells = spells.filter(i => i.isSelected).map(i => i.item as ISpell);
   }
 }

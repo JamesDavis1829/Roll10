@@ -23,6 +23,10 @@ export const CharacterStats = (character: ICharacter) => {
 }
 
 export type Nullable<T> = T | null;
+export type Selectable<T> = {
+  isSelected: boolean;
+  item: T;
+}
 
 export const Clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 

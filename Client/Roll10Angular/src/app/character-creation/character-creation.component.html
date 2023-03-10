@@ -1,120 +1,115 @@
 <main class="container">
   <form [formGroup]="characterPoints" (ngSubmit)="OnSubmit()">
-    <h1>Character Creation</h1>
-    <label for="name-input">Name</label>
-    <input id="name-input" formControlName="name" type="text" maxlength="100" minlength="1" (change)="CalculatePoints()" />
-    <div class="grid">
-      <fieldset>
-        <label>Level</label>
-        <select formControlName="level" (change)="CalculatePoints()">
-          <option *ngFor="let num of levelKeys" [ngValue]="num">{{num}}</option>
-        </select>
-      </fieldset>
-      <fieldset>
-        <label>Ancestry</label>
-        <select formControlName="ancestry" (change)="CalculatePoints()">
-          <option *ngFor="let opt of ancestryOptions" [ngValue]="opt">{{opt}}</option>
-        </select>
-      </fieldset>
-    </div>
-    <h2 style="text-align: center">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h2>
-    <div style="display: flex; justify-content: center; flex-wrap: wrap">
-      <app-round-inc-and-dec
-        Id="str-input"
-        Name="STR"
-        [Value]="shadowCharacter.strength"
-        Title="Strength"
-        (Decrement)="ChangeControlValue(characterPoints.controls.str, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.str, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-      <app-round-inc-and-dec
-        Id="agi-input"
-        Name="AGI"
-        [Value]="shadowCharacter.agility"
-        Title="Agility"
-        (Decrement)="ChangeControlValue(characterPoints.controls.agi, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.agi, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-      <app-round-inc-and-dec
-        Id="dur-input"
-        Name="DUR"
-        [Value]="shadowCharacter.durability"
-        Title="Durability"
-        (Decrement)="ChangeControlValue(characterPoints.controls.dur, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.dur, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-      <app-round-inc-and-dec
-        Id="sta-input"
-        Name="STA"
-        [Value]="shadowCharacter.stamina"
-        Title="Stamina"
-        (Decrement)="ChangeControlValue(characterPoints.controls.sta, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.sta, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-      <app-round-inc-and-dec
-        Id="int-input"
-        Name="INT"
-        [Value]="shadowCharacter.intelligence"
-        Title="Intelligence"
-        (Decrement)="ChangeControlValue(characterPoints.controls.int, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.int, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-      <app-round-inc-and-dec
-        Id="ins-input"
-        Name="INS"
-        [Value]="shadowCharacter.insight"
-        Title="Insight"
-        (Decrement)="ChangeControlValue(characterPoints.controls.ins, -1)"
-        (Increment)="ChangeControlValue(characterPoints.controls.ins, 1)"
-        [HideButtons]="false"
-        Color="border-slate-400 bg-slate-700"
-      />
-    </div>
-    <div style="display: flex; justify-content: center; flex-wrap: wrap">
-      <app-round-inc-and-dec
-        [HideButtons]="true"
-        [Value]="shadowCharacter.max_hp"
-        [Id]="'character-max-hp'"
-        Name="HP"
-        Title="HP"
-        Color="border-red-700 bg-red-500"
-      />
-      <app-round-inc-and-dec
-        [HideButtons]="true"
-        [Value]="shadowCharacter.max_stamina"
-        [Id]="'character-max-sta'"
-        Name="STA"
-        Title="Stamina"
-        Color="border-green-700 bg-green-500"
-      />
-    </div>
-    <div class="flex justify-center">
+    <section>
+      <h1>Create a Character</h1>
+      <label for="name-input">Name</label>
+      <input id="name-input" formControlName="name" type="text" maxlength="100" minlength="1" (change)="CalculatePoints()" [attr.aria-invalid]="!!characterPoints.controls.name.errors" />
+      <div class="grid">
+        <fieldset>
+          <label>Level</label>
+          <select formControlName="level" (change)="CalculatePoints()">
+            <option *ngFor="let num of levelKeys" [ngValue]="num">{{num}}</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <label>Ancestry</label>
+          <select formControlName="ancestry" (change)="CalculatePoints()">
+            <option *ngFor="let opt of ancestryOptions" [ngValue]="opt">{{opt}}</option>
+          </select>
+        </fieldset>
+      </div>
+      <h2 style="text-align: center" [ngStyle]="{'color': !!characterPoints.controls.points.errors ? 'var(--del-color)' : 'unset'}">{{characterPoints.controls.points.getRawValue()}} Points Remaining</h2>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap">
+        <app-round-inc-and-dec
+          Id="str-input"
+          Name="STR"
+          [Value]="shadowCharacter.strength"
+          Title="Strength"
+          (Decrement)="ChangeControlValue(characterPoints.controls.str, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.str, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+        <app-round-inc-and-dec
+          Id="agi-input"
+          Name="AGI"
+          [Value]="shadowCharacter.agility"
+          Title="Agility"
+          (Decrement)="ChangeControlValue(characterPoints.controls.agi, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.agi, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+        <app-round-inc-and-dec
+          Id="dur-input"
+          Name="DUR"
+          [Value]="shadowCharacter.durability"
+          Title="Durability"
+          (Decrement)="ChangeControlValue(characterPoints.controls.dur, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.dur, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+        <app-round-inc-and-dec
+          Id="sta-input"
+          Name="STA"
+          [Value]="shadowCharacter.stamina"
+          Title="Stamina"
+          (Decrement)="ChangeControlValue(characterPoints.controls.sta, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.sta, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+        <app-round-inc-and-dec
+          Id="int-input"
+          Name="INT"
+          [Value]="shadowCharacter.intelligence"
+          Title="Intelligence"
+          (Decrement)="ChangeControlValue(characterPoints.controls.int, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.int, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+        <app-round-inc-and-dec
+          Id="ins-input"
+          Name="INS"
+          [Value]="shadowCharacter.insight"
+          Title="Insight"
+          (Decrement)="ChangeControlValue(characterPoints.controls.ins, -1)"
+          (Increment)="ChangeControlValue(characterPoints.controls.ins, 1)"
+          [HideButtons]="false"
+          Color="border-slate-400 bg-slate-700"
+        />
+      </div>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap">
+        <app-round-inc-and-dec
+          [HideButtons]="true"
+          [Value]="shadowCharacter.max_hp"
+          [Id]="'character-max-hp'"
+          Name="HP"
+          Title="HP"
+          Color="border-red-700 bg-red-500"
+        />
+        <app-round-inc-and-dec
+          [HideButtons]="true"
+          [Value]="shadowCharacter.max_stamina"
+          [Id]="'character-max-sta'"
+          Name="STA"
+          Title="Stamina"
+          Color="border-green-700 bg-green-500"
+        />
+      </div>
       <ng-container *ngIf="shadowCharacter.level >= 3">
         <ng-container *ngTemplateOutlet="abiTemplate;context:{level: 3, formGroup: abiThirdLevel}"></ng-container>
       </ng-container>
-    </div>
-    <div class="text-center">
-      <ng-container *ngIf="characterPoints.controls.points.errors as error">
-        <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Points', message:'must be above'}"></ng-container>
-      </ng-container>
-      <ng-container *ngIf="characterPoints.controls.name.errors as error">
-        <ng-container  *ngTemplateOutlet="errorTemplate;context:{error: error, name:'Name', message: 'must be'}"></ng-container>
-      </ng-container>
-    </div>
-    <div class="h-4"></div>
-    <div class="flex flex-row justify-center">
-      <button class="btn bg-blue-500 hover:bg-blue-700 text-white disabled:bg-slate-500 disabled:hover:bg-slate-400" [disabled]="!IsFormValid()">Create Character</button>
-    </div>
+    </section>
+    <section>
+      <div class="grid">
+        <app-rollable-selector Name="Items" [Rollables]="itemChoices"  (SelectedRollables)="AddItemsToCharacter($event)"></app-rollable-selector>
+        <app-rollable-selector Name="Spells" [Rollables]="spellChoices" (SelectedRollables)="AddSpellsToCharacter($event)"></app-rollable-selector>
+      </div>
+    </section>
+    <button role="button" [disabled]="!IsFormValid()">Create Character</button>
   </form>
 </main>
 
@@ -139,11 +134,4 @@
       </div>
     </div>
   </form>
-</ng-template>
-
-<ng-template #errorTemplate let-error="error" let-name="name" let-message="message">
-<!--  {{name}} {{error | json}}-->
-  <p class="text-red-600" *ngIf="error?.['min']">
-    {{name}} {{message}} {{error['min']['actual']}}
-  </p>
 </ng-template>

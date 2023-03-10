@@ -25,12 +25,13 @@ export interface ICharacter extends IDbRecord
     caster_type: "none" | "quarter" | "half" | "full";
     actions: Array<ICharacterAction>;
     level: number;
+    owner: string;
 }
 
 export const defaultCharacter:ICharacter = {
   actions: [], hp: 0, name: "", insight: 0, agility: 0, caster_type: "none", current_stamina: 0, durability: 0,
   equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0, level: 0,
-  max_hp: 0, max_stamina: 0
+  max_hp: 0, max_stamina: 0, owner: ''
 }
 
 export type StatOperands = "STA" | "HP";
