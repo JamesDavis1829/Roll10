@@ -98,7 +98,10 @@
       <div>
         <button [id]='targetCharacter.id + "-reset"' class="m-2" type="button" (click)="ResetCharacter()">Reset</button>
       </div>
-      <div class="flex flex-row">
+      <div>
+        <ng-container *ngIf="pb.userSubject | async as user">
+          <button *ngIf="user.id == targetCharacter.owner" [id]="targetCharacter.id + '-delete'" class="m-2" type="button" (click)="DeleteCharacter()">Delete</button>
+        </ng-container>
       </div>
     </div>
   </div>

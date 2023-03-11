@@ -118,6 +118,20 @@ export class PocketBaseService {
     }
   }
 
+  public async DeleteItem(collection: string, id: string)
+  {
+    try
+    {
+      await this.pb.collection(collection).delete(id);
+      return true;
+    }
+    catch(e)
+    {
+      console.error(e);
+      return false;
+    }
+  }
+
   public Logout()
   {
     this.pb.authStore.clear();

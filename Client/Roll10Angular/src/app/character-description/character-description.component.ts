@@ -6,6 +6,7 @@ import {defaultRollable, IRollable} from "../../domain/data/Rollable";
 import {DiceLogService} from "../dice-log.service";
 import {HideDiceRoll} from "../../domain/data/Item";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
+import {PocketBaseService} from "../pocket-base.service";
 
 @Component({
   selector: 'app-character-description',
@@ -23,7 +24,7 @@ export class CharacterDescriptionComponent implements OnInit {
 
   hideDiceRoll = HideDiceRoll;
 
-  constructor(public diceLogService: DiceLogService) {
+  constructor(public diceLogService: DiceLogService, public pb: PocketBaseService) {
   }
 
   public GetStats()
@@ -68,5 +69,16 @@ export class CharacterDescriptionComponent implements OnInit {
       dslEquation:`roll(1,10) + ${stat}()`
     };
     this.RollDice(statRoll);
+  }
+
+  public DeleteCharacter()
+  {
+    let response = window.confirm(`Are you sure you want to delete ${this.targetCharacter.name}?`);
+    if(response)
+    {
+      this.pb.DeleteItem("characters", this.targetCharacter.id).then(_ => {
+        window.location.reload();
+      });
+    }
   }
 }

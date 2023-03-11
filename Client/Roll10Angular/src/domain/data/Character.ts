@@ -6,6 +6,10 @@ import { match } from "ts-pattern";
 import {ICharacterAction} from "./CharacterAction";
 import {EvaluateDSL} from "../dsl/DSL";
 
+
+export const casterOptions  = ["none","quarter","half","full"] as const;
+export type CasterType = typeof casterOptions[number];
+
 export interface ICharacter extends IDbRecord
 {
     name: string;
@@ -22,16 +26,18 @@ export interface ICharacter extends IDbRecord
     spells: Array<ISpell>;
     equipment: Array<IItem>;
     inventory: Array<IItem>;
-    caster_type: "none" | "quarter" | "half" | "full";
+    caster_type: CasterType;
     actions: Array<ICharacterAction>;
     level: number;
     owner: string;
+    is_ancestor: boolean;
+    ancestor: string;
 }
 
 export const defaultCharacter:ICharacter = {
   actions: [], hp: 0, name: "", insight: 0, agility: 0, caster_type: "none", current_stamina: 0, durability: 0,
   equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0, level: 0,
-  max_hp: 0, max_stamina: 0, owner: ''
+  max_hp: 0, max_stamina: 0, owner: '', is_ancestor: false, ancestor: ""
 }
 
 export type StatOperands = "STA" | "HP";

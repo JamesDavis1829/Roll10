@@ -1,10 +1,17 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms"
 import * as _ from "lodash";
-import {CharacterStatOption, characterStatOptions, CharacterStats, Clamp, GenerateId, Selectable} from "../../Helpers";
+import {
+  CharacterStatOption,
+  characterStatOptions,
+  CharacterStats,
+  Clamp,
+  GenerateId,
+  Selectable
+} from "../../Helpers";
 import {PocketBaseService} from "../pocket-base.service";
 import {IDSLEquation} from "../../domain/data/DSLEquation";
-import {defaultCharacter, ICharacter} from "../../domain/data/Character";
+import {casterOptions, CasterType, defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import {match} from "ts-pattern";
 import {AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
@@ -13,8 +20,8 @@ import {ISpell} from "../../domain/data/Spell";
 import {IRollable} from "../../domain/data/Rollable";
 import {Router} from "@angular/router";
 
-const minStatValue = 8;
-const maxStatValue = 13;
+const minStatValue = 0;
+const maxStatValue = 5;
 
 const minLevel = 1;
 //later will be 10 when feats are implemented
@@ -22,7 +29,7 @@ const maxLevel = 3;
 
 const maxPoints = 15;
 
-const doubleCostCutOff = 12;
+const doubleCostCutOff = 4;
 @Component({
   selector: 'app-character-creation',
   templateUrl: './character-creation.component.html',
@@ -30,13 +37,18 @@ const doubleCostCutOff = 12;
   encapsulation: ViewEncapsulation.ShadowDom,
 })
 export class CharacterCreationComponent {
+  characterId = GenerateId();
   maxLevel = maxLevel;
+  casterOptions = casterOptions;
+  baseCharacters: ICharacter[] = [];
+  selectedBaseCharacter: ICharacter = {...defaultCharacter};
   levelKeys = [...Array(maxLevel).keys()].map(k => k + 1);
-  shadowCharacter: ICharacter = {...defaultCharacter, id: GenerateId()};
-  characterPoints = new FormGroup({
+  shadowCharacter: ICharacter = {...defaultCharacter, id: this.characterId};
+  characterCreationForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
     level: new FormControl(minLevel, [Validators.required, Validators.min(minLevel), Validators.max(maxLevel)]),
-    ancestry: new FormControl<AncestryOption>("Human", [Validators.required]),
+    ancestry: new FormControl<ICharacter>(this.baseCharacters[0], [Validators.required]),
+    casterType: new FormControl<CasterType>("none", Validators.required),
     str: new FormControl(minStatValue, this.GetValidators()),
     agi: new FormControl(minStatValue, this.GetValidators()),
     dur: new FormControl(minStatValue, this.GetValidators()),
@@ -57,7 +69,7 @@ export class CharacterCreationComponent {
   spellChoices: ISpell[] = [];
 
   characterStatOptions = characterStatOptions;
-  ancestryOptions = ancestryOptions;
+  isLoading = true;
 
   constructor(private pb: PocketBaseService, private router: Router )
   {
@@ -71,7 +83,18 @@ export class CharacterCreationComponent {
     this.hpEquation = equations.find(sta => sta.id == "g7328zqjzmfptfl") ?? { id: "", equation: "", name: "" };
     this.spellChoices = await this.pb.GetFullList<ISpell>("spells")
     this.itemChoices = await this.pb.GetFullList<IItem>("items");
+    this.baseCharacters = await this.pb.GetFullList<ICharacter>("characters",undefined,"is_ancestor=true");
+    this.SetBaseCharacter(this.baseCharacters[0]);
+    this.characterCreationForm.controls.ancestry.setValue(this.selectedBaseCharacter);
+
     this.FillInCharacter();
+    this.isLoading = false;
+  }
+
+  private SetBaseCharacter(character: ICharacter)
+  {
+    this.selectedBaseCharacter = character
+    this.shadowCharacter = {...character, is_ancestor: false, id: this.characterId, ancestor: this.selectedBaseCharacter.id};
   }
 
   private GetValidators()
@@ -86,6 +109,7 @@ export class CharacterCreationComponent {
     if(user == null)
     {
       window.alert('You must be logged in to create characters');
+      return;
     }
 
     if(this.IsFormValid())
@@ -97,8 +121,9 @@ export class CharacterCreationComponent {
       };
       characterToUpload.owner = user?.id ?? "";
       this.pb.CreateItem<any>("characters",characterToUpload)
-        .then(_ => {
-          this.router.navigateByUrl!("");
+        .then(success => {
+          if(success)
+            this.router.navigateByUrl!("");
         })
         .catch(e => {
           console.error(e);
@@ -109,13 +134,14 @@ export class CharacterCreationComponent {
 
   public IsFormValid()
   {
-    return this.characterPoints.valid && (this.characterPoints.controls.points.value ?? 1) == 0
+    return this.characterCreationForm.valid && (this.characterCreationForm.controls.points.value ?? 1) == 0
   }
 
-  public CalculatePoints()
+  public OnFormChange()
   {
+    this.SetBaseCharacter(this.characterCreationForm.controls.ancestry.value ?? defaultCharacter);
     let pointsSpent = _.chain(['str','agi','dur','sta','int','ins'])
-      .map(f => this.characterPoints.get(f))
+      .map(f => this.characterCreationForm.get(f))
       .map(f => {
         let pointsAboveCutoff = Clamp(f?.value - doubleCostCutOff, 0, Number.MAX_VALUE);
         let pointsBelowCutoff = Clamp(f?.value - minStatValue,0, (doubleCostCutOff - minStatValue));
@@ -123,38 +149,27 @@ export class CharacterCreationComponent {
       })
       .sum()
       .value();
-    this.characterPoints.controls.points.setValue(maxPoints - pointsSpent);
+    this.characterCreationForm.controls.points.setValue(maxPoints - pointsSpent);
     this.FillInCharacter();
   }
 
   private FillInCharacter()
   {
-    this.shadowCharacter.stamina = this.characterPoints.controls.sta.value ?? 0;
-    this.shadowCharacter.level = this.characterPoints.controls.level.value ?? 0;
-    this.shadowCharacter.insight = this.characterPoints.controls.ins.value ?? 0;
-    this.shadowCharacter.intelligence = this.characterPoints.controls.int.value ?? 0;
-    this.shadowCharacter.agility = this.characterPoints.controls.agi.value ?? 0;
-    this.shadowCharacter.strength = this.characterPoints.controls.str.value ?? 0;
-    this.shadowCharacter.durability = this.characterPoints.controls.dur.value ?? 0;
-    this.shadowCharacter.name = this.characterPoints.controls.name.value ?? "";
+    this.shadowCharacter.stamina += this.characterCreationForm.controls.sta.value ?? 0;
+    this.shadowCharacter.level = this.characterCreationForm.controls.level.value ?? 0;
+    this.shadowCharacter.insight += this.characterCreationForm.controls.ins.value ?? 0;
+    this.shadowCharacter.intelligence += this.characterCreationForm.controls.int.value ?? 0;
+    this.shadowCharacter.agility += this.characterCreationForm.controls.agi.value ?? 0;
+    this.shadowCharacter.strength += this.characterCreationForm.controls.str.value ?? 0;
+    this.shadowCharacter.durability += this.characterCreationForm.controls.dur.value ?? 0;
+    this.shadowCharacter.name = this.characterCreationForm.controls.name.value ?? "";
+    this.shadowCharacter.caster_type = this.characterCreationForm.controls.casterType.value ?? "none";
 
     if(this.shadowCharacter.level >= 3)
     {
       this.shadowCharacter = this.AddStatToCharacter(this.shadowCharacter, this.abiThirdLevel.controls[`abi-3-1`].value ?? "Strength")
       this.shadowCharacter = this.AddStatToCharacter(this.shadowCharacter, this.abiThirdLevel.controls[`abi-3-2`].value ?? "Strength")
     }
-
-    match(this.characterPoints.controls.ancestry.value ?? "Human")
-      .with("Dwarven", () => {
-        this.shadowCharacter = {...this.shadowCharacter, strength: this.shadowCharacter.strength + 1, durability: this.shadowCharacter.durability + 1}
-      })
-      .with("Human", () => {
-        this.shadowCharacter = {...this.shadowCharacter, stamina: this.shadowCharacter.stamina + 2}
-      })
-      .with("Halfling", () => {
-        this.shadowCharacter = {...this.shadowCharacter, agility: this.shadowCharacter.agility + 1}
-      })
-      .exhaustive()
 
     this.shadowCharacter.max_hp = EvaluateDSL(this.shadowCharacter, this.hpEquation.equation).value;
     this.shadowCharacter.max_stamina = EvaluateDSL(this.shadowCharacter, this.staEquation.equation).value;
@@ -164,7 +179,7 @@ export class CharacterCreationComponent {
   {
     let value = control.value ?? 0;
     control.setValue(Clamp(value + addition, minStatValue, maxStatValue));
-    this.CalculatePoints();
+    this.OnFormChange();
   }
 
   private GenAbiFormGroup(level: number)
@@ -195,5 +210,10 @@ export class CharacterCreationComponent {
   public AddSpellsToCharacter(spells: Selectable<IRollable>[])
   {
     this.shadowCharacter.spells = spells.filter(i => i.isSelected).map(i => i.item as ISpell);
+  }
+
+  public TitleCase(val: string)
+  {
+    return _.startCase(val);
   }
 }
