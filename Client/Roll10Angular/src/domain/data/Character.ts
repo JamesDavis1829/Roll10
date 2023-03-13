@@ -5,6 +5,7 @@ import { ISpell } from "./Spell";
 import { match } from "ts-pattern";
 import {ICharacterAction} from "./CharacterAction";
 import {EvaluateDSL} from "../dsl/DSL";
+import {IFeat} from "./Feat";
 
 
 export const casterOptions  = ["none","quarter","half","full"] as const;
@@ -32,12 +33,14 @@ export interface ICharacter extends IDbRecord
     owner: string;
     is_ancestor: boolean;
     ancestor: string;
+
+    feats: Array<IFeat>
 }
 
 export const defaultCharacter:ICharacter = {
   actions: [], hp: 0, name: "", insight: 0, agility: 0, caster_type: "none", current_stamina: 0, durability: 0,
   equipment: [], id: "", intelligence: 0, inventory: [], spells: [], stamina: 0, strength: 0, level: 0,
-  max_hp: 0, max_stamina: 0, owner: '', is_ancestor: false, ancestor: ""
+  max_hp: 0, max_stamina: 0, owner: '', is_ancestor: false, ancestor: "", feats: []
 }
 
 export type StatOperands = "STA" | "HP";
