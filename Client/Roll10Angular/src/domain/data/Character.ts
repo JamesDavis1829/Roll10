@@ -33,7 +33,6 @@ export interface ICharacter extends IDbRecord
     owner: string;
     is_ancestor: boolean;
     ancestor: string;
-
     feats: Array<IFeat>
 }
 

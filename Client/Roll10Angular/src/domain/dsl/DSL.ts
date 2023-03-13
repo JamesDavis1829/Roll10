@@ -4,6 +4,7 @@ import {BaseDice} from "../../Helpers";
 import {DiceSubstitute} from "../data/Rollable";
 import * as _ from "lodash";
 import {match} from "ts-pattern";
+import {IFeat} from "../data/Feat";
 
 type Any = angu.Value;
 
@@ -84,6 +85,18 @@ export function basicLanguage (character:ICharacter, dslString: string) : DSLRet
           diceString: value.toString()
         })
         return value;
+      },
+      'feats': () => {
+        function EvaluateFeat(feat: IFeat): number {
+          return EvaluateDSL(character, feat.dslEquation).value
+        }
+        function sum(prevVal: number, currVal: number, i: number, array: number[]): number {
+          prevVal += currVal;
+          return prevVal;
+        }
+        return character.feats
+          .map(EvaluateFeat)
+          .reduce(sum)
       },
       'castermod': () => match(character.caster_type)
           .with("none", () => 0)
