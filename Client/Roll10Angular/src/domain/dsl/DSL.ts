@@ -87,7 +87,7 @@ export function basicLanguage (character:ICharacter, dslString: string) : DSLRet
       },
       'feats': () => {
         return _.chain(character.feats)
-          .map(f => EvaluateDSL(character, f.dslEquation))
+          .map(f => EvaluateDSL(character, f.dslEquation).value)
           .sum()
           .value();
       },
