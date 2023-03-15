@@ -14,7 +14,6 @@ import {IDSLEquation} from "../../domain/data/DSLEquation";
 import {casterOptions, CasterType, defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import {match} from "ts-pattern";
-import {AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
 import {IItem} from "../../domain/data/Item";
 import {ISpell} from "../../domain/data/Spell";
 import {IRollable} from "../../domain/data/Rollable";
@@ -78,6 +77,7 @@ export class CharacterCreationComponent {
 
   public async OnInitAsync()
   {
+    //TODO: Parallelize requests
     let equations = await this.pb.GetFullList<IDSLEquation>("dslequations");
     this.staEquation = equations.find(he => he.id == "hvk4ebqxzgsvlk8") ?? { id:"", equation: "", name: "" };
     this.hpEquation = equations.find(sta => sta.id == "g7328zqjzmfptfl") ?? { id: "", equation: "", name: "" };

@@ -27,7 +27,7 @@ export class CharacterListComponent implements OnInit{
   {
     let equations: IDSLEquation[];
     [this.characters, this.actions,equations] = await Promise.all([
-      this.pb.GetFullList<ICharacter>("characters","","is_ancestor=false","spells,equipment,inventory,actions"),
+      this.pb.GetFullList<ICharacter>("characters","","is_ancestor=false","spells,equipment,inventory,actions,feats"),
       this.pb.GetFullList<ICharacterAction>("actions", "+created", "all_characters=true"),
       this.pb.GetFullList<IDSLEquation>("dslequations")
     ])
