@@ -45,7 +45,7 @@ export class SettingsMenuComponent implements OnInit, OnDestroy {
     let result = await this.pb.UpdateItem<IUser>("users", this.currentUser?.id ?? "" , { diceroom: roomId })
     await this.pb.UpdateUser();
     match(result)
-      .with(true, () => { this.toastService.ShowToast({ id:GenerateId(), message:"Dice room updated!.", type:'Info' })})
+      .with(true, () => { this.toastService.ShowToast({ id:GenerateId(), message:"Dice room updated!", type:'Info' })})
       .with(false, () => { this.toastService.ShowToast({ id:GenerateId(), message:"Dice room could not be updated.", type:'Warning' })})
       .exhaustive();
   }

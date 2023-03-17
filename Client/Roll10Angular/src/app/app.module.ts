@@ -17,6 +17,10 @@ import { CharacterListComponent } from './character-list/character-list.componen
 import { CharacterCreationComponent } from './character-creation/character-creation.component';
 import { RoundIncAndDecComponent } from './round-inc-and-dec/round-inc-and-dec.component';
 import { RollableSelectorComponent } from './rollable-selector/rollable-selector.component';
+import { AncestryListComponent } from './ancestry-list/ancestry-list.component';
+import { ItemListComponent } from './item-list/item-list.component';
+import { ActionListComponent } from './action-list/action-list.component';
+import { SpellListComponent } from './spell-list/spell-list.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +37,11 @@ import { RollableSelectorComponent } from './rollable-selector/rollable-selector
     CharacterListComponent,
     CharacterCreationComponent,
     RoundIncAndDecComponent,
-    RollableSelectorComponent
+    RollableSelectorComponent,
+    AncestryListComponent,
+    ItemListComponent,
+    ActionListComponent,
+    SpellListComponent
   ],
     imports: [
         BrowserModule,
