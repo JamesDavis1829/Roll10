@@ -5,6 +5,7 @@ import {PocketBaseService} from "../pocket-base.service";
 import {IDSLEquation} from "../../domain/data/DSLEquation";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import * as _ from "lodash";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-character-list',
@@ -14,20 +15,28 @@ import * as _ from "lodash";
 export class CharacterListComponent implements OnInit{
   characters:Array<ICharacter> = [];
   actions:Array<ICharacterAction> = [];
+  onlyMyCharacters: boolean = false;
 
-  constructor(private pb: PocketBaseService) {
+  isLoading: boolean = true;
+
+  constructor(private pb: PocketBaseService, private route: ActivatedRoute) {
 
   }
 
   ngOnInit(): void {
-    this.Initialize().catch(e => console.error(e));
+    this.route.queryParams.subscribe(p => {
+      console.log(p);
+      this.onlyMyCharacters = !(p?.['nonPlayers'] == "true")
+      this.Initialize().catch(e => console.error(e));
+    })
   }
 
   async Initialize()
   {
+    this.isLoading = true;
     let equations: IDSLEquation[];
     [this.characters, this.actions,equations] = await Promise.all([
-      this.pb.GetFullList<ICharacter>("characters","","is_ancestor=false","spells,equipment,inventory,actions"),
+      this.pb.GetFullList<ICharacter>("characters","",`is_ancestor=false && owner ${this.onlyMyCharacters ? '!=' : '='} null`,"spells,equipment,inventory,actions"),
       this.pb.GetFullList<ICharacterAction>("actions", "+created", "all_characters=true"),
       this.pb.GetFullList<IDSLEquation>("dslequations")
     ])
@@ -51,5 +60,6 @@ export class CharacterListComponent implements OnInit{
       .sortBy('name')
       .value();
     this.characters = _.chain([this.characters.filter(c => !!c.owner), this.characters.filter(c => !c.owner)]).flatten().value();
+    this.isLoading = false;
   }
 }

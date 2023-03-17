@@ -1,3 +1,33 @@
 <app-toast></app-toast>
 <app-popup-menu></app-popup-menu>
-<router-outlet></router-outlet>
+<main class="container-fluid">
+  <nav>
+    <ul>
+      <li>
+        <details role="list" dir="auto">
+          <summary aria-haspopup="listbox" role="link">Characters</summary>
+          <ul role="listbox">
+            <li><a routerLink="/characters" [queryParams]="{nonPlayers: false}">My Characters</a></li>
+            <li><a routerLink="/create">Create a Character</a> </li>
+          </ul>
+        </details>
+      </li>
+      <li>
+        <details role="list" dir="auto">
+          <summary aria-haspopup="listbox" role="link">Compendium</summary>
+          <ul role="listbox">
+            <li><a routerLink="/characters" [queryParams]="{nonPlayers: true}">Non Player Characters</a></li>
+            <li><a routerLink="">Ancestries</a></li>
+            <li><a routerLink="">Actions</a></li>
+            <li><a routerLink="">Items</a> </li>
+            <li><a routerLink="">Spells</a> </li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+    <ul>
+      <li><a routerLink="settings">Settings</a></li>
+    </ul>
+  </nav>
+  <router-outlet></router-outlet>
+</main>

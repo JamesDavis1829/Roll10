@@ -1,5 +1,4 @@
 import {Component, ViewEncapsulation} from '@angular/core';
-import {match} from "ts-pattern";
 
 
 export type PopUpMode = "DiceLog" | "Settings";
@@ -16,18 +15,5 @@ export class PopupMenuComponent {
   ToggleMenuShowing()
   {
     this.isMenuShowing = !this.isMenuShowing;
-  }
-
-  ChangeMode(mode: PopUpMode)
-  {
-    this.mode = mode;
-  }
-
-  GetTitle()
-  {
-    return match(this.mode)
-      .with("DiceLog", () => "Dice Log")
-      .with("Settings", () => "Settings")
-      .exhaustive();
   }
 }

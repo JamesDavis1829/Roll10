@@ -1,33 +1,33 @@
-<div class="h-3"><!--spacer--></div>
-<ng-container *ngIf="currentUser?.email; else notLoggedIn">
-    <p class="text-center">{{currentUser?.email}}</p>
-    <div class="text-center my-4">
-        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" (click)="Logout()">Log Out</button>
-    </div>
-    <form class="text-center my-4" (submit)="HandleSubmit()">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="dice-room-id-entry">
-            Dice Room
+
+<main class="container">
+  <ng-container *ngIf="currentUser?.email; else notLoggedIn">
+    <section>
+      <h3>User Information</h3>
+      <h3 style="text-align: center">{{currentUser?.email}}</h3>
+      <button (click)="Logout()">Log Out</button>
+    </section>
+    <section>
+      <h3>Dice Room</h3>
+      <h4>Create a New Dice Room</h4>
+      <button (click)="CreateNewDiceRoom()">Create New Dice Room</button>
+      <form (submit)="HandleSubmit()">
+        <h4>Join a Dice Room</h4>
+        <label for="dice-room-id-entry">
+          Dice Room
+          <input type="text" id="dice-room-id-entry" [formControl]="idEntry" />
         </label>
-        <input class="input focus:outline-none focus:shadow-outline" id="dice-room-id-entry" [formControl]="idEntry" />
         <p *ngIf="idEntry.errors && idEntry.dirty" class="text-red-600">
           {{idEntry.errors['pattern'] ? 'Id must be 15 characters' : ''}}
         </p>
-        <div class="h-4"></div>
-        <button class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer" type="submit" id="dice-room-submit">Join Room</button>
-    </form>
-    <div class="text-center my-4">
-        <button class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" (click)="CreateNewDiceRoom()" id="create-new-dice-room">Create New Room</button>
+        <button type="submit">Join Dice Room</button>
+      </form>
+    </section>
+  </ng-container>
+  <ng-template #notLoggedIn>
+    <div style="text-align: center">
+      <h3>You Must Login To Use Settings</h3>
+      <a routerLink="/login" id="login-button" role="button">Log In</a>
     </div>
-    <div class="text-center my-4">
-      <a class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" href="/create">Create A Character</a>
-    </div>
-    <div class="text-center my-4">
-      <a class="btn bg-blue-500 text-white hover:bg-blue-700 hover:cursor-pointer" href="/">Character List</a>
-    </div>
-</ng-container>
-<ng-template #notLoggedIn>
-    <p class="text-center">You must log in to use settings.</p>
-    <div class="text-center my-4">
-        <a href="/login" id="login-button" class="btn bg-blue-500 hover:bg-blue-700 text-white hover:cursor-pointer">Log In</a>
-    </div>
-</ng-template>
+  </ng-template>
+
+</main>

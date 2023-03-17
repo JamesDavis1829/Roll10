@@ -14,7 +14,6 @@ import {IDSLEquation} from "../../domain/data/DSLEquation";
 import {casterOptions, CasterType, defaultCharacter, ICharacter} from "../../domain/data/Character";
 import {EvaluateDSL} from "../../domain/dsl/DSL";
 import {match} from "ts-pattern";
-import {AncestryOption, ancestryOptions} from "../../domain/data/Ancestries";
 import {IItem} from "../../domain/data/Item";
 import {ISpell} from "../../domain/data/Spell";
 import {IRollable} from "../../domain/data/Rollable";
@@ -66,7 +65,9 @@ export class CharacterCreationComponent {
   staEquation!: IDSLEquation;
 
   itemChoices: IItem[] = [];
+  selectedItems: IItem[] = [];
   spellChoices: ISpell[] = [];
+  selectedSpells: ISpell[] = [];
 
   characterStatOptions = characterStatOptions;
   isLoading = true;
@@ -94,7 +95,13 @@ export class CharacterCreationComponent {
   private SetBaseCharacter(character: ICharacter)
   {
     this.selectedBaseCharacter = character
-    this.shadowCharacter = {...character, is_ancestor: false, id: this.characterId, ancestor: this.selectedBaseCharacter.id};
+    this.shadowCharacter = {
+      ...character,
+      is_ancestor: false,
+      id: this.characterId,
+      ancestor: this.selectedBaseCharacter.id,
+      spells: [...this.shadowCharacter.spells],
+      equipment: [...this.shadowCharacter.equipment]};
   }
 
   private GetValidators()
@@ -173,6 +180,8 @@ export class CharacterCreationComponent {
 
     this.shadowCharacter.max_hp = EvaluateDSL(this.shadowCharacter, this.hpEquation.equation).value;
     this.shadowCharacter.max_stamina = EvaluateDSL(this.shadowCharacter, this.staEquation.equation).value;
+    this.shadowCharacter.spells = this.selectedSpells;
+    this.shadowCharacter.equipment = this.selectedItems;
   }
 
   public ChangeControlValue(control: FormControl<number | null>, addition:number)
@@ -204,12 +213,14 @@ export class CharacterCreationComponent {
 
   public AddItemsToCharacter(items: Selectable<IRollable>[])
   {
-    this.shadowCharacter.equipment = items.filter(i => i.isSelected).map(i => i.item as IItem);
+    this.selectedItems = items.filter(i => i.isSelected).map(i => i.item as IItem);
+    this.OnFormChange();
   }
 
   public AddSpellsToCharacter(spells: Selectable<IRollable>[])
   {
-    this.shadowCharacter.spells = spells.filter(i => i.isSelected).map(i => i.item as ISpell);
+    this.selectedSpells = spells.filter(i => i.isSelected).map(i => i.item as ISpell);
+    this.OnFormChange();
   }
 
   public TitleCase(val: string)
