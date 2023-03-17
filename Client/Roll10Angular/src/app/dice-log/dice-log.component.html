@@ -1,5 +1,5 @@
 <div>
-  <ul class="list-none">
+  <ul class="list-none" #diceLog>
     <ng-container *ngIf="diceLogService.diceLog.length > 0; else noDiceLogEntries">
       <ng-container *ngFor="let roll of diceLogService.diceLog">
         <li class="even:bg-slate-200 p-2">

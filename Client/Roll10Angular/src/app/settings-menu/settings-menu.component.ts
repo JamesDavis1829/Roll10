@@ -30,7 +30,7 @@ export class SettingsMenuComponent implements OnInit, OnDestroy {
     this.idEntry.addValidators([Validators.required,Validators.pattern(/[a-z0-9]{15}/)])
   }
 
-  async HandleSubmit()
+  async HandleDiceRoomSubmit()
   {
     if(this.idEntry.valid)
     {

@@ -1,4 +1,5 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Delay} from "../../Helpers";
 
 
 export type PopUpMode = "DiceLog" | "Settings";
@@ -9,11 +10,16 @@ export type PopUpMode = "DiceLog" | "Settings";
   encapsulation: ViewEncapsulation.ShadowDom
 })
 export class PopupMenuComponent {
-  public mode: PopUpMode = "DiceLog";
   public isMenuShowing = false;
+  @ViewChild("diceLog")
+  diceLog!: ElementRef<HTMLDivElement>;
 
   ToggleMenuShowing()
   {
     this.isMenuShowing = !this.isMenuShowing;
+    Delay(50).then(_ => {
+      if(this?.diceLog?.nativeElement)
+        this.diceLog.nativeElement.scrollTop = this.diceLog.nativeElement.scrollHeight;
+    });
   }
 }

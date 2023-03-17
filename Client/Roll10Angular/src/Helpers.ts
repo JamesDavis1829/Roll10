@@ -57,3 +57,10 @@ export function ForceCast<T>(a: any)
 {
     return (a as unknown) as T;
 }
+
+export function Delay(milliseconds: number)
+{
+  return new Promise<void>((resolve, reject) => {
+    setTimeout(() => { resolve() }, milliseconds);
+  })
+}

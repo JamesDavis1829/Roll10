@@ -8,19 +8,15 @@
     </section>
     <section>
       <h3>Dice Room</h3>
-      <h4>Create a New Dice Room</h4>
-      <button (click)="CreateNewDiceRoom()">Create New Dice Room</button>
-      <form (submit)="HandleSubmit()">
-        <h4>Join a Dice Room</h4>
-        <label for="dice-room-id-entry">
-          Dice Room
-          <input type="text" id="dice-room-id-entry" [formControl]="idEntry" />
-        </label>
-        <p *ngIf="idEntry.errors && idEntry.dirty" class="text-red-600">
-          {{idEntry.errors['pattern'] ? 'Id must be 15 characters' : ''}}
-        </p>
-        <button type="submit">Join Dice Room</button>
-      </form>
+      <label for="dice-room-id-entry">
+        Dice Room
+        <input type="text" id="dice-room-id-entry" [formControl]="idEntry" />
+      </label>
+      <p *ngIf="idEntry.errors && idEntry.dirty" class="text-red-600">
+        {{idEntry.errors['pattern'] ? 'Id must be 15 characters' : ''}}
+      </p>
+      <button (click)="HandleDiceRoomSubmit()">Join Dice Room</button>
+      <button (click)="CreateNewDiceRoom()" type="button">Create New Dice Room</button>
     </section>
   </ng-container>
   <ng-template #notLoggedIn>
