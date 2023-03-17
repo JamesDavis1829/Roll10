@@ -45,7 +45,6 @@ export class RollableSelectorComponent implements OnChanges {
     if(changes?.['Rollables'])
     {
       let formControls:{[key:string]: FormControl<boolean | null>} = {};
-      console.log(this.Rollables)
       for(let rollable of this.Rollables)
       {
         formControls[rollable.name] = new FormControl(false, Validators.required);

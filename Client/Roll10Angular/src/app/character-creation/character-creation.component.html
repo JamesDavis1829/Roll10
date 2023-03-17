@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="/assets/css/pico.min.css">
 <main class="container">
   <h1>Create a Character</h1>
-  <div *ngIf="isLoading else notLoading">
-    <button aria-busy="true">Loading Character Creator</button>
+  <div *ngIf="isLoading else notLoading" style="text-align: center;">
+    <h3 aria-busy="true">Loading Character Creator</h3>
   </div>
   <ng-template #notLoading>
     <form [formGroup]="characterCreationForm" (ngSubmit)="OnSubmit()">

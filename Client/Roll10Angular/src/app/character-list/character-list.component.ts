@@ -25,7 +25,6 @@ export class CharacterListComponent implements OnInit{
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(p => {
-      console.log(p);
       this.onlyMyCharacters = !(p?.['nonPlayers'] == "true")
       this.Initialize().catch(e => console.error(e));
     })

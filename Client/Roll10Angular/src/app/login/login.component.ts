@@ -34,7 +34,6 @@ export class LoginComponent implements OnInit {
   {
     window.localStorage.setItem("provider",JSON.stringify(info));
     let origin = window.location.origin
-    console.log(`${info.authUrl}${origin}/redirect`);
     window.open(`${info.authUrl}${origin}/redirect`,"_self")
   }
 }
