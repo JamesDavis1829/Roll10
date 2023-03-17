@@ -5,11 +5,14 @@
       <ng-container *ngIf="item.humanReadable">
         <p class="italic">Roll: {{item.humanReadable}}</p>
       </ng-container>
-      <ng-container *ngIf="item.dslEquation">
+      <ng-container *ngIf="item.dslEquation && humanReadableEffectString(character, item) != ''">
         <p class="italic">Effect: {{humanReadableEffectString(character, item)}}</p>
       </ng-container>
-      <ng-content></ng-content>
-      <p class="italic">{{item.description}}</p>
+      <details>
+        <summary>Details</summary>
+        <ng-content></ng-content>
+        <p class="italic">{{item.description}}</p>
+      </details>
     </div>
     <div class="relative w-8">
       <ng-container *ngIf="!hideDiceRoll">

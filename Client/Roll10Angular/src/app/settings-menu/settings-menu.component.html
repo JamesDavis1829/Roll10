@@ -3,7 +3,18 @@
   <ng-container *ngIf="currentUser?.email; else notLoggedIn">
     <section>
       <h3>User Information</h3>
-      <h3 style="text-align: center">{{currentUser?.email}}</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td>User ID</td>
+            <td>{{currentUser?.id}}</td>
+          </tr>
+          <tr>
+            <td>Username</td>
+            <td>{{currentUser?.email}}</td>
+          </tr>
+        </tbody>
+      </table>
       <button (click)="Logout()">Log Out</button>
     </section>
     <section>
