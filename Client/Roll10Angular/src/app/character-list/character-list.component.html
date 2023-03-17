@@ -5,11 +5,27 @@
     </div>
   </div>
   <ng-template #notLoading>
-    <div class="lg:w-11/12 w-full">
-      <ng-container *ngFor="let character of characters">
-        <app-character-description [character]="character" [allCharacterActions]="actions"></app-character-description>
-      </ng-container>
-    </div>
+    <ng-container *ngIf="onlyMyCharacters && !(pb.userSubject | async) else characterList">
+      <div style="text-align: center">
+        <h3>You Must Login To See Your Characters</h3>
+        <a routerLink="/login" id="login-button" role="button">Log In</a>
+      </div>
+    </ng-container>
+    <ng-template #characterList>
+      <div class="lg:w-11/12 w-full">
+        <ng-container *ngIf="characters.length > 0 else noCharacters">
+          <ng-container *ngFor="let character of characters">
+            <app-character-description [character]="character" [allCharacterActions]="actions"></app-character-description>
+          </ng-container>
+        </ng-container>
+        <ng-template #noCharacters>
+          <div style="text-align: center">
+            <h3>You have no characters.</h3>
+            <a routerLink="/create" id="create-character" role="button">Create a Character</a>
+          </div>
+        </ng-template>
+      </div>
+    </ng-template>
   </ng-template>
 <!--  TODO: Remove when floating menu is no longer there-->
   <div style="height: 85px"></div>

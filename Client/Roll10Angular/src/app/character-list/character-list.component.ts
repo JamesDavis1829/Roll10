@@ -19,7 +19,7 @@ export class CharacterListComponent implements OnInit{
 
   isLoading: boolean = true;
 
-  constructor(private pb: PocketBaseService, private route: ActivatedRoute) {
+  constructor(public pb: PocketBaseService, private route: ActivatedRoute) {
 
   }
 
