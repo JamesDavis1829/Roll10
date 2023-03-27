@@ -1,3 +1,36 @@
-<div style="text-align: center">
-  <h2>Items coming soon!</h2>
-</div>
+<main class="container">
+  <h3 style="text-align: center">Items</h3>
+  <ng-container *ngFor="let item of itemList">
+    <article>
+      <h4>{{item.name}}</h4>
+      <ng-container *ngIf="item.humanReadable">
+        <p>Roll: {{item.humanReadable}}</p>
+      </ng-container>
+      <h6>Statistics</h6>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Wield</th>
+            <th>Weight</th>
+            <th>Range</th>
+            <th>STR</th>
+            <th>AGI</th>
+            <th>INT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ToTitleCase(item.category)}}</td>
+            <td>{{item.wield.length == 0 ? 'None' : item.wield.join(',')}}</td>
+            <td>{{ToTitleCase(item.weight)}}</td>
+            <td>{{item.range.length ? item.range : 'None'}}</td>
+            <td>{{item.strength_requirement}}</td>
+            <td>{{item.agility_requirement}}</td>
+            <td>{{item.intelligence_requirement}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </ng-container>
+</main>

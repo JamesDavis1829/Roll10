@@ -1,8 +1,10 @@
-<ng-container *ngFor="let ancestry of ancestriesList">
-  <article>
-    <h4>{{ancestry.name}}</h4>
-    <table>
-      <thead>
+<h3 style="text-align: center">Ancestries</h3>
+<main class="container">
+  <ng-container *ngFor="let ancestry of ancestriesList">
+    <article>
+      <h4>{{ancestry.name}}</h4>
+      <table>
+        <thead>
         <tr>
           <th scope="col">Strength</th>
           <th scope="col">Agility</th>
@@ -11,8 +13,8 @@
           <th scope="col">Intelligence</th>
           <th scope="col">Insight</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <tr>
           <td>{{ancestry.strength}}</td>
           <td>{{ancestry.agility}}</td>
@@ -21,7 +23,8 @@
           <td>{{ancestry.intelligence}}</td>
           <td>{{ancestry.insight}}</td>
         </tr>
-      </tbody>
-    </table>
-  </article>
-</ng-container>
+        </tbody>
+      </table>
+    </article>
+  </ng-container>
+</main>
