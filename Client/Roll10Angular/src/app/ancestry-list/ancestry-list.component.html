@@ -1,3 +1,27 @@
-<div style="text-align: center">
-  <h2>Ancestries coming soon!</h2>
-</div>
+<ng-container *ngFor="let ancestry of ancestriesList">
+  <article>
+    <h4>{{ancestry.name}}</h4>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Strength</th>
+          <th scope="col">Agility</th>
+          <th scope="col">Durability</th>
+          <th scope="col">Stamina</th>
+          <th scope="col">Intelligence</th>
+          <th scope="col">Insight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ancestry.strength}}</td>
+          <td>{{ancestry.agility}}</td>
+          <td>{{ancestry.durability}}</td>
+          <td>{{ancestry.stamina}}</td>
+          <td>{{ancestry.intelligence}}</td>
+          <td>{{ancestry.insight}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </article>
+</ng-container>
