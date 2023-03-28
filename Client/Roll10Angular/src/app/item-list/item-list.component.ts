@@ -26,3 +26,5 @@ export class ItemListComponent {
     return _.startCase(val);
   }
 }
+
+
