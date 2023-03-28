@@ -2,35 +2,47 @@
   <h3 style="text-align: center">Items</h3>
   <ng-container *ngFor="let item of itemList">
     <article>
-      <h4>{{item.name}}</h4>
-      <ng-container *ngIf="item.humanReadable">
-        <p>Roll: {{item.humanReadable}}</p>
-      </ng-container>
-      <h6>Statistics</h6>
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Wield</th>
-            <th>Weight</th>
-            <th>Range</th>
-            <th>STR</th>
-            <th>AGI</th>
-            <th>INT</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ToTitleCase(item.category)}}</td>
-            <td>{{item.wield.length == 0 ? 'None' : item.wield.join(',')}}</td>
-            <td>{{ToTitleCase(item.weight)}}</td>
-            <td>{{item.range.length ? item.range : 'None'}}</td>
-            <td>{{item.strength_requirement}}</td>
-            <td>{{item.agility_requirement}}</td>
-            <td>{{item.intelligence_requirement}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <details>
+        <summary>
+          <div class="grid">
+            <h4>{{item.name}}</h4>
+            <div><i>{{Tags(item)}}</i></div>
+          </div>
+        </summary>
+        <div class="grid">
+          <div>
+            <h4>Basic Information</h4>
+            <ul>
+              <li>Description: {{ item.description }}</li>
+              <li>Category: {{ item.category }}</li>
+              <li>Range: {{ item.range }}</li>
+              <li>Weight: {{ item.weight }}</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Equations</h4>
+            <ul>
+              <li>Human Readable: {{ item.humanReadable }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid">
+          <div>
+            <h4>Requirements</h4>
+            <ul>
+              <li>Strength: {{ item.strength_requirement }}</li>
+              <li>Agility: {{ item.agility_requirement }}</li>
+              <li>Intelligence: {{ item.intelligence_requirement }}</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Wield Options</h4>
+            <ul>
+              <li *ngFor="let option of item.wield">{{ option }}</li>
+            </ul>
+          </div>
+        </div>
+      </details>
     </article>
   </ng-container>
 </main>

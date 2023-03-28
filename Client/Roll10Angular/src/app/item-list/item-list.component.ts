@@ -25,6 +25,16 @@ export class ItemListComponent {
   {
     return _.startCase(val);
   }
+
+  Tags(item:IItem)
+  {
+    return _.chain([item.category,item.wield, item.weight])
+      .flatten()
+      .compact()
+      .map(v => _.startCase(v))
+      .join(' | ')
+      .value()
+  }
 }
 
 
